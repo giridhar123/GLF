@@ -1,0 +1,79 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  basicTimeStep 16
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation -0.2308905560057681 0.9483471669460946 0.21754816039825156 1.5359037215596476
+  position 0.9872146065967696 0.9320901341076753 -0.3070600698952122
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0 -0.01 0
+  floorSize 5 5
+  floorTileSize 0.25 0.25
+  wallHeight 0.05
+}
+WoodenBox {
+  translation -0.0618114 0.0399608 0.0614715
+  rotation -0.5522681775018663 0.34403338596105276 0.759368744065056 -1.9298850577653842e-17
+  name "wooden box(3)"
+  size 0.12 0.1 0.37
+}
+WoodenBox {
+  translation -0.188018 0.0399608 0.0590234
+  rotation 1.26565e-17 1 -1.9984e-18 1.5708
+  name "wooden box(5)"
+  size 0.12 0.1 0.35
+}
+WoodenBox {
+  translation -0.320534 0.0399608 -0.310126
+  rotation -0.5522681775018663 0.34403338596105276 0.759368744065056 -1.9298850577653842e-17
+  name "wooden box(4)"
+  size 0.39 0.1 0.12
+}
+WoodenBox {
+  translation -0.243586 0.0399608 -0.551844
+  rotation -0.5522681775018663 0.34403338596105276 0.759368744065056 -1.9298850577653842e-17
+  name "wooden box(8)"
+  size 1 0.1 0.1
+}
+WoodenBox {
+  translation -0.260979 0.0399608 0.42387
+  rotation 0.902081691911273 0.07772196152888465 -0.4245090314876682 -2.5106982998809644e-17
+  name "wooden box(2)"
+  size 0.5 0.1 0.1
+}
+WoodenBox {
+  translation -0.548278 0.0399608 -0.00339725
+  rotation -1.66533e-17 1 -5.9952e-18 1.5708
+  name "wooden box(7)"
+  size 1 0.1 0.1
+}
+WoodenBox {
+  translation 0.173025 0.0399608 -0.155309
+  rotation -0.01726985926717042 0.9991445452515237 -0.03757565242304947 0.0024897826954049674
+  name "wooden box(1)"
+  size 0.1 0.1 0.8
+}
+WoodenBox {
+  translation 0.0724383 0.0399608 0.180568
+  rotation -0.49592101396402144 0.4479984717651598 0.7438815209460297 -1.6118707520389742e-17
+  size 0.2 0.1 0.13
+}
+WoodenBox {
+  translation -0.309591 0.0399608 -0.0427677
+  rotation -0.49592101396402144 0.4479984717651598 0.7438815209460297 -1.6118707520389742e-17
+  name "wooden box(6)"
+  size 0.12 0.1 0.16
+}
+DEF prova E-puck {
+  translation -0.3977 0 -0.434922
+  rotation 0 1 0 3.14159
+  controller "MyControllerJava"
+  supervisor TRUE
+  distance_sensor_numberOfRays 8
+}
