@@ -1,52 +1,35 @@
-// File:          MyControllerJava.java
-// Date:
-// Description:
-// Author:
-// Modifications:
+import com.cyberbotics.webots.controller.Supervisor;
+import com.cyberbotics.webots.controller.Node;
+import com.cyberbotics.webots.controller.Field;
 
-// You may need to add other webots classes such as
-import com.cyberbotics.webots.controller.DistanceSensor;
-import com.cyberbotics.webots.controller.Motor;
-import com.cyberbotics.webots.controller.Robot;
-
-// Here is the main class of your controller.
-// This class defines how to initialize and how to run your controller.
 public class MyControllerJava {
 
-  // This is the main function of your controller.
-  // It creates an instance of your Robot instance and
-  // it uses its function(s).
-  // Note that only one instance of Robot should be created in
-  // a controller program.
-  // The arguments of the main function can be specified by the
-  // "controllerArgs" field of the Robot node
   public static void main(String[] args) {
 
-    // create the Robot instance.
-    Robot robot = new Robot();
+    final int TIME_STEP = 32;
 
-    // get the time step of the current world.
-    int timeStep = (int) Math.round(robot.getBasicTimeStep());
+    final Supervisor supervisor = new Supervisor();
 
-    // You should insert a getDevice-like function in order to get the
-    // instance of a device of the robot. Something like:
-    Motor motor = robot.getMotor("left wheel motor");
-    DistanceSensor ds = robot.getDistanceSensor("ps0");
-    ds.enable(timeStep);
+    // do this once only
+    final Node robot_node = supervisor.getFromDef("prova");
+    if (robot_node == null) {
+      System.err.println("No DEF MY_ROBOT node found in the current world file");
+      System.exit(1);
+    }
 
-    // Main loop:
-    // - perform simulation steps until Webots is stopping the controller
-    while (robot.step(timeStep) != -1) {
-      // Read the sensors:
-      // Enter here functions to read sensor data, like:
-      double val = ds.getValue();
+    /* Cerca un nuovo controller */
+    Node RootNode = supervisor.getRoot();
+    Field RootChildenField = RootNode.getField("children");
+    String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
+    String SpawnBox = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
 
-      // Process sensor data here.
+    //RootChildenField.importMFNodeFromString(4,SpawnEPuck);
+    RootChildenField.importMFNodeFromString(4,SpawnBox);
 
-      // Enter here functions to send actuator commands, like:
-      motor.setPosition(10.0);
-    };
-
-    // Enter here exit cleanup code.
+    
   }
 }
+
+
+
+
