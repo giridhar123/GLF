@@ -7,7 +7,7 @@ public class General
     public static void main(String args[]) throws IOException
     {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("/bin/bash", "-c", "cd ./GuardiaController/");
+        processBuilder.command("cmd.exe", "/c", "cd ./GuardiaController/");
 
         try {
 
@@ -34,7 +34,7 @@ public class General
         guardiaExecutor.start();
 
         ControllerExecutor ladroExecutor = new ControllerExecutor("LadroController", "ladro");
-        processBuilder.command("/bin/bash", "-c", "cd ../LadroController/");
+        processBuilder.command("cmd.exe", "/c", "cd ../LadroController/");
 
         try {
 

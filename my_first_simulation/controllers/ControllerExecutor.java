@@ -18,7 +18,8 @@ public class ControllerExecutor extends Thread
     {
         ProcessBuilder processBuilder = new ProcessBuilder();
 
-        processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=\"" + robotName + "\"");
+        //in windows
+        processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME="+robotName);
 
         try {
 
@@ -41,8 +42,7 @@ public class ControllerExecutor extends Thread
             e.printStackTrace();
         }
 
-        processBuilder.command("/bin/bash", "-c", "java -XstartOnFirstThread -classpath /Applications/Webots.app/lib/controller/java/Controller.jar:/Users/davide/Desktop/Università/Robotica/Progetto/Locale/my_first_simulation/controllers/" + controllerName + "/ -Djava.library.path=/Applications/Webots.app/lib/controller/java " + controllerName);
-
+         processBuilder.command("cmd.exe", "/c", "java -classpath C:/Users/biril/AppData/Local/Programs/Webots/lib/controller/java/Controller.jar;C:/Users/biril/Documents/GLF_Personal/my_first_simulation/controllers/"+ controllerName +" -Djava.library.path=C:/Users/biril/AppData/Local/Programs/Webots/lib/controller/java " + controllerName);
         try {
 
             Process process = processBuilder.start();

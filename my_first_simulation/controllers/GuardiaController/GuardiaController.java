@@ -20,7 +20,8 @@ public class GuardiaController {
     
       
     while (robot.step(timeStep) != -1) {
-        System.out.println("LOL");
+        
+       //System.out.println("LOL");
         motorL.setPosition(10.0);
         motorR.setPosition(10.0);
     }
