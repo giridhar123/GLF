@@ -4,8 +4,8 @@ import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.Robot;
 
-public class MyControllerJava {
-
+public class SupervisorController
+{
     public static void main(String[] args)
     {
         final int TIME_STEP = 16;
@@ -35,15 +35,10 @@ public class MyControllerJava {
         // - perform simulation steps until Webots is stopping the controller
         int count = 0;
         while (supervisor.step(TIME_STEP) != -1) {
-            //motor.setPosition(10.0);
+            motor.setPosition(10.0);
             System.out.println(count++);
         }
 
         //RootChildenField.importMFNodeFromString(4,SpawnEPuck);
-        
     }
 }
-
-
-
-
