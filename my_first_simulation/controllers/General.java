@@ -1,76 +1,29 @@
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.io.File;
 
 public class General
 {
-    public static void main(String args[]) throws IOException
+    public static void main(String args[]) throws IOException, FileNotFoundException
     {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("cmd.exe", "/c", "cd ./GuardiaController/");
+        FileInputStream fileInputStream = new FileInputStream(new File("path.txt"));
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
 
-        try {
+        Properties properties = new Properties();
+        properties.load(inputStreamReader);
 
-            Process process = processBuilder.start();
+        String webotsPath = properties.getProperty("webotspath");
+        String projectPath = properties.getProperty("projectpath");
 
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            int exitCode = process.waitFor();
-            System.out.println("\nExited with error code : " + exitCode);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ControllerExecutor guardiaExecutor = new ControllerExecutor("GuardiaController", "guardia");
-        guardiaExecutor.start();
-
-        ControllerExecutor ladroExecutor = new ControllerExecutor("LadroController", "ladro");
-        processBuilder.command("cmd.exe", "/c", "cd ../LadroController/");
-
-        try {
-
-            Process process = processBuilder.start();
-
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            int exitCode = process.waitFor();
-            System.out.println("\nExited with error code : " + exitCode);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ladroExecutor.start();
-        
-
-        //Runtime.getRuntime().exec("/bin/bash -c export WEBOTS_ROBOT_NAME=\"guardia\"");
-
-        /*
-        Runtime.getRuntime().exec("/bin/bash -c cd ./GuardiaController/");
-        Runtime.getRuntime().exec("/bin/bash -c java -XstartOnFirstThread -classpath /Applications/Webots.app/lib/controller/java/Controller.jar:/Users/davide/Desktop/Università/Robotica/Progetto/Locale/my_first_simulation/controllers/GuardiaController/ -Djava.library.path=/Applications/Webots.app/lib/controller/java GuardiaController");
-        System.out.println("Avviato guardia controller");
-
-        Runtime.getRuntime().exec("/bin/bash -c export WEBOTS_ROBOT_NAME=\"ladro\"");
-        Runtime.getRuntime().exec("/bin/bash -c cd ../LadroController/");
-        Runtime.getRuntime().exec("/bin/bash -c java -XstartOnFirstThread -classpath /Applications/Webots.app/lib/controller/java/Controller.jar:/Users/davide/Desktop/Università/Robotica/Progetto/Locale/my_first_simulation/controllers/LadroController/ -Djava.library.path=/Applications/Webots.app/lib/controller/java LadroController");
-        System.out.println("Avviato ladro controller");
-        */
+        ControllerExecutor guardiaController = new ControllerExecutor("GuardiaController", "guardia", webotsPath, projectPath);
+        ControllerExecutor ladroController = new ControllerExecutor("LadroController", "ladro", webotsPath, projectPath);
+        guardiaController.start();
+        ladroController.start();
     }
 }

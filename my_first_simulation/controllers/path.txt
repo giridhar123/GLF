@@ -1,0 +1,2 @@
+webotspath=/Applications/Webots.app
+projectpath=/Users/davide/Desktop/Università/Robotica/Progetto/Locale

@@ -7,11 +7,15 @@ public class ControllerExecutor extends Thread
 {
     private String controllerName;
     private String robotName;
+    private String webotsPath;
+    private String projectPath;
 
-    public ControllerExecutor(String controllerName, String robotName)
+    public ControllerExecutor(String controllerName, String robotName, String webotsPath, String projectPath)
     {
         this.controllerName = controllerName;
         this.robotName = robotName;
+        this.webotsPath = webotsPath;
+        this.projectPath = projectPath;
     }
 
     public void run()
@@ -19,14 +23,16 @@ public class ControllerExecutor extends Thread
         ProcessBuilder processBuilder = new ProcessBuilder();
 
         //in windows
-        processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME="+robotName);
+        String OS = System.getProperty("os.name");
+
+        if (OS.equals(new String("Mac OS X")))
+            processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=\"" + robotName + "\"");
+        else
+            processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME=" + robotName);
 
         try {
-
             Process process = processBuilder.start();
-
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -35,20 +41,20 @@ public class ControllerExecutor extends Thread
 
             int exitCode = process.waitFor();
             System.out.println("\nExited with error code : " + exitCode);
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-         processBuilder.command("cmd.exe", "/c", "java -classpath C:/Users/biril/AppData/Local/Programs/Webots/lib/controller/java/Controller.jar;C:/Users/biril/Documents/GLF_Personal/my_first_simulation/controllers/"+ controllerName +" -Djava.library.path=C:/Users/biril/AppData/Local/Programs/Webots/lib/controller/java " + controllerName);
+        if (OS.equals(new String("Mac OS X")))
+            processBuilder.command("/bin/bash", "-c", "java -XstartOnFirstThread -classpath " + webotsPath + "/lib/controller/java/Controller.jar:" + projectPath + "/my_first_simulation/controllers/" + controllerName + "/ -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
+        else
+            processBuilder.command("cmd.exe", "/c", "java -classpath " + webotsPath + "/lib/controller/java/Controller.jar;" + projectPath + "/my_first_simulation/controllers/"+ controllerName +" -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
+        
         try {
-
             Process process = processBuilder.start();
-
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -57,7 +63,6 @@ public class ControllerExecutor extends Thread
 
             int exitCode = process.waitFor();
             System.out.println("\nExited with error code : " + exitCode);
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
