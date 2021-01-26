@@ -1,30 +1,31 @@
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.Robot;
+import java.io.*;
+import java.net.*;
+import java.util.Date;
 
-public class GuardiaController {
-  
-  public static void main(String[] args) {
-    System.out.println("1");
-    Robot robot = new Robot();
-    System.out.println("2");
-    int timeStep = 16;
-    System.out.println("3");
-    Motor motorL = robot.getMotor("left wheel motor");
-    System.out.println("4");
-    Motor motorR = robot.getMotor("right wheel motor");
-    System.out.println("5");
+public class GuardiaController
+{  
+    private final int TCP_PORT = 6868;
 
-    if (robot == null)
-      System.out.println("Robot null");
-      
-    
-      
-    while (robot.step(timeStep) != -1) {
-        
-       //System.out.println("LOL");
-        motorL.setPosition(10.0);
-        motorR.setPosition(10.0);
+    public static void main(String[] args) throws IOException
+    {    
+        Robot robot = new Robot();
+        int timeStep = 16;
+        Motor motorL = robot.getMotor("left wheel motor");
+        Motor motorR = robot.getMotor("right wheel motor");
+
+        /* TEST SOCKET START */
+        Socket socket = new Socket("127.0.0.1", TCP_PORT);
+        OutputStream output = socket.getOutputStream();
+        PrintWriter writer = new PrintWriter(output, true);
+        writer.println("Ciaooooo sono Guardia controller");
+        /* TEST SOCKET END */
+
+        while (robot.step(timeStep) != -1)
+        {
+            motorL.setPosition(10.0);
+            motorR.setPosition(10.0);
+        }
     }
-    System.out.println("6");
-  }
 }
