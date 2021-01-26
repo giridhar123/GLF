@@ -9,6 +9,7 @@ public class ControllerExecutor extends Thread
     private String robotName;
     private String webotsPath;
     private String projectPath;
+    public boolean ready;
 
     public ControllerExecutor(String controllerName, String robotName, String webotsPath, String projectPath)
     {
@@ -16,6 +17,7 @@ public class ControllerExecutor extends Thread
         this.robotName = robotName;
         this.webotsPath = webotsPath;
         this.projectPath = projectPath;
+        ready = false;
     }
 
     public void run()
@@ -40,7 +42,7 @@ public class ControllerExecutor extends Thread
             }
 
             int exitCode = process.waitFor();
-            System.out.println("\nExited with error code : " + exitCode);
+            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -54,6 +56,7 @@ public class ControllerExecutor extends Thread
         
         try {
             Process process = processBuilder.start();
+            ready = true;
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
@@ -62,7 +65,7 @@ public class ControllerExecutor extends Thread
             }
 
             int exitCode = process.waitFor();
-            System.out.println("\nExited with error code : " + exitCode);
+            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

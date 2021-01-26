@@ -8,9 +8,11 @@ import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.io.File;
 import java.util.Scanner;
+import java.lang.Thread;
 
 public class General
 {
+    private static ControllerExecutor supervisorController;
     private static ControllerExecutor guardiaController;
     private static ControllerExecutor ladroController;
     private static String webotsPath;
@@ -61,7 +63,25 @@ public class General
     {
         guardiaController = new ControllerExecutor("GuardiaController", "guardia", webotsPath, projectPath);
         ladroController = new ControllerExecutor("LadroController", "ladro", webotsPath, projectPath);
+        supervisorController = new ControllerExecutor("SupervisorController", "supervisor", webotsPath, projectPath);
         guardiaController.start();
+        try
+        {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
         ladroController.start();
+        try
+        {
+            Thread.sleep(500);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        supervisorController.start();
     }
 }
