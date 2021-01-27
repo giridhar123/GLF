@@ -1,3 +1,5 @@
+package LadroController;
+
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.Robot;
 

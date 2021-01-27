@@ -1,16 +1,15 @@
+package General;
 import java.io.IOException;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.io.File;
 import java.util.Scanner;
 import java.lang.Thread;
 
-public class General
+public class Main
 {
     private static ControllerExecutor supervisorController;
     private static ControllerExecutor guardiaController;
@@ -64,24 +63,26 @@ public class General
         guardiaController = new ControllerExecutor("GuardiaController", "guardia", webotsPath, projectPath);
         ladroController = new ControllerExecutor("LadroController", "ladro", webotsPath, projectPath);
         supervisorController = new ControllerExecutor("SupervisorController", "supervisor", webotsPath, projectPath);
-        guardiaController.start();
         try
         {
-            Thread.sleep(500);
+            guardiaController.start();
+        
+            while (!(guardiaController.ready))
+                Thread.sleep(5);        
+
+            System.out.println("GuardiaController: ready");
+            
+            ladroController.start();
+            while (!(ladroController.ready))
+                Thread.sleep(5);
+
+            System.out.println("ladroController: ready");
+            
+            supervisorController.start();
         }
         catch (InterruptedException e)
         {
             e.printStackTrace();
         }
-        ladroController.start();
-        try
-        {
-            Thread.sleep(500);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        supervisorController.start();
     }
 }

@@ -1,3 +1,6 @@
+package General;
+
+
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -50,9 +53,9 @@ public class ControllerExecutor extends Thread
         }
 
         if (OS.equals(new String("Mac OS X")))
-            processBuilder.command("/bin/bash", "-c", "java -XstartOnFirstThread -classpath " + webotsPath + "/lib/controller/java/Controller.jar:" + projectPath + "/my_first_simulation/controllers/" + controllerName + "/ -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
+            processBuilder.command("/bin/bash", "-c", "java -XstartOnFirstThread -classpath " + webotsPath + "/lib/controller/java/Controller.jar:" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/src/" + controllerName + "/ -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
         else
-            processBuilder.command("cmd.exe", "/c", "java -classpath " + webotsPath + "/lib/controller/java/Controller.jar;" + projectPath + "/my_first_simulation/controllers/"+ controllerName +" -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
+            processBuilder.command("cmd.exe", "/c", "java -classpath " + webotsPath + "/lib/controller/java/Controller.jar;" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/src/"+ controllerName +" -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
         
         try {
             Process process = processBuilder.start();

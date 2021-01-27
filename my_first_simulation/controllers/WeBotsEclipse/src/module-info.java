@@ -1,0 +1,5 @@
+/*module Eclipse {
+	requires rt;
+	
+}
+*/
