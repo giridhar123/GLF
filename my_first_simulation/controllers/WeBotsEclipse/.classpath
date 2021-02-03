@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Applications/Webots.app/lib/controller/java/Controller.jar"/>
+	<classpathentry kind="lib" path="C:/Users/biril/AppData/Local/Programs/Webots/lib/controller/java/Controller.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

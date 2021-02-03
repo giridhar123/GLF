@@ -1,0 +1,2 @@
+Windows: processBuilder.command("cmd.exe", "/c", "java -classpath " + webotsPath + "/lib/controller/java/Controller.jar;" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/src/" + controllerName +" -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
+Classpath: C:\Users\biril\AppData\Local\Programs\Webots\lib\controller\java

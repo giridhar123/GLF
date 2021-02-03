@@ -49,8 +49,9 @@ public class Main
 
     public static void printMenu()
     {
-        System.out.println("Digita 1 per avviare i controller");
-        System.out.println("Digita 2 per compilare tutti i controller");
+        System.out.println("Digita 1 per compilare i controller");
+        
+        System.out.println("Digita 2 per avviare tutti i controller");
     }
 
     public static void compilaTutto()
@@ -69,15 +70,11 @@ public class Main
         
             while (!(guardiaController.ready))
                 Thread.sleep(5);        
-
-            System.out.println("GuardiaController: ready");
             
             ladroController.start();
             while (!(ladroController.ready))
                 Thread.sleep(5);
 
-            System.out.println("ladroController: ready");
-            
             supervisorController.start();
         }
         catch (InterruptedException e)

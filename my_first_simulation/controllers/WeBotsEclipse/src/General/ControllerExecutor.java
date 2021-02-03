@@ -45,7 +45,13 @@ public class ControllerExecutor extends Thread
             }
 
             int exitCode = process.waitFor();
-            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
+            if(exitCode == 0)
+            {
+            	System.out.println(robotName + ": Variabile d'ambiente settata correttamente :" );
+            }
+            
+            reader.close();
+            
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -55,8 +61,7 @@ public class ControllerExecutor extends Thread
         if (OS.equals(new String("Mac OS X")))
             processBuilder.command("/bin/bash", "-c", "java -XstartOnFirstThread -classpath " + webotsPath + "/lib/controller/java/Controller.jar:" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/src/" + controllerName + "/ -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
         else
-            processBuilder.command("cmd.exe", "/c", "java -classpath " + webotsPath + "/lib/controller/java/Controller.jar;" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/src/"+ controllerName +" -Djava.library.path=" + webotsPath + "/lib/controller/java " + controllerName);
-        
+        	processBuilder.command("cmd.exe", "/c", "javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
         try {
             Process process = processBuilder.start();
             ready = true;
@@ -69,10 +74,13 @@ public class ControllerExecutor extends Thread
 
             int exitCode = process.waitFor();
             System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
+            reader.close();
+            
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
     }
 }

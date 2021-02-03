@@ -6,6 +6,7 @@ import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.Robot;
 
+@SuppressWarnings("unused")
 public class SupervisorController
 {
     public static void main(String[] args) throws InterruptedException

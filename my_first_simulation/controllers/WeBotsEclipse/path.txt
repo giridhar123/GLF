@@ -1,2 +1,2 @@
-webotspath=/Applications/Webots.app
-projectpath=/Users/davide/Desktop/Università/Robotica/Progetto/Locale
+webotspath=C:/Users/biril/AppData/Local/Programs/Webots
+projectpath=C:/Users/biril/Documents/GLF_Personal
