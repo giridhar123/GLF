@@ -2,6 +2,9 @@ package SupervisorController;
 
 import com.cyberbotics.webots.controller.Supervisor;
 import com.cyberbotics.webots.controller.Node;
+
+import java.util.Vector;
+
 import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.Robot;
@@ -32,25 +35,54 @@ public class SupervisorController
         /* Cerca un nuovo controller */
         Node RootNode = supervisor.getRoot();
         Field RootChildenField = RootNode.getField("children");
-        String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
-        String SpawnBox = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
+        	//String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
+        	//String SpawnBox2 = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
         
-        RootChildenField.importMFNodeFromString(4,SpawnBox);
+       //Prima L
+        String SpawnBox1 = "DEF L1 Proto1 {translation 0,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox2 = "DEF L1 Proto1 {translation 0.1,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox3 = "DEF L1 Proto1 {translation 0.2,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox4 = "DEF L1 Proto1 {translation 0.3,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox5 = "DEF L1 Proto1 {translation 0.3,0.05,-0.1 size 0.1,0.1,0.1 mass 2} " ;
+        
+        Vector<String> v = new Vector<String>(6);
+        	v.add(SpawnBox1) ;
+        	v.add(SpawnBox2) ;
+        	v.add(SpawnBox3) ;
+        	v.add(SpawnBox4) ;
+        	v.add(SpawnBox5) ;
+ 
+        for(int i=0 ; i<5 ; i++)
+        	RootChildenField.importMFNodeFromString(4,v.get(i));
+        v.clear();
+        
+        //Seconda L
+         SpawnBox1 = "DEF L2 Proto1 {translation 0,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+         SpawnBox2 = "DEF L2 Proto1 {translation 0.1,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+         SpawnBox3 = "DEF L2 Proto1 {translation 0.2,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+         SpawnBox4 = "DEF L2 Proto1 {translation 0.3,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+         SpawnBox5 = "DEF L2 Proto1 {translation 0.3,0.05,-0.70 size 0.1,0.1,0.1 mass 2} " ;
+         
+	     	v.add(SpawnBox1) ;
+	     	v.add(SpawnBox2) ;
+	     	v.add(SpawnBox3) ;
+	     	v.add(SpawnBox4) ;
+	     	v.add(SpawnBox5) ;
+     	
+	      for(int i=0 ; i<5 ; i++)
+         	RootChildenField.importMFNodeFromString(4,v.get(i));
+	      v.clear();
+	   
+	        String Ball = "DEF O Ball1 {translation 0.25,0.035,-0.35 mass 2 radius 0.10} " ;
+         	RootChildenField.importMFNodeFromString(4,Ball);
 
-        Motor motor = supervisor.getMotor("left wheel motor");
-        //  DistanceSensor ds = robot.getDistanceSensor("dsname");
-        //  ds.enable(timeStep);
-        
-        // Main loop:
-        // - perform simulation steps until Webots is stopping the controller
+
+	      
         int count = 0;
-        
         while (supervisor.step(TIME_STEP) != -1) {
             
-            //motor.setPosition(10.0);
+ 
             Thread.sleep(5);
         }
-
-        //RootChildenField.importMFNodeFromString(4,SpawnEPuck);
     }
 }
