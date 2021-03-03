@@ -57,6 +57,8 @@ public class ControllerExecutor extends Thread
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        System.out.println("javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
 
         if (OS.equals(new String("Mac OS X")))
             processBuilder.command("/bin/bash", "-c", "java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar " + controllerName + "." + controllerName);
