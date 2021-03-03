@@ -19,6 +19,7 @@ public class Main
 
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
+    	
         FileInputStream fileInputStream = new FileInputStream(new File("path.txt"));
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
 
@@ -28,12 +29,12 @@ public class Main
         webotsPath = properties.getProperty("webotspath");
         projectPath = properties.getProperty("projectpath");
 
-        Server server = new Server();
-        server.start();
+        //Server server = new Server();
+        //server.start();
 
         printMenu();
         Scanner scanner = new Scanner(System.in);
-        int value = scanner.nextInt();
+        int value = 2;//scanner.nextInt();
         scanner.close();
 
         switch (value)
