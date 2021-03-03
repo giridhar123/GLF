@@ -1,4 +1,9 @@
 /bin/
+<<<<<<< HEAD
 .classpath
 path.txt
 .project
+=======
+path.txt
+.classpath
+>>>>>>> ffaa279999245a890727b3c47b85a13eb1b48151
