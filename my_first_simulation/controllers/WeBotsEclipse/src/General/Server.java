@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -12,9 +13,14 @@ public class Server extends Thread
 {
     private final int TCP_PORT = 6868;
     AsynchronousServerSocketChannel server;
+    
+    ArrayList<AsynchronousSocketChannel> guardie;
+    ArrayList<AsynchronousSocketChannel> ladri;
 
     public Server()
     {
+    	guardie = new ArrayList<>();
+    	ladri = new ArrayList<>();
         try
         {
         	server = AsynchronousServerSocketChannel.open();
@@ -33,26 +39,8 @@ public class Server extends Thread
             try
             {
             	Future<AsynchronousSocketChannel> future = server.accept();
-            	AsynchronousSocketChannel clientChannel = future.get();
-                System.out.println("New client connected");
-                if ((clientChannel != null) && (clientChannel.isOpen())) {
-                    /*while (true) {*/
-                        ByteBuffer buffer = ByteBuffer.allocate(45);
-                        Future<Integer> readResult  = clientChannel.read(buffer);
-                        
-                        // perform other computations
-                        
-                        System.out.println("Ho ricevuto " + readResult.get().shortValue());
-                        
-                        buffer.flip();
-                        Future<Integer> writeResult = clientChannel.write(buffer);
-             
-                        // perform other computations
-             
-                        writeResult.get();
-                        buffer.clear();
-                    //}
-                }
+            	ConnectionHandler connectionHandler = new ConnectionHandler(this, future.get());
+            	connectionHandler.start();
             }
             catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -62,5 +50,17 @@ public class Server extends Thread
 				e.printStackTrace();
 			}
         }
+    }
+    
+    public void addGuardia(AsynchronousSocketChannel guardia)
+    {
+    	System.out.println("aggiungo una guardia");
+    	guardie.add(guardia);
+    }
+    
+    public void addLadro(AsynchronousSocketChannel ladro)
+    {
+    	System.out.println("Aggiungo un ladro...");
+    	ladri.add(ladro);
     }
 }
