@@ -29,8 +29,8 @@ public class Main
         webotsPath = properties.getProperty("webotspath");
         projectPath = properties.getProperty("projectpath");
 
-        //Server server = new Server();
-        //server.start();
+        Server server = new Server();
+        server.start();
 
         printMenu();
         Scanner scanner = new Scanner(System.in);
