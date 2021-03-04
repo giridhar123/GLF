@@ -12,6 +12,7 @@ import java.lang.Thread;
 public class Main
 {
     private static ControllerExecutor supervisorController;
+
     private static ControllerExecutor guardiaController;
     private static ControllerExecutor ladroController;
     private static String webotsPath;

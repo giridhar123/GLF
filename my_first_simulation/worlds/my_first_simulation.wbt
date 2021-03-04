@@ -4,8 +4,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
-  orientation -0.0887996535414019 0.9678855375146604 0.23518547531870237 2.4148323846379887
-  position 2.120127372830209 1.838218337433811 -2.438899787388285
+  orientation -0.058972532082177224 0.9824430471936405 0.17699689116109002 2.4742986879719533
+  position 9.514434971482888 5.712984594479586 -11.979616826662573
 }
 TexturedBackground {
 }
@@ -13,8 +13,8 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   translation 0 -0.01 0
-  floorSize 5 5
-  floorTileSize 0.25 0.25
+  floorSize 10 10
+  floorTileSize 0.2 0.2
   wallHeight 0.05
 }
 E-puck {
