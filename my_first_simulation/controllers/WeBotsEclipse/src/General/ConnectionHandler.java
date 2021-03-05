@@ -5,8 +5,11 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import Map.Mappa;
 import Network.Packet;
 import Network.Client.CTS_PEER_INFO;
+import Network.Server.STC_SEND_MAP;
+import SupervisorController.MySupervisor;
 
 public class ConnectionHandler extends Thread {
 	
@@ -18,7 +21,6 @@ public class ConnectionHandler extends Thread {
 		this.server = server;
 		this.clientChannel = clientChannel;
 		System.out.println("New client connected");
-
 	}
 	
 	public void run()
@@ -65,15 +67,22 @@ public class ConnectionHandler extends Thread {
 		switch (packet.getOpcode())
 		{
 			case Packet.CTS_PEER_INFO:
+			{
+				CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(packet, buf);
+				
+				if (cts_peer_info.getType() == CTS_PEER_INFO.GUARDIA)
+					server.addGuardia(clientChannel);
+				else if (cts_peer_info.getType() == CTS_PEER_INFO.LADRO)
+					server.addLadro(clientChannel);
+				else if (cts_peer_info.getType() == CTS_PEER_INFO.SUPERVISOR)
 				{
-					CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(packet, buf);
-					
-					if (cts_peer_info.getType() == CTS_PEER_INFO.GUARDIA)
-						server.addGuardia(clientChannel);
-					else if (cts_peer_info.getType() == CTS_PEER_INFO.LADRO)
-						server.addLadro(clientChannel);
+					Mappa mappa = server.getMappa();
+					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
+					ByteBuffer buffer = stc_send_map.encode();
+			        clientChannel.write(buffer);
 				}
-				break;
+			}
+			break;
 			default:
 				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 				break;

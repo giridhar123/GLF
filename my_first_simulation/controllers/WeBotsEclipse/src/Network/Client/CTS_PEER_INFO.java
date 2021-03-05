@@ -11,6 +11,7 @@ public class CTS_PEER_INFO extends Packet
     
     public static final byte GUARDIA = 1;
     public static final byte LADRO = 2;
+    public static final byte SUPERVISOR = 3;
     
     public CTS_PEER_INFO(Packet packet, ByteBuffer buf) {
     	super(packet);
@@ -42,7 +43,7 @@ public class CTS_PEER_INFO extends Packet
     	ByteBuffer buf = ByteBuffer.allocate(getSize());
     	buf.putInt(getSize());
     	buf.putShort(this.getOpcode());
-    	buf.put(this.type);        
+    	buf.put(this.type);
         buf.position(0);
         return buf;
     }

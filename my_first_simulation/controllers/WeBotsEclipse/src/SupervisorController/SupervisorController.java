@@ -1,8 +1,16 @@
 package SupervisorController;
 
-import Map.MapGenerator; // @Todo Da inserire nel project setting, non in locale così barbaro.
+import Map.Mappa;
+import Network.Client.CTS_PEER_INFO;
+import General.ConnectionHandler;
 import General.ControllerExecutor;
+
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Vector;
+import java.util.concurrent.Future;
+
 import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Motor;
@@ -12,26 +20,21 @@ import com.cyberbotics.webots.controller.Supervisor;
 @SuppressWarnings("unused")
 public class SupervisorController
 {
-    private static MapGenerator map;
+    private static Mappa map;
+    private static MySupervisor mySupervisor;
+    private static final int TCP_PORT = 6868;
+    private static SupervisorHandler supervisorHandler;
 
     public static void main(String[] args) throws InterruptedException
-    {
-    	
-    	// Creazione dell'oggetto che mi genera la mappa
-    	int temporanea1 = 100 ;
-    	int temporanea2 = 100 ;
-    	map = new MapGenerator("difficolta", 10, temporanea1, temporanea2);
-    	int[][] Mappa = map.Start();
-    	
-    	
+    {	
     	// Creazione dell'oggetto su webots
         final int TIME_STEP = 16;
-        final Supervisor supervisor = new Supervisor();
+        mySupervisor = new MySupervisor();
         
-        final Node robot_node = supervisor.getFromDef("supervisor");
-        final Node viewpoint_node = supervisor.getFromDef("viewpoint");
+        final Node robot_node = mySupervisor.getFromDef("supervisor");
+        final Node viewpoint_node = mySupervisor.getFromDef("viewpoint");
         
-        final Node Floor = supervisor.getFromDef("World");//
+        final Node Floor = mySupervisor.getFromDef("World");//
         if(Floor != null)
         {
         		// da capire come modificare il campo di gioco
@@ -47,25 +50,25 @@ public class SupervisorController
         }
 
         robot_node.setVisibility(viewpoint_node, false);
-        Node RootNode = supervisor.getRoot();
-        Field RootChildenField = RootNode.getField("children");
-        
-      
-        
-        	
         
         
-        
+        connectToServer();
         
         /* T E S T I N G */ 
-        SpawnTest(RootChildenField,Mappa);
+        //SpawnTest(RootChildenField, mappa);
         
-        while (supervisor.step(TIME_STEP) != -1) {
+        while (mySupervisor.step(TIME_STEP) != -1) {
             //Thread.sleep(5);
         }
     }
     
-    private static void SpawnTest(Field RootChildenField, int[][] Mappa)
+    private static void connectToServer()
+    {
+        supervisorHandler = new SupervisorHandler(mySupervisor);
+        supervisorHandler.start();
+    }
+    
+    private static void SpawnTest(Field RootChildenField, Mappa mappa)
     {
     	//String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
     	//String SpawnBox2 = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
@@ -80,10 +83,10 @@ public class SupervisorController
 		  {
 			 for(j=0; j<100; j++)
 			 {
-				 // Sto scorrendo l'array, se all'interno di questo valore c'è 1 allora faccio lo spawn su quel punto di posizione x,y
+				 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
 				 	TempX = MatrixToWorldX((float) i);
 				 	TempY = MatrixToWorldY((float) j);
-				 if(Mappa[i][j] == 1 )
+				 if(mappa.get(i, j) == 1 )
 				 {
 		    	  String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
 		          RootChildenField.importMFNodeFromString(4,SpawnBox);
@@ -133,12 +136,12 @@ public class SupervisorController
 
 	private static float MatrixToWorldY(float point) {
 	
-		point = (float) (4.95 - ( 0.10 * point)); //4,95 è la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
+		point = (float) (4.95 - ( 0.10 * point)); //4,95 ï¿½ la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
 	}
 	private static float MatrixToWorldX(float point) {
 		
-		point = (float) (4.95 - ( 0.10 * point)); //4,95 è la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
+		point = (float) (4.95 - ( 0.10 * point)); //4,95 ï¿½ la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
 	}
  }

@@ -9,9 +9,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import Map.Mappa;
+
 public class Server extends Thread
 {
     private final int TCP_PORT = 6868;
+    private Mappa mappa;
     AsynchronousServerSocketChannel server;
     
     ArrayList<AsynchronousSocketChannel> guardie;
@@ -33,7 +36,14 @@ public class Server extends Thread
     }
 
     public void run()
-    {            
+    {          
+    	// Creazione dell'oggetto che mi genera la mappa
+    	int temporanea1 = 25 ;
+    	int temporanea2 = 25 ;
+    	mappa = new Mappa("difficolta", 10, temporanea1, temporanea2);
+    	
+    	System.out.println("Server - X: " + mappa.getXSize() + " Y: " + mappa.getYSize());
+    	
         while (true)
         {
             try
@@ -50,6 +60,11 @@ public class Server extends Thread
 				e.printStackTrace();
 			}
         }
+    }
+    
+    public Mappa getMappa()
+    {
+    	return mappa;
     }
     
     public void addGuardia(AsynchronousSocketChannel guardia)
