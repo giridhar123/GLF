@@ -28,7 +28,7 @@ public class MySupervisor extends Supervisor {
 
 				 if(mappa.get(i, j) == 1 )
 				 {
-					 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
+					 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2} " ;
 		         	RootChildenField.importMFNodeFromString(4,SpawnBox);
 				 }
 			}
