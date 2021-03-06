@@ -42,24 +42,37 @@ public class SupervisorRobot extends Supervisor implements Client {
     	System.out.println(pavimento.getSFVec2f()[0]);
     	pavimento.setSFVec2f(mappa.getWeBotsXYMap());
 
-    	Spawn(mappa, RootChildrenField);
+    	SpawnAMMERDA(mappa, RootChildrenField);
 	
 	}
 	
 	
-	private static void Spawn(Mappa mappa, Field RootChildrenField )
+	private static void SpawnAMMERDA(Mappa mappa, Field RootChildrenField )
 	{
 		float TempX, TempY;
+		
+		int[][] matrice= new int[20][20];
+		
+		int x,y;
+		
+		for(int i=0; i<100; i++)
+		{
+			x=(int) (Math.random()*20);
+			y=(int) (Math.random()*20);
+			
+			if(matrice[x][y] == 1) i--;
+			matrice[x][y]=1;
+		}
 
-	for(int i=0; i < mappa.getXSize() ; i++)
+	for(int i=0; i < 20; i++)
 	  {
-		 for(int j=0; j< mappa.getYSize(); j++)
+		 for(int j=0; j< 20; j++)
 		 {
-			 // Sto scorrendo l'array, se all'interno di questo valore c'� 1 allora faccio lo spawn su quel punto di posizione x,y
+			 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
 			 	TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
 			 	TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
 
-			 if(mappa.get(i, j) == 1)
+			 if(matrice[i][j] == 1)
 			 {
 				 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
 				 RootChildrenField.importMFNodeFromString(4,SpawnBox);
@@ -68,6 +81,27 @@ public class SupervisorRobot extends Supervisor implements Client {
 	  }
 	}
 
+	private static void Spawn (Mappa mappa, Field RootChildrenField) 
+	{
+		float TempX, TempY;
+		
+		for(int i=0; i < mappa.getXSize() ; i++)
+		{
+			for(int j=0; j< mappa.getYSize(); j++)
+			{
+			// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
+			TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
+			TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
+			
+			if(mappa.get(i, j) == 1)
+				{
+				String SpawnBox = "DEF L1 Proto1 {​​translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}​​ " ;
+				RootChildrenField.importMFNodeFromString(4,SpawnBox);
+				}
+			}
+		}
+	}
+	
 	private static float MatrixToWorldY(float point, double WeBotsTile) {
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
@@ -100,7 +134,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 		  {
 			 for(j=0; j<100; j++)
 			 {
-				 // Sto scorrendo l'array, se all'interno di questo valore c'� 1 allora faccio lo spawn su quel punto di posizione x,y
+				 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
 				 	TempX = MatrixToWorldX((float) i, mappa.getWeBotsTile());
 				 	TempY = MatrixToWorldY((float) j, mappa.getWeBotsTile());
 				 if(mappa.get(i, j) == 1 )
