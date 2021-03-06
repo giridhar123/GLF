@@ -1,20 +1,19 @@
 package LadroController;
 
-import com.cyberbotics.webots.controller.Motor;
-import com.cyberbotics.webots.controller.Robot;
+import General.SharedVariables;
+import Network.ClientConnectionHandler;
+import Network.Client.CTS_PEER_INFO;
+import Robot.LadroRobot;
 
 public class LadroController
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
-        Robot robot = new Robot();
-        int timeStep = 16;
-        Motor motorL = robot.getMotor("left wheel motor");
-        Motor motorR = robot.getMotor("right wheel motor");
+        LadroRobot robot = new LadroRobot();
+        
+        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA);
+        clientConnectionHandler.start();
 
-        while (robot.step(timeStep) != -1) {
-            motorL.setPosition(-10.0);
-            motorR.setPosition(-10.0);
-        }
+        while (robot.step(SharedVariables.TIME_STEP) != -1);
     }
 }
