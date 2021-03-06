@@ -47,7 +47,7 @@ public class ControllerExecutor extends Thread
             int exitCode = process.waitFor();
             if(exitCode == 0)
             {
-            	System.out.println(robotName + ": Variabile d'ambiente settata correttamente :" );
+            	System.out.println(robotName + " : Variabile d'ambiente settata correttamente " );
             }
             
             reader.close();
@@ -58,7 +58,7 @@ public class ControllerExecutor extends Thread
             e.printStackTrace();
         }
         
-        System.out.println("javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
+        //System.out.println("javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
 
         if (OS.equals(new String("Mac OS X")))
             processBuilder.command("/bin/bash", "-c", "java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar " + controllerName + "." + controllerName);
@@ -75,7 +75,8 @@ public class ControllerExecutor extends Thread
             }
 
             int exitCode = process.waitFor();
-            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
+           System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
+      
             reader.close();
             
         } catch (IOException e) {

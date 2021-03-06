@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.io.File;
 import java.util.Scanner;
+
+import Cleaner.Cleaner;
+
 import java.lang.Thread;
 
 public class Main
@@ -20,7 +23,6 @@ public class Main
 
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
-    	
         FileInputStream fileInputStream = new FileInputStream(new File("path.txt"));
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
 
@@ -30,7 +32,7 @@ public class Main
         webotsPath = properties.getProperty("webotspath");
         projectPath = properties.getProperty("projectpath");
 
-        Server server = new Server();
+       Server server = new Server();
         server.start();
 
         printMenu();
@@ -61,8 +63,11 @@ public class Main
         System.out.println("HEY");
     }
 
-    public static void eseguiTutto()
+    public static void eseguiTutto() 
+
     {
+    	//Cleaner cleaner = new Cleaner();
+    	
         guardiaController = new ControllerExecutor("GuardiaController", "guardia", webotsPath, projectPath);
         ladroController = new ControllerExecutor("LadroController", "ladro", webotsPath, projectPath);
         supervisorController = new ControllerExecutor("SupervisorController", "supervisor", webotsPath, projectPath);
@@ -84,4 +89,18 @@ public class Main
             e.printStackTrace();
         }
     }
+
+    public static void RestartAll()
+    {
+    	/*
+    	 * L'idea è quella di utilizzare questa funzione per resettare il mondo, però deve essere effettuata ogniqualvolta venga riavviato il main.
+    	 * Purtroppo il codice va avanti prima che webots si "stabilizzi" per riagganciare i controllori.
+    	 * Ho provato ad usare syncronized ma non è andato, c'è da capire come fare.
+    	 * 
+    	 * com.cyberbotics.webots.controller.Node; // restartController
+    	 * com.cyberbotics.webots.controller.Supervisor; // worldReset
+    	 */
+    }
+
 }
+

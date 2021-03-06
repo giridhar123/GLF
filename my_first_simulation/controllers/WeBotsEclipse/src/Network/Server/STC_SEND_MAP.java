@@ -11,12 +11,17 @@ public class STC_SEND_MAP extends Packet{
 	
 	public STC_SEND_MAP(Mappa mappa)
 	{
-		super(8 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
+		// 16 
+		super(16 + 8 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
 		this.mappa = mappa;
 	}
 	
 	public STC_SEND_MAP(Packet packet, ByteBuffer buf) {
     	super(packet);
+    	
+    	double arrayXY[] = new double[2];
+    	arrayXY[0] =  buf.getDouble();
+    	arrayXY[1] = buf.getDouble();
     	
     	int xDim = buf.getInt();
     	int yDim = buf.getInt();
@@ -25,7 +30,7 @@ public class STC_SEND_MAP extends Packet{
     		for(int j = 0; j < yDim; ++j)
     			mappa[i][j] = buf.getInt();
     	
-    	this.mappa = new Mappa(mappa, xDim, yDim);
+    	this.mappa = new Mappa(mappa, xDim, yDim , arrayXY);
     }
 	
 	public Mappa getMappa()
@@ -39,6 +44,8 @@ public class STC_SEND_MAP extends Packet{
     	ByteBuffer buf = ByteBuffer.allocate(getSize());
     	buf.putInt(getSize());
     	buf.putShort(this.getOpcode());
+    	buf.putDouble(mappa.getWeBotsXYMap()[0]);
+    	buf.putDouble(mappa.getWeBotsXYMap()[1]);
     	buf.putInt(mappa.getXSize());
     	buf.putInt(mappa.getYSize());
     	for (int i = 0; i < mappa.getXSize(); ++i)

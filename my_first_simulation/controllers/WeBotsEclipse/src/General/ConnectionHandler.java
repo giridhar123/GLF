@@ -9,7 +9,6 @@ import Map.Mappa;
 import Network.Packet;
 import Network.Client.CTS_PEER_INFO;
 import Network.Server.STC_SEND_MAP;
-import SupervisorController.MySupervisor;
 
 public class ConnectionHandler extends Thread {
 	
@@ -20,7 +19,7 @@ public class ConnectionHandler extends Thread {
 	{
 		this.server = server;
 		this.clientChannel = clientChannel;
-		System.out.println("New client connected");
+		//System.out.println("New client connected");
 	}
 	
 	public void run()
@@ -56,6 +55,7 @@ public class ConnectionHandler extends Thread {
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return ; // Altrimenti va in loop quando si presenta IOException
 			}
 		}
 	}
