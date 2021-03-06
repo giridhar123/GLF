@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.Future;
 import Network.Client.CTS_PEER_INFO;
+import Robot.GuardiaRobot;
 
 public class GuardiaController
 {  
@@ -14,10 +15,8 @@ public class GuardiaController
 
     public static void main(String[] args) throws Exception
     {
-        Robot robot = new Robot();
+        GuardiaRobot robot = new GuardiaRobot();
         int timeStep = 16;
-        Motor motorL = robot.getMotor("left wheel motor");
-        Motor motorR = robot.getMotor("right wheel motor");
 
         /* TEST SOCKET START */
         CTS_PEER_INFO packet = new CTS_PEER_INFO(CTS_PEER_INFO.LADRO);
@@ -30,10 +29,11 @@ public class GuardiaController
         Future<Integer> writeResult = client.write(buffer);
         /* TEST SOCKET END */
 
+        robot.turnRight();
+        
         while (robot.step(timeStep) != -1)
         {
-            motorL.setPosition(10.0);
-            motorR.setPosition(10.0);
+            
         }
     }
 }
