@@ -29,12 +29,7 @@ public class GuardiaController
         Future<Integer> writeResult = client.write(buffer);
         /* TEST SOCKET END */
 
-        System.out.println("1");
-        robot.goStraightOn();
-        System.out.println("2");
-        robot.goStraightOn();
-        System.out.println("3");
-        robot.goStraightOn();
+        robot.turnRight();
         
         while (robot.step(timeStep) != -1)
         {

@@ -100,7 +100,27 @@ public class GenericRobot extends Robot
 	        leftMotor.setVelocity(-0.5);
 	        rightMotor.setVelocity(0.5);
 	        step(TIME_STEP);
-	        updatePose();
+	        updatePose(0);
+	    }
+
+	    stop();
+	}
+	
+	public void turnRight()
+	{
+	    stop();
+	    step(TIME_STEP);
+	    sensorValue[0] = leftMotorSensor.getValue();
+	    sensorValue[1] = rightMotorSensor.getValue();
+
+	    double goalTheta = pose[2] + PI/2.00 % PI2;
+
+	    while(Math.pow(pose[2] - goalTheta, 2) > 0.001)
+	    {	    	
+	        leftMotor.setVelocity(0.5);
+	        rightMotor.setVelocity(-0.5);
+	        step(TIME_STEP);
+	        updatePose(1);
 	    }
 
 	    stop();
@@ -112,7 +132,7 @@ public class GenericRobot extends Robot
 	    rightMotor.setVelocity(0 * MAX_SPEED);
 	}
 	
-	public void updatePose()
+	public void updatePose(int n)
 	{
 	    // compute current encoder positions
 	    double del_enLeftW = leftMotorSensor.getValue() - sensorValue[0];
@@ -130,7 +150,10 @@ public class GenericRobot extends Robot
 	    // Update in position along Y direction
 	    pose[1] +=  dispRobot * Math.sin(pose[2]); // robot position w.r.to Y direction
 	    // Update in orientation
-	    pose[2] += (values[1] - values[0])/AXLE_LENGTH; // orientation
+	    if(n==1) pose[2] += (values[0] - values[1])/AXLE_LENGTH; // orientation
+	    
+	    else pose[2] += (values[1] - values[0])/AXLE_LENGTH; // orientation
+	    
 	    pose[2] = pose[2] % PI2;
 	}
 	
