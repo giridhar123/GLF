@@ -5,9 +5,7 @@ import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
 
-import Map.Mappa;
-
-public abstract class GenericRobot extends Robot
+public abstract class GenericRobot extends Robot 
 {
 	private final int TIME_STEP = 16;
 	private final double MAX_SPEED = 6.28;
@@ -58,10 +56,9 @@ public abstract class GenericRobot extends Robot
 	    leftMotor.setVelocity(1 * MAX_SPEED);
         rightMotor.setVelocity(1 * MAX_SPEED);
 	    
-	    boolean obstacles = false;
 	    for (int i = 0; i < 50; ++i)
 	    {
-	        if ((obstacles = checkObstaclesInFront()) == true)
+	        if (checkObstaclesInFront())
 	        {
 	            goBack(i);
 	            break;
@@ -174,6 +171,4 @@ public abstract class GenericRobot extends Robot
 	{
 	    return (sensors[0].getValue() > OBSTACLE_TRESHOLD && sensors[1].getValue() > OBSTACLE_TRESHOLD);
 	}
-	
-	public abstract void onStcSendMapReceived(Mappa mappa);
 }

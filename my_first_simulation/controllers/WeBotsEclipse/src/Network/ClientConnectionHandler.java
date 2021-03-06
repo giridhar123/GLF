@@ -5,26 +5,23 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.Future;
-
-import com.cyberbotics.webots.controller.Robot;
-
 import General.SharedVariables;
 import Map.Mappa;
 import Network.Client.CTS_PEER_INFO;
 import Network.Server.STC_SEND_MAP;
-import Robot.GenericRobot;
+import Robot.Client;
 
 public class ClientConnectionHandler extends Thread{
 	
 	private AsynchronousSocketChannel channel;
 	private InetSocketAddress hostAddress;
 	private byte clientType;
-	private GenericRobot robotClient;
+	private Client client;
 	
-	public ClientConnectionHandler(byte clientType, GenericRobot robotClient)
+	public ClientConnectionHandler(byte clientType, Client client)
 	{
 		this.clientType = clientType;
-		this.robotClient = robotClient;
+		this.client = client;
 				
 		try {
 			channel = AsynchronousSocketChannel.open();
@@ -77,7 +74,7 @@ public class ClientConnectionHandler extends Thread{
 			{
 				STC_SEND_MAP stc_send_map = new STC_SEND_MAP(packet, buf);
 				Mappa mappa = stc_send_map.getMappa();
-				robotClient.onStcSendMapReceived(mappa);
+				client.onStcSendMapReceived(mappa);
 			}
 			break;
 			default:

@@ -11,7 +11,7 @@ public class LadroController
     {
         LadroRobot robot = new LadroRobot();
         
-        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA);
+        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, robot);
         clientConnectionHandler.start();
 
         while (robot.step(SharedVariables.TIME_STEP) != -1);

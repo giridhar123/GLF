@@ -1,9 +1,13 @@
 package SupervisorController;
 
 import Map.Mappa;
+import Network.ClientConnectionHandler;
 import Network.Client.CTS_PEER_INFO;
+import Robot.SupervisorRobot;
 import General.ConnectionHandler;
 import General.ControllerExecutor;
+import General.SharedVariables;
+
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -16,23 +20,15 @@ import com.cyberbotics.webots.controller.Field;
 
 public class SupervisorController
 {
-    private static MySupervisor mySupervisor;
-    private static SupervisorHandler supervisorHandler;
+    private static SupervisorRobot supervisor;
 
     public static void main(String[] args) throws InterruptedException
-    {	      
-    	int timeStep = 16;
-    	
-    	mySupervisor = new MySupervisor();
-        connectToServer();
-        
-        while (mySupervisor.step(timeStep) != -1);
-        
-    }
-    
-    private static void connectToServer()
     {
-        supervisorHandler = new SupervisorHandler(mySupervisor);
-        supervisorHandler.start();
+    	SupervisorRobot supervisor = new SupervisorRobot();
+
+    	ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.SUPERVISOR, supervisor);
+    	clientConnectionHandler.start();
+        
+        while (supervisor.step(SharedVariables.TIME_STEP) != -1);
     }
  }

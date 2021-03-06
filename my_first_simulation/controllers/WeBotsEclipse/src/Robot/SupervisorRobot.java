@@ -1,4 +1,4 @@
-package SupervisorController;
+package Robot;
 
 import java.util.Vector;
 
@@ -7,8 +7,8 @@ import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 
 import Map.Mappa;
-@SuppressWarnings("unused")
-public class MySupervisor extends Supervisor {
+
+public class SupervisorRobot extends Supervisor implements Client {
 		
 	public void spawnaMappa(Mappa mappa)
 	{		
@@ -20,7 +20,6 @@ public class MySupervisor extends Supervisor {
        
         // Field
         Field RootChildrenField = RootNode.getField("children");
-        
         
         robot_node.setVisibility(viewpoint_node, false);
         
@@ -60,8 +59,7 @@ public class MySupervisor extends Supervisor {
 			 	TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
 			 	TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
 
-			 //if(mappa.get(i, j) == 1 )
-			 	System.out.println(mappa.get(i, j));
+			 if(mappa.get(i, j) == 1)
 			 {
 				 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
 				 RootChildrenField.importMFNodeFromString(4,SpawnBox);
@@ -152,6 +150,10 @@ public class MySupervisor extends Supervisor {
 	           	RootChildenField.importMFNodeFromString(4,Ball);
 	          int count = 0;
     }
-    
-    
+
+
+	@Override
+	public void onStcSendMapReceived(Mappa mappa) {
+		spawnaMappa(mappa);
+	}
  }

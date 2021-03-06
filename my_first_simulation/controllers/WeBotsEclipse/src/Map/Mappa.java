@@ -3,46 +3,44 @@ package Map;
 import java.util.ArrayList;
 import java.util.Random;
 
-@SuppressWarnings("all")
 public class Mappa
 {	
 	String Difficolta ;
 	int NumeroBlocchiPercorso;
-	private static int x ; //Dim Matrice
-	private static int y;
-	private static int LimX,LimY = 1000;
+	private int xDim; //Dim Matrice
+	private int yDim;
 	private int[][] mappa;
-	double[] WeBotsXYMap ; // Quanto deve essere la mappa di WeBots
-	private static double WeBotsTile ; // Grandezza di una singola cella di WeBots
+	private double[] WeBotsXYMap ; // Quanto deve essere la mappa di WeBots
+	private double WeBotsTile ; // Grandezza di una singola cella di WeBots
 	
-	public Mappa(String Difficolta, int x, int y, double WeBotsTile , double[] WeBotsXYMap)
+	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap)
 	{
 		this.Difficolta = Difficolta;
-		this.x = x;
-		this.y = y;
+		this.xDim = xDim;
+		this.yDim = yDim;
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
-		this.mappa = new int[x][y];
+		this.mappa = new int[xDim][yDim];
 		CreateValidMapTest();
 	}
 	
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
 		this.WeBotsXYMap = arrayXY;
-		this.x = xDim;
-		this.y = yDim;
+		this.xDim = xDim;
+		this.yDim = yDim;
 		this.mappa = mappa;
 		
 	}
 	
 	public int getXSize()
 	{
-		return x;
+		return xDim;
 	}
 	
 	public int getYSize()
 	{
-		return y;
+		return yDim;
 	}
 	
 	public double getWeBotsTile()
@@ -82,11 +80,11 @@ public class Mappa
 		// Solo per testing
 				Random rand = new Random();
 				  
-				for(int i=0; i<x ; i++)
+				for(int i=0; i < xDim; i++)
 				{
-					for(int j=0; j<y ; j++)
+					for(int j=0; j < yDim; j++)
 					{
-						if( (rand.nextInt(10)+1) <= 13)
+						if( (rand.nextInt(10)+1) <= 5)
 						{ 
 							this.mappa[i][j] = 0 ;
 						}
@@ -105,9 +103,9 @@ public class Mappa
 		// Solo per testing
 				Random rand = new Random();
 				  
-				for(int i=0; i<=x ; i++)
+				for(int i=0; i <= xDim; i++)
 				{
-					for(int j=0; j<y ; j++)
+					for(int j=0; j < yDim; j++)
 					{
 						if( (rand.nextInt(10)+1) <= 5)
 						{ 

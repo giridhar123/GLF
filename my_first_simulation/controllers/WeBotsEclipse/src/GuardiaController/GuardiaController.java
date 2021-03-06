@@ -11,7 +11,7 @@ public class GuardiaController
     {
         GuardiaRobot robot = new GuardiaRobot();
 
-        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA);
+        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, robot);
         clientConnectionHandler.start();
 
         robot.turnRight();
