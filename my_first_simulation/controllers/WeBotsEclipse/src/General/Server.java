@@ -36,14 +36,15 @@ public class Server extends Thread
     }
 
     public void run()
-    {          
+    {
     	// Creazione dell'oggetto che mi genera la mappa
-    	int temporanea1 = 25 ;
-    	int temporanea2 = 25 ;
-    	mappa = new Mappa("difficolta", 10, temporanea1, temporanea2);
+    	int DimMapX = 25 ; // Dimensione Matrice in x
+    	int DimMapY = 25 ; // Dimensione Matrice in y
+    	double WeBotsTile = 4.95 ; // Dimensione della singola cella di WeBots
+    	double[] WeBotsXYMap = {5.0,5.0}; // Dimensione della mappa(il campo) WebBots
     	
-    	System.out.println("Server - X: " + mappa.getXSize() + " Y: " + mappa.getYSize());
-    	
+    	mappa = new Mappa("difficolta", DimMapX, DimMapY, WeBotsTile,WeBotsXYMap); 
+     	
         while (true)
         {
             try
@@ -75,7 +76,7 @@ public class Server extends Thread
     
     public void addLadro(AsynchronousSocketChannel ladro)
     {
-    	System.out.println("Aggiungo un ladro...");
+    	System.out.println("Aggiungo un ladro");
     	ladri.add(ladro);
     }
 }
