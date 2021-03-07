@@ -1,6 +1,5 @@
 package Map;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Mappa
@@ -77,21 +76,23 @@ public class Mappa
 
 	public int[][] CreateValidMapTest()
 	{
-		// Solo per testing
-				Random rand = new Random();
-				  
-				for(int i=0; i < xDim; i++)
-				{
+		Random rand = new Random();
+			int min = 0;
+			int max = mappa[1].length-1;
+			
+			for(int i=0; i < xDim; i++)
+				{	
 					for(int j=0; j < yDim; j++)
 					{
-						if( (rand.nextInt(10)+1) <= 5)
-						{ 
-							this.mappa[i][j] = 0 ;
-						}
-						else
+						if(i==min || i==max || j==min || j==max )
 						{
 							this.mappa[i][j] = 1 ;
 						}
+						else
+						{
+							this.mappa[i][j] = 0 ;
+						}
+						
 					}
 				}
 		return mappa ;
@@ -100,8 +101,7 @@ public class Mappa
 	
 	public int[][] CreateValidMap()
 	{
-		// Solo per testing
-				Random rand = new Random();
+		Random rand = new Random();
 				  
 				for(int i=0; i <= xDim; i++)
 				{
