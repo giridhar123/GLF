@@ -2,7 +2,6 @@ package General;
 import java.lang.Thread;
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.ArrayList;
@@ -38,8 +37,8 @@ public class Server extends Thread
     public void run()
     {
     	// Creazione dell'oggetto che mi genera la mappa
-    	int DimMapX = 10 ; // Dimensione Matrice in x
-    	int DimMapY = 10 ; // Dimensione Matrice in y
+    	int DimMapX = 20 ; // Dimensione Matrice in x
+    	int DimMapY = 20 ; // Dimensione Matrice in y
     	double WeBotsTile = 4.95 ; // Dimensione della singola cella di WeBots
     	double[] WeBotsXYMap = {5.0,5.0}; // Dimensione della mappa(il campo) WebBots
     	

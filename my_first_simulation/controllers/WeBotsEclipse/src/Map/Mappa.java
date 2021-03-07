@@ -63,6 +63,12 @@ public class Mappa
 		return mappa[i][j];
 	}
 	
+	public int[][] getMap()
+	{
+		return this.mappa;
+		
+	}
+	
 	@Override
 	public String toString()
 	{
