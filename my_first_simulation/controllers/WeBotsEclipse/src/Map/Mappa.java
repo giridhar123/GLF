@@ -1,6 +1,5 @@
 package Map;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Mappa
@@ -15,23 +14,29 @@ public class Mappa
 	
 	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap)
 	{
+		// Questo costruttore è richiamato enlla classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDim = xDim;
 		this.yDim = yDim;
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
 		this.mappa = new int[xDim][yDim];
-		CreateValidMapTest();
+		this.mappa= CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
 	}
+	
 	
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
+		// Questo costruttore è richiamato enlla classe STC_SEND_MAP
+		 // A questo costruttore passo già i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
 		this.xDim = xDim;
 		this.yDim = yDim;
 		this.mappa = mappa;
+		//this.mappa = mappa;
 		
 	}
+	
 	
 	public int getXSize()
 	{
@@ -75,10 +80,33 @@ public class Mappa
 		return sb.toString();
 	}
 
-	public int[][] CreateValidMapTest()
+	public int[][] CreateMapClosed()
 	{
-		// Solo per testing
-				Random rand = new Random();
+			int min = 0;
+			int max = mappa[1].length-1;
+			
+			for(int i=0; i < xDim; i++)
+				{	
+					for(int j=0; j < yDim; j++)
+					{
+						if(i==min || i==max || j==min || j==max )
+						{
+							this.mappa[i][j] = 1 ;
+						}
+						else
+						{
+							this.mappa[i][j] = 0 ;
+						}
+						
+					}
+				}
+		System.out.print(" x " + mappa[0].length + " y " + mappa[1].length + " x " + " " + xDim + " y " + yDim);
+		return mappa ;
+	}
+	
+	public int[][] CreateValidMap()
+	{
+		Random rand = new Random();
 				  
 				for(int i=0; i < xDim; i++)
 				{
@@ -97,26 +125,11 @@ public class Mappa
 		return mappa ;
 	}
 	
-	
-	public int[][] CreateValidMap()
+	public int[][] CreateMap(int[][] map)
 	{
-		// Solo per testing
-				Random rand = new Random();
-				  
-				for(int i=0; i <= xDim; i++)
-				{
-					for(int j=0; j < yDim; j++)
-					{
-						if( (rand.nextInt(10)+1) <= 5)
-						{ 
-							this.mappa[i][j] = 0 ;
-						}
-						else
-						{
-							this.mappa[i][j] = 1 ;
-						}
-					}
-				}
-		return mappa ;
+		TestingMap TM = new TestingMap();
+		return TM.Go(map);
+		
 	}
+	
 }

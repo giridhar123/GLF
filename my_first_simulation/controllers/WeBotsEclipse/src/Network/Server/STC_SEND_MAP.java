@@ -30,8 +30,10 @@ public class STC_SEND_MAP extends Packet{
     		for(int j = 0; j < yDim; ++j)
     			mappa[i][j] = buf.getInt();
     	
-    	this.mappa = new Mappa(mappa, xDim, yDim , arrayXY);
-    }
+    	this.mappa = new Mappa(mappa, xDim, yDim , arrayXY); 
+  
+    	}
+	
 	
 	public Mappa getMappa()
 	{
