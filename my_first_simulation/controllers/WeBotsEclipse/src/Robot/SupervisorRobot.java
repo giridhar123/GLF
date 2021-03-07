@@ -57,7 +57,7 @@ public class SupervisorRobot extends Supervisor implements Client {
     	System.out.println(pavimento.getSFVec2f()[0]);
     	pavimento.setSFVec2f(mappa.getWeBotsXYMap());
 
-    	SpawnAMMERDA(mappa, RootChildrenField);
+    	Spawn(mappa, RootChildrenField);
 	
 	}
 	
