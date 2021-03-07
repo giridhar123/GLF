@@ -38,6 +38,7 @@ public class SupervisorRobot extends Supervisor implements Client {
         robot_node.setVisibility(viewpoint_node, false);
         
         // Controlli 
+        /*
         if (robot_node == null) 
         {
             System.err.println("No DEF MY_ROBOT node found in the current world file");
@@ -48,7 +49,7 @@ public class SupervisorRobot extends Supervisor implements Client {
         	System.err.println("No DEF ViewPoint node found in the current world file");
             System.exit(1);
         }
-
+		*/
         // Inizializzazione Scenario
       
         
@@ -56,7 +57,7 @@ public class SupervisorRobot extends Supervisor implements Client {
     	System.out.println(pavimento.getSFVec2f()[0]);
     	pavimento.setSFVec2f(mappa.getWeBotsXYMap());
 
-    	SpawnAMMERDA(mappa, RootChildrenField);
+    	Spawn(mappa, RootChildrenField);
 	
 	}
 	
@@ -65,13 +66,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 	{
 		float TempX, TempY;
 		
-<<<<<<< HEAD
 		int[][] matrice= new int[21][21];
-		
-=======
-		int[][] matrice= new int[20][20];
-
->>>>>>> 1e5bbfabf6f1fa8aa3179ced0bdc847071d5988c
 		int x,y;
 		
 		for(int i=0; i<100; i++)
@@ -84,7 +79,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 			
 			matrice[x][y]=1;
 		}
-<<<<<<< HEAD
+
 		
 		String spawnBox = "";		
 		for(int i=0; i < 21; i++)
@@ -116,7 +111,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 			newPosition[2] = MatrixToWorldY((float) 10, mappa.getWeBotsTile());
 			posizione.setSFVec3f(newPosition);
 			System.out.println("Robot spostato");
-=======
 
 		for(int i=0; i < 20; i++)
 		{
@@ -131,15 +125,18 @@ public class SupervisorRobot extends Supervisor implements Client {
 				 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
 				 RootChildrenField.importMFNodeFromString(4,SpawnBox);
 			 }
->>>>>>> 1e5bbfabf6f1fa8aa3179ced0bdc847071d5988c
+
 		}
 		
 		Packet worldReady = new CTS_WORLD_READY();
 		clientConnectionHandler.sendPacket(worldReady);
 	}
+		}
+	}
 
 	private static void Spawn (Mappa mappa, Field RootChildrenField) 
 	{
+		String SpawnBox = "";
 		float TempX, TempY;
 		
 		for(int i=0; i < mappa.getXSize() ; i++)
@@ -150,13 +147,13 @@ public class SupervisorRobot extends Supervisor implements Client {
 			TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
 			TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
 			
-			if(mappa.get(i, j) == 1)
+			if(mappa.get(i, j) != 0 )
 				{
-				String SpawnBox = "DEF L1 Proto1 {​​translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}​​ " ;
-				RootChildrenField.importMFNodeFromString(4,SpawnBox);
+				 SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
 				}
 			}
 		}
+		RootChildrenField.importMFNodeFromString(4,SpawnBox);
 	}
 	
 	private static float MatrixToWorldY(float point, double WeBotsTile) {
@@ -242,7 +239,17 @@ public class SupervisorRobot extends Supervisor implements Client {
 	          int count = 0;
     }
 
-
+	private static void printMap(int[][] map)
+	{
+		for(int i=0; i < map[0].length ; i++)
+		{
+			for(int j=0; j < map[1].length; j++)
+			{
+				System.out.print(" " + map[i][j] + " ");
+			}
+			System.out.println("");
+		}
+	}
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
 		spawnaMappa(mappa);

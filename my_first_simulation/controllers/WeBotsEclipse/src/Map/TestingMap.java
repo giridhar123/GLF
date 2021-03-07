@@ -3,64 +3,43 @@ package Map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class TestingMap {
 	
 	public int[][] Go(int[][] map)
     {
-		// Prendo da dimensione della matrice passata dalla classe Mappa richiamata da Server.
-		int dim = 25; // dim matrix
+		 // Prendo da dimensione della matrice passata dalla classe Mappa richiamata da Server.
+		// Tutto sto delirio lo faccio perché se prendo elementi random non da un pool avrei un problema di efficenza.
+		int dim = map[0].length; // dim matrix
+		int randomElement = 0;
+		int index = 0 ;
+		int[] ArrayIndex = {0,0};
+		
     	int[] arr = new int[dim*dim]; // In questo array ci vanno tutti i valori possibili dalla matrice, quindi deve essere dim*dim
-
     	for(int i = 0 ; i< arr.length ; i++)
-    	{ arr[i] = i ;}
-    
+    	{ arr[i] = i ;}	
+    	
     	//La funzione mi mette all'interno di un'arraylist i valori randomici dell'array sopra in modo da decidere "randomicamente" la posizione dentro la quale inserire il pattern di oggetti ( attualmente il cubo )
     	List<Integer> shuffled = new ArrayList<>();
-    	for (Integer i : arr)
+    	 for (Integer i : arr)
     	    shuffled.addAll (Collections.nCopies(1,i)); 
     			Collections.shuffle(shuffled); 
-    			
-    			int randomElement = 0;
-    			int index = 0 ;
-    	
+
     	// Ripeto queste operazioni fino al numero di valori all'interno dell'array. da ottimizzare levando quando becco il valore 1 durante i controlli
     	for( int i = 0 ; i < arr.length; i++ )
     	{
 	    	index =  (int) Math.floor(Math.random() * shuffled.size()); // valore random dentro l'arrayList
 	    	randomElement = shuffled.get( index ); // prendo l'elemento
 		    shuffled.remove(index); // rimuovo l'elemento (altrimenti potrei riprendere gli stessi valori)
-	    	QuattroAdiacenza(ValoreIndex(randomElement),dim,map); // Vedere le singole funzioni
-    	}
+		    
+		    ArrayIndex[0] = (int) randomElement/dim;
+		    ArrayIndex[1] =  randomElement%dim;
+	    	QuattroAdiacenza(ArrayIndex,dim,map); // Vedere le singole funzioni
+    	}    	
 		 return map;
-    }
-
-	private static int[] ValoreIndex(int randomElement) 
-	{	
-		// Dato che ho preso il numero dall'array e lo devo
-		// scrivere per essere preso all'interno della matrice
-		// lo scrivo come stringa e poi prendo i singoli caratteri.
-		// *da risolvere se la matrice è > 100 in quanto prendo 
-		// ho trovato il problema porco dio :facepalm:
-		String index=randomElement+"";
-		int x = 0 ;
-		int y = 0 ;
-		if(randomElement>=10)
-		{
-		 x = Integer.parseInt(index.charAt(0)+"");
-		 y = Integer.parseInt(index.charAt(1)+"");
-		}
-		if( randomElement < 10)
-		{	
-			 x = Integer.parseInt(index.charAt(0)+"");
-			 y = 0 ;	
-		}
-    		//System.out.println("x "+ x + " y "+ y);
-    		int ArrayIndex[] = {x,y};
-    		
-    		return ArrayIndex;
 		
-	}
+    }
     
 	private static  ArrayList<int[]>  QuattroAdiacenza(int[] index,int dim, int[][] map) 
 	{	
