@@ -79,4 +79,9 @@ public class Server extends Thread
     	System.out.println("Aggiungo un ladro");
     	ladri.add(ladro);
     }
+    
+    public ArrayList<AsynchronousSocketChannel> getLadri()
+    {
+    	return this.ladri;
+    }
 }

@@ -82,5 +82,11 @@ public class ClientConnectionHandler extends Thread{
 				break;
 		}
 	}
+	
+	public void sendPacket(Packet packet)
+	{
+		ByteBuffer buf = packet.encode();
+		channel.write(buf);
+	}
 
 }

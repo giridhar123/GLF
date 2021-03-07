@@ -25,9 +25,6 @@ public class SupervisorController
     public static void main(String[] args) throws InterruptedException
     {
     	SupervisorRobot supervisor = new SupervisorRobot();
-
-    	ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.SUPERVISOR, supervisor);
-    	clientConnectionHandler.start();
         
         while (supervisor.step(SharedVariables.TIME_STEP) != -1);
     }

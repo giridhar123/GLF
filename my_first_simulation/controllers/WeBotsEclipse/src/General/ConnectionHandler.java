@@ -2,6 +2,7 @@ package General;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -83,6 +84,17 @@ public class ConnectionHandler extends Thread {
 				}
 			}
 			break;
+			case Packet.CTS_WORLD_READY:
+			{
+				ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
+				for (int i = 0; i < ladri.size(); ++i)
+				{
+					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
+					ByteBuffer buffer = stc_send_map.encode();
+					ladri.get(i).write(buffer);
+				}
+			}
+				break;
 			default:
 				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 				break;
