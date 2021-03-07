@@ -14,23 +14,29 @@ public class Mappa
 	
 	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap)
 	{
+		// Questo costruttore è richiamato enlla classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDim = xDim;
 		this.yDim = yDim;
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
 		this.mappa = new int[xDim][yDim];
-		CreateValidMapTest();
+		this.mappa= CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
 	}
+	
 	
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
+		// Questo costruttore è richiamato enlla classe STC_SEND_MAP
+		 // A questo costruttore passo già i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
 		this.xDim = xDim;
 		this.yDim = yDim;
 		this.mappa = mappa;
+		//this.mappa = mappa;
 		
 	}
+	
 	
 	public int getXSize()
 	{
@@ -74,9 +80,8 @@ public class Mappa
 		return sb.toString();
 	}
 
-	public int[][] CreateValidMapTest()
+	public int[][] CreateMapClosed()
 	{
-		Random rand = new Random();
 			int min = 0;
 			int max = mappa[1].length-1;
 			
@@ -95,15 +100,15 @@ public class Mappa
 						
 					}
 				}
+		System.out.print(" x " + mappa[0].length + " y " + mappa[1].length + " x " + " " + xDim + " y " + yDim);
 		return mappa ;
 	}
-	
 	
 	public int[][] CreateValidMap()
 	{
 		Random rand = new Random();
 				  
-				for(int i=0; i <= xDim; i++)
+				for(int i=0; i < xDim; i++)
 				{
 					for(int j=0; j < yDim; j++)
 					{
@@ -119,4 +124,12 @@ public class Mappa
 				}
 		return mappa ;
 	}
+	
+	public int[][] CreateMap(int[][] map)
+	{
+		TestingMap TM = new TestingMap();
+		return TM.Go(map);
+		
+	}
+	
 }

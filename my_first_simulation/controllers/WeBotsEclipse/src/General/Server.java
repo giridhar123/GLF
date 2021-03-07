@@ -38,8 +38,8 @@ public class Server extends Thread
     public void run()
     {
     	// Creazione dell'oggetto che mi genera la mappa
-    	int DimMapX = 25 ; // Dimensione Matrice in x
-    	int DimMapY = 25 ; // Dimensione Matrice in y
+    	int DimMapX = 10 ; // Dimensione Matrice in x
+    	int DimMapY = 10 ; // Dimensione Matrice in y
     	double WeBotsTile = 4.95 ; // Dimensione della singola cella di WeBots
     	double[] WeBotsXYMap = {5.0,5.0}; // Dimensione della mappa(il campo) WebBots
     	
