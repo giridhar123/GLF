@@ -10,7 +10,7 @@ public class TestingMap {
 	public int[][] Go(int[][] map)
     {
 		 // Prendo da dimensione della matrice passata dalla classe Mappa richiamata da Server.
-		// Tutto sto delirio lo faccio perché se prendo elementi random non da un pool avrei un problema di efficenza.
+		// Tutto sto delirio lo faccio perch� se prendo elementi random non da un pool avrei un problema di efficenza.
 		int dim = map[0].length; // dim matrix
 		int randomElement = 0;
 		int index = 0 ;
