@@ -1,19 +1,19 @@
-#VRML_SIM R2021a utf8
+#VRML_SIM R2020b utf8
 WorldInfo {
   basicTimeStep 16
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
-  orientation -0.058972532082177224 0.9824430471936405 0.17699689116109002 2.4742986879719533
-  position 3.9257245491115826 2.700219073397984 -4.1335747010328
+  orientation -0.5759214464291963 0.5687223560876713 0.5872557953983855 2.1136508706898773
+  position -0.8160326390386456 11.237503550862096 -0.7858847874290926
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-RectangleArena {
+DEF World RectangleArena {
   translation 0 -0.01 0
-  floorSize 10 10
+  floorSize 5 5
   floorTileSize 0.2 0.2
   wallHeight 0.05
 }

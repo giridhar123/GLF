@@ -63,6 +63,12 @@ public class Mappa
 		return mappa[i][j];
 	}
 	
+	public int[][] getMap()
+	{
+		return this.mappa;
+		
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -100,7 +106,7 @@ public class Mappa
 						
 					}
 				}
-		System.out.print(" x " + mappa[0].length + " y " + mappa[1].length + " x " + " " + xDim + " y " + yDim);
+		//System.out.print(" x " + mappa[0].length + " y " + mappa[1].length + " x " + " " + xDim + " y " + yDim);
 		return mappa ;
 	}
 	
@@ -128,7 +134,7 @@ public class Mappa
 	public int[][] CreateMap(int[][] map)
 	{
 		TestingMap TM = new TestingMap();
-		return TM.Go(map);
+		return TM.GoPattern(map);
 		
 	}
 	
