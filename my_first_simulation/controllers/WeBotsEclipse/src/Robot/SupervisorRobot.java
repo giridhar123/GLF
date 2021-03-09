@@ -153,7 +153,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 
-	private static void Spawn (Mappa mappa, Field RootChildrenField) 
+	private static void Spawn(Mappa mappa, Field RootChildrenField) 
 	{
 		String SpawnBox = "";
 		float TempX, TempY;
@@ -162,14 +162,12 @@ public class SupervisorRobot extends Supervisor implements Client {
 		{
 			for(int j=0; j< mappa.getYSize(); j++)
 			{
-			// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-			TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
-			TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
+				//Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
+				TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
+				TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
 			
-			if(mappa.get(i, j) != 0 )
-				{
-				 SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-				}
+				if(mappa.get(i, j) != 0 )
+					SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
 			}
 		}
 		RootChildrenField.importMFNodeFromString(4,SpawnBox);
@@ -255,10 +253,9 @@ public class SupervisorRobot extends Supervisor implements Client {
   	   
 	  	        String Ball = "DEF O Ball1 {translation 0.25,0.035,-0.35 mass 2 radius 0.10} " ;
 	           	RootChildenField.importMFNodeFromString(4,Ball);
-	          int count = 0;
     }
 
-	private static void printMap(int[][] map)
+	private void printMap(int[][] map)
 	{
 		for(int i=0; i < map[0].length ; i++)
 		{
@@ -272,5 +269,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
 		spawnaMappa(mappa);
+		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
+		clientConnectionHandler.sendPacket(cts_world_ready);
 	}
  }

@@ -11,6 +11,20 @@ public class Point {
 		this.y = y;
 	}
 	
+	public Point(Point otherPoint)
+	{
+		this.x = otherPoint.x;
+		this.y = otherPoint.y;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{		
+		Point otherPoint = (Point) o;
+		
+		return (this.x == otherPoint.x && this.y == otherPoint.y);
+	}
+	
 	public int getX()
 	{
 		return x;
@@ -29,6 +43,12 @@ public class Point {
 	public void setY(int n)
 	{
 		this.y = n;
+	}
+	
+	@Override
+	public String toString()
+	{		
+		return new String(this.x + " " + this.y);
 	}
 	
 	public void print() 

@@ -1,15 +1,23 @@
 package Robot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import com.cyberbotics.webots.controller.DistanceSensor;
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
+import com.sun.jdi.Value;
 
 import Map.Mappa;
+import Map.Point;
 import Network.ClientConnectionHandler;
 import Network.Client.CTS_PEER_INFO;
+import java.util.HashSet;
 
 public abstract class GenericRobot extends Robot 
 {
@@ -32,7 +40,8 @@ public abstract class GenericRobot extends Robot
 	private DistanceSensor sensors[];
 	private double sensorValue[], pose[];
 	
-	protected int direction, xPosition, yPosition;
+	protected int direction;
+	protected Point robotPosition;
 	protected Mappa mappa;
 	
 	public GenericRobot(int direction)
@@ -215,34 +224,167 @@ public abstract class GenericRobot extends Robot
 				break;
 			}
 		}
-			
 	}
+	
+	/*
+	 * GUAI A CHI TOCCA QUESTO ALGORITMO!!!!
+	 */
+	public ArrayList<Point> AStar(Point goal)
+	{
+		Point start = new Point(robotPosition);
+		Set<Point> closedset = new HashSet<>();			//the empty set % The set of nodes already evaluated.     
+		Set<Point> openset = new HashSet<>();			//set containing the initial node % The set of tentative nodes to be evaluated.
+		openset.add(start);
+		
+		Map<Point, Float> g_score = new HashMap<>();	// Distance from start along optimal path.
+		g_score.put(start, (float) 0);
+		
+		Map<Point, Point> came_from = new HashMap<>(); 	// the empty map % The map of navigated nodes.
+		Map<Point, Float> h_score = new HashMap<>();
+		float value = heuristic_estimate_of_distance(start, goal);
+		h_score.put(start, value);
+		
+		Map<Point, Float> f_score = new HashMap<>();
+		f_score.put(start, value);						//% Estimated total distance from start to goal through y.
+				
+		while (!openset.isEmpty())
+		{
+			Point x = getHelp(openset, f_score); //:= the node in openset having the lowest f_score[] value
+						
+			if (x.equals(goal))
+				return reconstruct_path(came_from, goal);
+			
+         	openset.remove(x);
+         	closedset.add(x);
+         	
+         	Set<Point> neighbors = getNeighbors(x);
+         	Iterator<Point> iterator = neighbors.iterator();
+         	
+         	while (iterator.hasNext())
+         	{
+         		Point y = iterator.next();
+         		if (closedset.contains(y))
+         			continue;
+
+         		float tentative_g_score = g_score.get(x) + 1;
+             
+         		boolean tentative_is_better = false;
+         		if (!openset.contains(y))
+         		{
+         			openset.add(y);
+         			tentative_is_better = true;
+         		}
+         		else if (tentative_g_score < g_score.get(y))
+         			tentative_is_better = true;
+
+		        if (tentative_is_better)
+		        {
+		        	came_from.put(y, x);
+		        	
+		        	//RIGHE MAGICHE SENZA SENSO CHE FANNO FUNZIONARE LA RICOSTRUZIONE DEL PATH
+		        	if (y.equals(goal))
+		        		goal = y;
+
+		            g_score.put(y, tentative_g_score);
+		            h_score.put(y, heuristic_estimate_of_distance(y, goal));
+		            f_score.put(y, g_score.get(y) + h_score.get(y));
+		        }
+         	}
+		}
+		return null;
+	}
+	
+	private Point getHelp(Set<Point> openset, Map<Point, Float> f_score)
+	{
+		Point point = null;		
+		float min = Float.MAX_VALUE;
+		
+		Iterator<Point> iterator = openset.iterator();
+		while (iterator.hasNext())
+		{
+			Point testPoint = iterator.next();
+			if (f_score.get(testPoint) < min)
+			{
+				point = testPoint;
+				min = f_score.get(testPoint);
+			}
+		}
+		
+		return point;
+	}
+	
+	private Set<Point> getNeighbors(Point point)
+	{
+		Set<Point> set = new HashSet<>();
+		
+		int x = point.getX();
+		int y = point.getY();
+		
+		Point north = x - 1 >= 0 && mappa.get(x - 1, y) == 0 ? new Point(x - 1, y) : null;
+		Point south = x + 1 <= mappa.getXSize() && mappa.get(x + 1, y) == 0 ? new Point(x + 1, y) : null;
+		Point east = y + 1 <= mappa.getYSize() && mappa.get(x, y + 1) == 0 ? new Point(x, y + 1) : null;
+		Point west = y - 1 >= 0 && mappa.get(x, y - 1) == 0 ? new Point(x, y - 1) : null;
+		
+		if (north != null)
+			set.add(north);
+		if (south != null)
+			set.add(south);
+		if (east != null)
+			set.add(east);
+		if (west != null)
+			set.add(west);
+		
+		return set;
+	}
+
+	private ArrayList<Point> reconstruct_path(Map<Point, Point> came_from, Point current_node)
+	{
+		ArrayList<Point> path = new ArrayList<>();
+		
+		if (came_from.get(current_node) != null)
+		{
+			ArrayList<Point> p = reconstruct_path(came_from, came_from.get(current_node));
+			System.out.println(current_node);
+        	p.addAll(path);
+        	return p;
+		}
+
+		return path;
+	}
+	
+	private float heuristic_estimate_of_distance(Point point, Point otherPoint)
+	{
+		double xDiff = point.getX() - otherPoint.getX();
+		double yDiff = point.getY() - otherPoint.getY();
+		
+		xDiff = Math.pow(xDiff, 2);
+		yDiff = Math.pow(yDiff, 2);
+		
+		return (float) (Math.sqrt(xDiff + yDiff));
+	}
+	
 	
 	public ArrayList<Integer> getPath(int xDestination, int yDestination)
 	{
-	    ArrayList<int[]> viewedCells = new ArrayList<>();
-	    ArrayList<int[]> pathList = new ArrayList<>();
+	    ArrayList<Point> viewedCells = new ArrayList<>();
+	    ArrayList<Point> pathList = new ArrayList<>();
 
-	    int nextPosition[] = new int[2];
-	    int currentPosition[] = new int[2];
-	    currentPosition[0] = this.xPosition;
-	    currentPosition[1] = this.yPosition;
-	    
-	    nextPosition[0] = nextPosition[1] = -1;
+	    Point nextPosition = new Point(-1, -1);
+	    Point currentPosition = new Point(robotPosition);
+	    pathList.add(robotPosition);
 	    
 	    int count = 0;
 	    int times = 0;
 	    
-	    while (nextPosition[0] != xDestination || nextPosition[1] != yDestination)
+	    while (nextPosition.getX() != xDestination || nextPosition.getY() != yDestination)
 	    {
 	        nextPosition = findAdiacentEmptyCell(currentPosition, viewedCells);
 	        
-	        if (nextPosition[0] != -1 && nextPosition[1] != -1)
+	        if (nextPosition.getX() != -1 && nextPosition.getY() != -1)
 	        {
 	        	pathList.add(nextPosition);
 	        	viewedCells.add(nextPosition);
-	        	currentPosition[0] = nextPosition[0];
-	        	currentPosition[1] = nextPosition[1];
+	        	currentPosition = new Point(nextPosition);
 	        	count = 0;
 	        	times = 0;
 	        }
@@ -251,8 +393,7 @@ public abstract class GenericRobot extends Robot
 	            if (++count == 4)
 	            {
 	                pathList.remove(pathList.size() - 1);
-	                currentPosition[0] = pathList.get(pathList.size() - 1)[0];
-	                currentPosition[1] = pathList.get(pathList.size() - 1)[1];
+	                currentPosition = new Point(pathList.get(pathList.size() - 1));
 	                count = 0;
 	            }
 	        }
@@ -260,29 +401,24 @@ public abstract class GenericRobot extends Robot
 	        if (++times == 100)
 	        	break;
 	    }
-
-	    System.out.println("path trovato DIM: " + pathList.size());
-	    for (int i = 0; i < pathList.size(); ++i)
-	    	System.out.println(pathList.get(i)[0] + " " + pathList.get(i)[1]);
 	    
 	    ArrayList<Integer> path = new ArrayList<>();
 
-	    int pos1[] = pathList.get(0);
+	    Point pos1 = pathList.get(0);
 	    for (int i = 1; i < pathList.size(); ++i)
 	    {
-	        int pos2[] = pathList.get(i);
+	        Point pos2 = pathList.get(i);
 
-	        if (pos2[0] == (pos1[0] + 1))
+	        if (pos2.getX() == (pos1.getX() + 1))
 	            path.add(SUD);
-	        else if (pos2[0] == (pos1[0] - 1))
+	        else if (pos2.getX() == (pos1.getX() - 1))
 	        	path.add(NORD);
-	        else if (pos2[1] == (pos1[1] - 1))
+	        else if (pos2.getY() == (pos1.getY() - 1))
 	        	path.add(OVEST);
-	        else if (pos2[1] == (pos1[1] + 1))
+	        else if (pos2.getY() == (pos1.getY() + 1))
 	        	path.add(EST);
 	        
-	        pos1[0] = pos2[0];
-	        pos1[1] = pos2[1];
+	        pos1 = new Point(pos2);
 	    }
 
 	    path.add(-1);
@@ -290,48 +426,44 @@ public abstract class GenericRobot extends Robot
 	    return path;
 	}
 	
-	public int[] findAdiacentEmptyCell(int currentPosition[], ArrayList<int[]> viewedCells)
+	public Point findAdiacentEmptyCell(Point currentPosition, ArrayList<Point> viewedCells)
 	{
-	    int nextPosition[] = new int[2];
-	    nextPosition[0] = currentPosition[0];
-	    nextPosition[1] = currentPosition[1];
+	    Point nextPosition = new Point(currentPosition);
+	    nextPosition.setX(nextPosition.getX() + 1);
 
-	    nextPosition[0] += 1;
-
-	    if (nextPosition[0] < 21 &&
-	        mappa.get(nextPosition[0], nextPosition[1]) == 0 &&
+	    if (nextPosition.getX() < mappa.getXSize() &&
+	        mappa.get(nextPosition.getX(), nextPosition.getY()) == 0 &&
 	        !contains(nextPosition, viewedCells))
 	        return nextPosition;
 	    
-	    nextPosition[0] -= 2;
-	    if (nextPosition[0] >= 0 &&
-	        mappa.get(nextPosition[0], nextPosition[1]) == 0 &&
+	    nextPosition.setX(nextPosition.getX() - 2);
+	    if (nextPosition.getX() >= 0 &&
+	        mappa.get(nextPosition.getX(), nextPosition.getY()) == 0 &&
 	        !contains(nextPosition, viewedCells))
 	        return nextPosition;
 
-	    nextPosition[0] += 1;
-	    nextPosition[1] += 1;
-	    if (nextPosition[1] < 21 &&
-	    	mappa.get(nextPosition[0], nextPosition[1]) == 0 &&
+	    nextPosition.setX(nextPosition.getX() + 1);
+	    nextPosition.setY(nextPosition.getY() + 1);
+	    if (nextPosition.getY() < mappa.getYSize() &&
+	    	mappa.get(nextPosition.getX(), nextPosition.getY()) == 0 &&
 	    	!contains(nextPosition, viewedCells))
 	        return nextPosition;
 
-	    nextPosition[1] -= 2;
-	    if (nextPosition[1] >= 0 &&
-    		mappa.get(nextPosition[0], nextPosition[1]) == 0 &&
+	    nextPosition.setY(nextPosition.getY() - 2);
+	    if (nextPosition.getY() >= 0 &&
+    		mappa.get(nextPosition.getX(), nextPosition.getY()) == 0 &&
     		!contains(nextPosition, viewedCells))
 	        return nextPosition;
 
-	    nextPosition[0] = -1;
-	    nextPosition[1] = -1;
+	    nextPosition = new Point(-1, -1);
 
 	    return nextPosition;
 	}
 	
-	private boolean contains(int element[], ArrayList<int[]>list)
+	private boolean contains(Point element, ArrayList<Point>list)
 	{
 		for (int i = 0; i < list.size(); ++i)
-			if (list.get(i)[0] == element[0] && list.get(i)[1] == element[1])
+			if (list.get(i).getX() == element.getX() && list.get(i).getY() == element.getY())
 				return true;
 		
 		return false;

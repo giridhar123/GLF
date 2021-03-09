@@ -1,6 +1,9 @@
 package Robot;
 
+import java.util.ArrayList;
+
 import Map.Mappa;
+import Map.Point;
 
 public class LadroRobot extends GenericRobot implements Client {
 	
@@ -11,6 +14,7 @@ public class LadroRobot extends GenericRobot implements Client {
 
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
+		System.out.println("LADRO MAPPA RICEVUTA");
 		this.mappa = mappa;
 		
 		for (int i = 0; i < mappa.getXSize(); ++i)
@@ -19,7 +23,7 @@ public class LadroRobot extends GenericRobot implements Client {
 			{
 				if (i == 10 && j == 10)
 					System.out.print(" b" + mappa.get(i, j) + "b");
-				else if (i == 13 && j == 33)
+				else if (i == 20 && j == 20)
 					System.out.print(" a" + mappa.get(i, j) + "a");
 				else
 					System.out.print(" " + mappa.get(i, j) + " ");
@@ -28,8 +32,12 @@ public class LadroRobot extends GenericRobot implements Client {
 			System.out.println("");
 		}
 		//funzione cerca punto buono
-		this.xPosition = 10;
-		this.yPosition = 10;
-		goTo(13, 13);
+		this.robotPosition = new Point(10, 10);
+		ArrayList<Point> path = this.AStar(new Point(20, 20));
+		
+		System.out.println("Path ok");
+		
+		for (int i = 0; i < path.size(); ++i)
+			System.out.println(path.get(i));
 	}
 }
