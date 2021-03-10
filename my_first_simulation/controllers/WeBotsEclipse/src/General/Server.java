@@ -37,7 +37,7 @@ public class Server extends Thread {
 		double WeBotsTile = 6.95; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
 
-		mappa = new Mappa("difficolta", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
+		mappa = new Mappa("meow", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
 
 		while (true) {
 			try {
