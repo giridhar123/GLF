@@ -1,4 +1,4 @@
-package General;
+package Network;
 
 import java.lang.Thread;
 import java.io.*;
@@ -37,12 +37,12 @@ public class Server extends Thread {
 		double WeBotsTile = 6.95; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
 
-		mappa = new Mappa("difficolta", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
+		mappa = new Mappa("meow", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
 
 		while (true) {
 			try {
 				Future<AsynchronousSocketChannel> future = server.accept();
-				ConnectionHandler connectionHandler = new ConnectionHandler(this, future.get());
+				ServerConnectionHandler connectionHandler = new ServerConnectionHandler(this, future.get());
 				connectionHandler.start();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

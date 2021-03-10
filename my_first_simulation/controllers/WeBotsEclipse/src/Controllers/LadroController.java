@@ -1,11 +1,11 @@
-package LadroController;
+package Controllers;
 
 import java.util.ArrayList;
 
 import General.SharedVariables;
 import Map.Point;
 import Network.ClientConnectionHandler;
-import Network.Client.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Robot.GenericRobot;
 import Robot.LadroRobot;
 

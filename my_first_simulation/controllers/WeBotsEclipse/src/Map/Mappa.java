@@ -4,8 +4,7 @@ import java.util.Random;
 
 public class Mappa
 {	
-	String Difficolta ;
-	int NumeroBlocchiPercorso;
+	private String Difficolta ;
 	private int xDim; //Dim Matrice
 	private int yDim;
 	private int[][] mappa;
@@ -134,8 +133,13 @@ public class Mappa
 	public int[][] CreateMap(int[][] map)
 	{
 		TestingMap TM = new TestingMap();
-		return TM.GoPattern(map);
+		return TM.CreateMap(this);
 		
+	}
+
+
+	public String getDifficolta() {
+		return Difficolta;
 	}
 	
 }

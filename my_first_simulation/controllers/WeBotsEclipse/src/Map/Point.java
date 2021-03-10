@@ -51,6 +51,13 @@ public class Point {
 		return new String(this.x + " " + this.y);
 	}
 	
+	@Override
+	public int hashCode() {
+	    StringBuilder hash = new StringBuilder();
+	    hash.append(x).append(y);
+	    return Integer.valueOf(hash.toString());
+	}
+	
 	public void print() 
 	{
 		System.out.println("x = "+ x +"; y = "+ y);

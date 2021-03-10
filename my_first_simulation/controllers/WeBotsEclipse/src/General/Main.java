@@ -7,8 +7,7 @@ import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.io.File;
 import java.util.Scanner;
-
-import Cleaner.Cleaner;
+import Network.Server;
 
 import java.lang.Thread;
 
@@ -32,7 +31,7 @@ public class Main
         webotsPath = properties.getProperty("webotspath");
         projectPath = properties.getProperty("projectpath");
 
-       Server server = new Server();
+        Server server = new Server();
         server.start();
 
         printMenu();
@@ -93,9 +92,9 @@ public class Main
     public static void RestartAll()
     {
     	/*
-    	 * L'idea è quella di utilizzare questa funzione per resettare il mondo, però deve essere effettuata ogniqualvolta venga riavviato il main.
+    	 * L'idea ï¿½ quella di utilizzare questa funzione per resettare il mondo, perï¿½ deve essere effettuata ogniqualvolta venga riavviato il main.
     	 * Purtroppo il codice va avanti prima che webots si "stabilizzi" per riagganciare i controllori.
-    	 * Ho provato ad usare syncronized ma non è andato, c'è da capire come fare.
+    	 * Ho provato ad usare syncronized ma non ï¿½ andato, c'ï¿½ da capire come fare.
     	 * 
     	 * com.cyberbotics.webots.controller.Node; // restartController
     	 * com.cyberbotics.webots.controller.Supervisor; // worldReset

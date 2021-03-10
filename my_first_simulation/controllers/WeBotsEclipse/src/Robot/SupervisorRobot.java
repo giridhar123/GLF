@@ -1,18 +1,14 @@
 package Robot;
 
-import java.util.ArrayList;
 import java.util.Vector;
-
 import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
-
-import Map.Point;
 import Map.Mappa;
 import Network.ClientConnectionHandler;
 import Network.Packet;
-import Network.Client.CTS_PEER_INFO;
-import Network.Client.CTS_WORLD_READY;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_WORLD_READY;
 
 public class SupervisorRobot extends Supervisor implements Client {
 	

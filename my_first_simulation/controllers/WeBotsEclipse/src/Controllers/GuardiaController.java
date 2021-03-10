@@ -1,8 +1,8 @@
-package GuardiaController;
+package Controllers;
 
 import General.SharedVariables;
 import Network.ClientConnectionHandler;
-import Network.Client.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Robot.GenericRobot;
 import Robot.GuardiaRobot;
 
