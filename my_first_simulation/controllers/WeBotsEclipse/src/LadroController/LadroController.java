@@ -51,10 +51,12 @@ public class LadroController
 	{
 		int north, south, east, west;
 		
-		north= y-1>=0? map[x][y-1] : 0;
-		south= y+1<=19? map[x][y+1] : 0;
-		east= x+1<=19? map[x+1][y] : 0;
-		west= x-1>=0? map[x-1][y] : 0;
+		int mapDim = map[0].length;
+		
+		north = x - 1 >= 0 ? map[x-1][y] : 0;
+		south = x + 1 < mapDim ? map[x+1][y] : 0;
+		east = y + 1 < mapDim ? map[x][y+1] : 0;
+		west = y - 1 >= 0 ? map[x][y-1] : 0;
 		
 		if((north + south + east + west) == 3) return true;
 		else return false;
