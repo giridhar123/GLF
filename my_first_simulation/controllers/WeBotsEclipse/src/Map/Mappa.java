@@ -13,7 +13,7 @@ public class Mappa
 	
 	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap)
 	{
-		// Questo costruttore è richiamato enlla classe SERVER
+		// Questo costruttore ï¿½ richiamato enlla classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDim = xDim;
 		this.yDim = yDim;
@@ -26,8 +26,8 @@ public class Mappa
 	
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
-		// Questo costruttore è richiamato enlla classe STC_SEND_MAP
-		 // A questo costruttore passo già i dati ed i calcoli fatti dal server.
+		// Questo costruttore ï¿½ richiamato enlla classe STC_SEND_MAP
+		 // A questo costruttore passo giï¿½ i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
 		this.xDim = xDim;
 		this.yDim = yDim;

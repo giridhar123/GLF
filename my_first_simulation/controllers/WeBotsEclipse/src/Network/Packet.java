@@ -22,12 +22,13 @@ public class Packet
     	this.opcode = buf.getShort();
     }
     
-    public Packet(final short opcode){
-    	this.size = 4 + 2;
+    public Packet(final short opcode)
+    {
+    	this.size = 4 + 2; //SIZE OF INT + SIZE OF SHORT
         this.opcode = opcode;
     }
     
-    public Packet(final int size, final short opcode){
+    public Packet(final int size, final short opcode) {
     	this(opcode);
     	this.size += size;
         this.opcode = opcode;

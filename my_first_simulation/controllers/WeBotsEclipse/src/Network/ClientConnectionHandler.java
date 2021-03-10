@@ -38,9 +38,10 @@ public class ClientConnectionHandler extends Thread{
 			Future<Void> future = channel.connect(hostAddress);
 			future.get();
 			
-			CTS_PEER_INFO packet = new CTS_PEER_INFO(clientType);
-	        ByteBuffer buffer = packet.encode();
-	        channel.write(buffer);
+			CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(clientType);
+			sendPacket(cts_peer_info);
+			
+			ByteBuffer buffer;
 			
 			while (true)
 			{
@@ -79,7 +80,7 @@ public class ClientConnectionHandler extends Thread{
 			break;
 			default:
 				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
-				break;
+			break;
 		}
 	}
 	
@@ -88,5 +89,4 @@ public class ClientConnectionHandler extends Thread{
 		ByteBuffer buf = packet.encode();
 		channel.write(buf);
 	}
-
 }
