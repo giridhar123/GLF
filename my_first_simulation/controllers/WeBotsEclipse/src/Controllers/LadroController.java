@@ -14,17 +14,17 @@ public class LadroController
 	
     public static void main(String[] args) throws Exception
     {
-        LadroRobot robot = new LadroRobot(GenericRobot.OVEST);
+        LadroRobot robot = new LadroRobot(GenericRobot.SUD);
         
         ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, robot);
         clientConnectionHandler.start();
         
         //ArrayList<Point> pts = potentialShelters(map);  pts contiene i possibili nascondigli
         //estrai un punto da pts
+        
 
         while (true)
         {
-        	robot.stop();
         	robot.step(SharedVariables.TIME_STEP);
         }
     }

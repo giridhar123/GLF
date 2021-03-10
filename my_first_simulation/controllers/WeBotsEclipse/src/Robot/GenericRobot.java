@@ -28,9 +28,9 @@ public abstract class GenericRobot extends Robot
 	
 	//Valori di supporto per la direzione del robot
 	public static final int NORD = 0;
-	public static final int SUD = 1;
-	public static final int EST = 2;
-	public static final int OVEST = 3;
+	public static final int OVEST = 1;
+	public static final int SUD = 2;
+	public static final int EST = 3;	
 	
 	//Motori e sensori
 	private Motor leftMotor, rightMotor;
@@ -127,6 +127,7 @@ public abstract class GenericRobot extends Robot
 	        updatePose(OVEST);
 	    }
 
+	    direction = (direction + 1) % 4;
 	    stop();
 	}
 	
@@ -146,6 +147,8 @@ public abstract class GenericRobot extends Robot
 	        step(SharedVariables.TIME_STEP);
 	        updatePose(EST);
 	    }
+	    
+	    direction = (direction - 1) % 4;
 
 	    stop();
 	}

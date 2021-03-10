@@ -1,6 +1,6 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2021a utf8
 WorldInfo {
-  basicTimeStep 16
+  basicTimeStep 64
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
@@ -13,7 +13,7 @@ TexturedBackgroundLight {
 }
 DEF World RectangleArena {
   translation 0 -0.01 0
-  floorSize 5 5
+  floorSize 8 8
   floorTileSize 0.2 0.2
   wallHeight 0.05
 }
@@ -25,7 +25,7 @@ E-puck {
   supervisor TRUE
   distance_sensor_numberOfRays 8
 }
-E-puck {
+DEF Ladro E-puck {
   translation -0.43278672099269416 -0.010031937055721068 1.4876338957683977
   rotation 0.9999151614378181 0.012772037944420847 -0.0025583145873931236 0.0022053736163157875
   name "ladro"

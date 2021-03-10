@@ -102,8 +102,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 			for(int j=0; j < 21; j++)
 			{
 				// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
-				TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
+				TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
+				TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
 				if(matrice[i][j] == 1)
 				{
 					spawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} ";
@@ -123,7 +123,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 			double newPosition[] = new double[3];
 			newPosition[0] = MatrixToWorldX((float) 10, mappa.getWeBotsTile());
 			newPosition[1] = pos[1];
-			newPosition[2] = MatrixToWorldY((float) 10, mappa.getWeBotsTile());
+			newPosition[2] = MatrixToWorldZ((float) 10, mappa.getWeBotsTile());
 			posizione.setSFVec3f(newPosition);
 			System.out.println("Robot spostato");
 
@@ -132,8 +132,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 			for(int j=0; j< 20; j++)
 		 {
 			 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-			 	TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
-			 	TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
+			 	TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
+			 	TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
 
 			 if(matrice[i][j] == 1)
 			 {
@@ -149,27 +149,42 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 
-	private static void Spawn(Mappa mappa, Field RootChildrenField) 
+	private void Spawn(Mappa mappa, Field RootChildrenField) 
 	{
 		String SpawnBox = "";
-		float TempX, TempY;
+		float TempX, TempZ;
 		
-		for(int i=0; i < mappa.getXSize() ; i++)
+		for(int i=0; i < mappa.getXSize(); i++)
 		{
 			for(int j=0; j< mappa.getYSize(); j++)
 			{
 				//Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
-				TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
+				TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
+				TempZ = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
 			
 				if(mappa.get(i, j) != 0 )
-					SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
+					SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempZ+" size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
 			}
 		}
 		RootChildrenField.importMFNodeFromString(4,SpawnBox);
+		
+		final Node robot_node = getFromDef("Ladro");
+		if (robot_node != null)
+		{
+			System.out.println("Sposto il robot...");
+			Field posizione = robot_node.getField("translation");
+			double pos[] = posizione.getSFVec3f();
+			
+			double newPosition[] = new double[3];
+			newPosition[0] = MatrixToWorldX((float) 10, mappa.getWeBotsTile());
+			newPosition[1] = pos[1];
+			newPosition[2] = MatrixToWorldZ((float) 10, mappa.getWeBotsTile());
+			posizione.setSFVec3f(newPosition);
+			System.out.println("Robot spostato");
+		}
 	}
 	
-	private static float MatrixToWorldY(float point, double WeBotsTile) {
+	private static float MatrixToWorldZ(float point, double WeBotsTile) {
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
 	}
@@ -202,8 +217,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 			 for(j=0; j<100; j++)
 			 {
 				 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				 	TempX = MatrixToWorldX((float) i, mappa.getWeBotsTile());
-				 	TempY = MatrixToWorldY((float) j, mappa.getWeBotsTile());
+				 	TempX = MatrixToWorldX((float) j, mappa.getWeBotsTile());
+				 	TempY = MatrixToWorldZ((float) i, mappa.getWeBotsTile());
 				 if(mappa.get(i, j) == 1 )
 				 {
 		    	  String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;

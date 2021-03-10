@@ -60,6 +60,9 @@ public class TestingMap {
 	    	RandomIndex = (int) Math.floor(Math.random() * (AL.size()-1) ); // Valore random preso tra 0 e AL.size-1 || 0 _ 1599 alla prima iterata , 0_1598 alla seconda etc..
 	    	map = TakePattern(MatrixIndexPoint,dim, map, RandomIndex);
     	}
+    	
+    	map[10][10] = map[20][20] = 0;
+    	
 		 return map;
     }
     

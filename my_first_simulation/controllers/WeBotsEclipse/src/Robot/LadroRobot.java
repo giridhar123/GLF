@@ -24,38 +24,24 @@ public class LadroRobot extends GenericRobot implements Client {
 			return false;
 		}
 		else
-		{	
-			for (int i = 0; i < path.size(); ++i)
-				System.out.println(path.get(i));
-		}
+			System.out.println("Path found");
 		
 		path.add(0, robotPosition);
 		ArrayList<Integer> convertedPath = convertToDirections(path);
 		
-		//Test print
 		int value;
-		String direction = null;
 		for (int i = 0; i < convertedPath.size(); ++i)
 		{
 			value = convertedPath.get(i);
 			
-			switch (value)
+			while (this.direction != value)
 			{
-				case NORD:
-					direction = new String("NORD");
-					break;
-				case SUD:
-					direction = new String("SUD");
-					break;
-				case EST:
-					direction = new String("EST");
-					break;
-				case OVEST:
-					direction = new String("OVEST");
-					break;
+				turnLeft();
+				System.out.println("Rotating");
 			}
-
-			System.out.println(direction);
+			
+			System.out.println("Moving");
+			goStraightOn();
 		}
 		
 		return true;
@@ -87,7 +73,8 @@ public class LadroRobot extends GenericRobot implements Client {
 	}
 	
 	@Override
-	public void onStcSendMapReceived(Mappa mappa) {
+	public void onStcSendMapReceived(Mappa mappa)
+	{
 		System.out.println("LADRO: MAPPA RICEVUTA");
 		this.mappa = mappa;
 		
