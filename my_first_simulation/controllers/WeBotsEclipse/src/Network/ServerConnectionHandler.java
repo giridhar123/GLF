@@ -1,4 +1,4 @@
-package General;
+package Network;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -8,19 +8,18 @@ import java.util.concurrent.Future;
 
 import Map.Mappa;
 import Network.Packet;
-import Network.Client.CTS_PEER_INFO;
-import Network.Server.STC_SEND_MAP;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ServerToClient.STC_SEND_MAP;
 
-public class ConnectionHandler extends Thread {
+public class ServerConnectionHandler extends Thread {
 	
 	private AsynchronousSocketChannel clientChannel;
 	private Server server;
 	
-	public ConnectionHandler(Server server, AsynchronousSocketChannel clientChannel)
+	public ServerConnectionHandler(Server server, AsynchronousSocketChannel clientChannel)
 	{
 		this.server = server;
 		this.clientChannel = clientChannel;
-		//System.out.println("New client connected");
 	}
 	
 	public void run()
@@ -94,10 +93,10 @@ public class ConnectionHandler extends Thread {
 					ladri.get(i).write(buffer);
 				}
 			}
-				break;
+			break;
 			default:
 				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
-				break;
+			break;
 		}
 	}
 

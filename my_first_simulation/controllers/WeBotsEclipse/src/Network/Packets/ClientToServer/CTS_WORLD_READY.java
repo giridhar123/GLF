@@ -1,4 +1,4 @@
-package Network.Client;
+package Network.Packets.ClientToServer;
 
 import java.nio.ByteBuffer;
 

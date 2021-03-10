@@ -1,4 +1,4 @@
-package General;
+package Network;
 
 import java.lang.Thread;
 import java.io.*;
@@ -42,7 +42,7 @@ public class Server extends Thread {
 		while (true) {
 			try {
 				Future<AsynchronousSocketChannel> future = server.accept();
-				ConnectionHandler connectionHandler = new ConnectionHandler(this, future.get());
+				ServerConnectionHandler connectionHandler = new ServerConnectionHandler(this, future.get());
 				connectionHandler.start();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

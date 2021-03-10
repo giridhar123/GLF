@@ -1,10 +1,10 @@
-package SupervisorController;
+package Controllers;
 
 import Map.Mappa;
 import Network.ClientConnectionHandler;
-import Network.Client.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Robot.SupervisorRobot;
-import General.ConnectionHandler;
+import Network.ServerConnectionHandler;
 import General.ControllerExecutor;
 import General.SharedVariables;
 

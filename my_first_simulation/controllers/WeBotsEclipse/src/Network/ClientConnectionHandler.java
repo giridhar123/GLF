@@ -7,8 +7,8 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
-import Network.Client.CTS_PEER_INFO;
-import Network.Server.STC_SEND_MAP;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ServerToClient.STC_SEND_MAP;
 import Robot.Client;
 
 public class ClientConnectionHandler extends Thread{

@@ -4,19 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import com.cyberbotics.webots.controller.DistanceSensor;
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
-import com.sun.jdi.Value;
 
 import Map.Mappa;
 import Map.Point;
-import Network.ClientConnectionHandler;
-import Network.Client.CTS_PEER_INFO;
 import java.util.HashSet;
 
 public abstract class GenericRobot extends Robot 
@@ -226,9 +222,6 @@ public abstract class GenericRobot extends Robot
 		}
 	}
 	
-	/*
-	 * GUAI A CHI TOCCA QUESTO ALGORITMO!!!!
-	 */
 	public ArrayList<Point> AStar(Point goal)
 	{
 		Point start = new Point(robotPosition);
@@ -280,11 +273,6 @@ public abstract class GenericRobot extends Robot
 		        if (tentative_is_better)
 		        {
 		        	came_from.put(y, x);
-		        	
-		        	//RIGHE MAGICHE SENZA SENSO CHE FANNO FUNZIONARE LA RICOSTRUZIONE DEL PATH
-		        	if (y.equals(goal))
-		        		goal = y;
-
 		            g_score.put(y, tentative_g_score);
 		            h_score.put(y, heuristic_estimate_of_distance(y, goal));
 		            f_score.put(y, g_score.get(y) + h_score.get(y));
@@ -339,17 +327,14 @@ public abstract class GenericRobot extends Robot
 
 	private ArrayList<Point> reconstruct_path(Map<Point, Point> came_from, Point current_node)
 	{
-		ArrayList<Point> path = new ArrayList<>();
-		
 		if (came_from.get(current_node) != null)
 		{
 			ArrayList<Point> p = reconstruct_path(came_from, came_from.get(current_node));
-			System.out.println(current_node);
-        	p.addAll(path);
+			p.add(current_node);
         	return p;
-		}
+		}	
 
-		return path;
+		return (new ArrayList<Point>());
 	}
 	
 	private float heuristic_estimate_of_distance(Point point, Point otherPoint)

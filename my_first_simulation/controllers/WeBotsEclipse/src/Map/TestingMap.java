@@ -194,7 +194,7 @@ public class TestingMap {
 		  
 		  default:
 		  {
-			  System.out.println("altro");
+			  System.out.println("default");
 			  break;
 		  }
 		}

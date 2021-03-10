@@ -35,9 +35,12 @@ public class LadroRobot extends GenericRobot implements Client {
 		this.robotPosition = new Point(10, 10);
 		ArrayList<Point> path = this.AStar(new Point(20, 20));
 		
-		System.out.println("Path ok");
-		
-		for (int i = 0; i < path.size(); ++i)
-			System.out.println(path.get(i));
+		if (path == null)
+			System.out.println("Path not found");
+		else
+		{	
+			for (int i = 0; i < path.size(); ++i)
+				System.out.println(path.get(i));
+		}
 	}
 }
