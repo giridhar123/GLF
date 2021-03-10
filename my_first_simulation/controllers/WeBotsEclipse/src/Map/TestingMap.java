@@ -7,62 +7,48 @@ import java.util.Random;
 public class TestingMap {
 	public static List<Integer> AL = new ArrayList<>();
 
-<<<<<<< HEAD
-	public int[][] CreateMap(Mappa mappa)
-    {
-		// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
-		int[][] map = mappa.getMap();
-		String Difficolta = mappa.getDifficolta() ;
-		int DimMatrix = map[0].length*map[1].length; // Dimensione matrice
-		int dim = map[0].length ; // Dimensione della colonna ( poi devo modificare x e y )
-		int RandomIndex = 0 ; // Indice Random preso dal pool all'interno della lista AL
-		int[] MatrixIndexPoint = {0,0}; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
-		int NumeroCubi = 0; // Da aggiornare con i dati sperimentali in base alla dimensione della mappa
-		
-		switch (Difficolta)
-		{
-			case "facile" :
-			{
-			NumeroCubi = 100; 
-			break;
-			}
-			case "normale" :
-			{
-			NumeroCubi = 250;
-			break;
-			}
-			case "difficile" :
-			{
-			NumeroCubi = 400;
-			break;
-			}
-			case "meow" :
-			{
-			NumeroCubi = 1000;
-			break;
-			}
-			default :
-			{
-				NumeroCubi = 100;
-				break;
-			}
-		
-		}
 	 // Da prendere dal server in base alla difficoltà
-		
-=======
-	public int[][] GoPattern(int[][] map)
-    {
-		// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
-		
-		int DimMatrix = map[0].length*map[1].length; // Dimensione matrice
-		int dim = map[0].length ; // Dimensione della colonna ( poi devo modificare x e y )
-		int RandomIndex = 0 ; // Indice Random preso dal pool all'interno della lista AL
-		int[] MatrixIndexPoint = {0,0}; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
-		int NumeroCubi = 400 ; // Da prendere dal server in base alla difficoltà
-		
->>>>>>> 1b08a5cbef39ae798e74d0e0ea44137eb6f9d4c6
-		
+	
+		public int[][] CreateMap(Mappa mappa)
+	    {
+			// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
+			int[][] map = mappa.getMap();
+			String Difficolta = mappa.getDifficolta() ;
+			int DimMatrix = map[0].length*map[1].length; // Dimensione matrice
+			int dim = map[0].length ; // Dimensione della colonna ( poi devo modificare x e y )
+			int RandomIndex = 0 ; // Indice Random preso dal pool all'interno della lista AL
+			int[] MatrixIndexPoint = {0,0}; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
+			int NumeroCubi = 0; // Da aggiornare con i dati sperimentali in base alla dimensione della mappa
+			
+			switch (Difficolta)
+			{
+				case "facile" :
+				{
+				NumeroCubi = 100; 
+				break;
+				}
+				case "normale" :
+				{
+				NumeroCubi = 250;
+				break;
+				}
+				case "difficile" :
+				{
+				NumeroCubi = 400;
+				break;
+				}
+				case "meow" :
+				{
+				NumeroCubi = 1000;
+				break;
+				}
+				default :
+				{
+					NumeroCubi = 100;
+					break;
+				}
+			
+			}
 		
 		// Metto all'interno di AL, tutti i valori della matrice
     	for(int i = 0 ; i < DimMatrix ; i++)
