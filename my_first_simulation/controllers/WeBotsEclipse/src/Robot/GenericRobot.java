@@ -8,7 +8,6 @@ import com.cyberbotics.webots.controller.Robot;
 import General.SharedVariables;
 import Map.Mappa;
 import Map.Point;
-import Network.ClientConnectionHandler;
 
 public abstract class GenericRobot extends Robot 
 {
@@ -37,7 +36,6 @@ public abstract class GenericRobot extends Robot
 	private Motor leftMotor, rightMotor;
 	private PositionSensor leftMotorSensor, rightMotorSensor;
 	private DistanceSensor sensors[];
-	private boolean abc;
 	private double sensorValue[], pose[];
 	
 	//Variabili per memorizzare la posizione e la direzione del robot
@@ -47,11 +45,14 @@ public abstract class GenericRobot extends Robot
 	//Mappa in cui si trova il robot
 	protected Mappa mappa;
 	
+	//Flag per la gestione tra thread
+	private boolean stepFlag;
+	
 	public GenericRobot(int direction)
 	{
 		super();
 		
-		this.abc = false;
+		this.stepFlag = false;
 		
 		this.direction = direction;
 		pose = new double[3];
@@ -82,7 +83,8 @@ public abstract class GenericRobot extends Robot
 	
 	public synchronized void goStraightOn(Thread caller)
 	{
-		abc = true;
+		stepFlag = true;
+		
 	    leftMotor.setVelocity(1 * MAX_SPEED);
 	    rightMotor.setVelocity(1 * MAX_SPEED);
 	    
@@ -97,7 +99,8 @@ public abstract class GenericRobot extends Robot
 	    }
 	    
 	    stop();
-	    abc = false;
+	    
+	    stepFlag = false;
 	    notifyAll();
 	}
 	
@@ -119,7 +122,8 @@ public abstract class GenericRobot extends Robot
 	
 	public synchronized void turnLeft(Thread caller)
 	{
-		abc = true;
+		stepFlag = true;
+		
 	    stop();
 	    myStep(SharedVariables.TIME_STEP, caller);
 	    sensorValue[0] = leftMotorSensor.getValue();
@@ -139,13 +143,14 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	    direction = (direction + 1) % 4;
 	    
-	    abc = false;
+	    stepFlag = false;
 	    notifyAll();
 	}
 	
 	public synchronized void turnRight(Thread caller)
 	{
-		abc = true;
+		stepFlag = true;
+		
 	    stop();
 	    myStep(SharedVariables.TIME_STEP, caller);
 	    sensorValue[0] = leftMotorSensor.getValue();
@@ -167,7 +172,8 @@ public abstract class GenericRobot extends Robot
 	    System.out.println(direction);
 
 	    stop();
-	    abc = false;
+	    
+	    stepFlag = false;
 	    notifyAll();
 	}
 	
@@ -219,11 +225,11 @@ public abstract class GenericRobot extends Robot
 	    return (sensors[0].getValue() > OBSTACLE_TRESHOLD && sensors[1].getValue() > OBSTACLE_TRESHOLD);
 	}
 	
-	public synchronized void myStep (int time, Thread caller)
+	public synchronized int myStep(int time, Thread caller)
 	{
 		if (caller == null)
 		{
-			while(abc) 
+			while(stepFlag) 
 			{
 				try 
 				{
@@ -236,6 +242,6 @@ public abstract class GenericRobot extends Robot
 				}
 			}
 		}
-		step(time);
+		return step(time);
 	}
 }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import General.SharedVariables;
 import Map.Point;
-import Network.ClientConnectionHandler;
-import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Robot.GenericRobot;
 import Robot.LadroRobot;
 
@@ -18,12 +16,10 @@ public class LadroController
         
         //ArrayList<Point> pts = potentialShelters(map);  pts contiene i possibili nascondigli
         //estrai un punto da pts
-        
+                
+        robot.connectToServer();
 
-        while (true)
-        {
-        	robot.myStep(SharedVariables.TIME_STEP, null);
-        }
+        while (robot.myStep(SharedVariables.TIME_STEP, null) != -1);
     }
     
     public static ArrayList<Point> potentialShelters(int[][] map)
@@ -59,3 +55,4 @@ public class LadroController
 		else return false;
 	}
 }
+ 

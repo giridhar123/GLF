@@ -1,6 +1,7 @@
 package Robot;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import General.AStarSearcher;
 import Map.Mappa;
@@ -17,7 +18,11 @@ public class LadroRobot extends GenericRobot implements Client {
 		super(direction);
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
-        clientConnectionHandler.start();
+	}
+	
+	public void connectToServer()
+	{
+		clientConnectionHandler.start();
 	}
 	
 	private boolean goTo(Point goal)
@@ -36,22 +41,41 @@ public class LadroRobot extends GenericRobot implements Client {
 		path.add(0, robotPosition);
 		ArrayList<Integer> convertedPath = convertToDirections(path);
 		
+		Random r = new Random();
 		int value;
-		
 		for (int i = 0; i < convertedPath.size(); ++i)
 		{
 			value = convertedPath.get(i);
 			int sig = this.direction - value;
 			
-			if(sig < 0) sig +=4;
+			if (sig < 0)
+				sig += 4;
 			
-			if((sig % 4) == 1) turnRight(clientConnectionHandler);
-			else if((sig % 4) == 2)
+			//N.B. Ma siamo sicuri che il modulo è necessario?
+			switch (sig % 4)
 			{
-				turnLeft(clientConnectionHandler);
-				turnLeft(clientConnectionHandler);
-			}
-			else if((sig % 4) == 3) turnLeft(clientConnectionHandler); 
+				case 1:
+					turnRight(clientConnectionHandler);
+					break;
+				case 2:
+					{
+						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180°
+						if (r.nextInt(2) == 0)
+						{
+							turnLeft(clientConnectionHandler);
+							turnLeft(clientConnectionHandler);
+						}
+						else
+						{
+							turnRight(clientConnectionHandler);
+							turnRight(clientConnectionHandler);
+						}
+					}
+					break;
+				case 3:
+					turnLeft(clientConnectionHandler);
+					break;
+			} 
 		
 			goStraightOn(clientConnectionHandler);
 		}

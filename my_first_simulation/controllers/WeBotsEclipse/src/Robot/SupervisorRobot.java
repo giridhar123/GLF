@@ -17,6 +17,10 @@ public class SupervisorRobot extends Supervisor implements Client {
 	public SupervisorRobot()
 	{
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.SUPERVISOR, this);
+	}
+	
+	public void connectToServer()
+	{
 		clientConnectionHandler.start();
 	}
 		
@@ -184,18 +188,19 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 	
-	private static float MatrixToWorldZ(float point, double WeBotsTile) {
+	private static float MatrixToWorldZ(float point, double WeBotsTile)
+	{
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
 	}
-	private static float MatrixToWorldX(float point, double WeBotsTile) {
-		
+	
+	private static float MatrixToWorldX(float point, double WeBotsTile)
+	{	
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e'la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
 	}
 	
 	private static void RestartNode(Node robot_node)
-
 	{
         robot_node.restartController();
 	}
@@ -266,17 +271,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 	           	RootChildenField.importMFNodeFromString(4,Ball);
     }
 
-	private void printMap(int[][] map)
-	{
-		for(int i=0; i < map[0].length ; i++)
-		{
-			for(int j=0; j < map[1].length; j++)
-			{
-				System.out.print(" " + map[i][j] + " ");
-			}
-			System.out.println("");
-		}
-	}
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
 		spawnaMappa(mappa);
