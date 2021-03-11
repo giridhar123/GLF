@@ -12,10 +12,13 @@ import Network.Packets.ClientToServer.CTS_PEER_INFO;
 public class LadroRobot extends GenericRobot implements Client {
 
 	private ClientConnectionHandler clientConnectionHandler;
+	private boolean hidden;
 	
 	public LadroRobot(int direction)
 	{
 		super(direction);
+		
+		hidden = false;
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
 	}
@@ -51,7 +54,7 @@ public class LadroRobot extends GenericRobot implements Client {
 			int sig = this.direction - value;
 			
 			if (sig < 0)
-					sig += 4;
+				sig += 4;
 			
 			if(i > 0 && sig != 0)
 			{
@@ -59,17 +62,17 @@ public class LadroRobot extends GenericRobot implements Client {
 				count = 1;
 			}
 			
-			//N.B. Ma siamo sicuri che il modulo sia necessario?
-			switch (sig % 4)
+			switch (sig)
 			{
-				case 0: ++count;
+				case 0:
+					++count;
 					break;
 				case 1:
 					turnRight(clientConnectionHandler);
 					break;
 				case 2:
 					{
-						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180°
+						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180ï¿½
 						if (r.nextInt(2) == 0)
 						{
 							turnLeft(clientConnectionHandler);
@@ -85,7 +88,8 @@ public class LadroRobot extends GenericRobot implements Client {
 				case 3:
 					turnLeft(clientConnectionHandler);
 					break;
-				default: break;
+				default:
+					break;
 			}
 		}
 		
@@ -122,8 +126,13 @@ public class LadroRobot extends GenericRobot implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa)
 	{
-		System.out.println("LADRO: MAPPA RICEVUTA");
 		this.mappa = mappa;
+	}
+	
+	public void hide()
+	{
+		if (mappa == null || hidden)
+			return;
 		
 		for (int i = 0; i < mappa.getXSize(); ++i)
 		{
@@ -143,5 +152,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		this.robotPosition = new Point(10, 10);
 		Point goal = new Point(20, 20);
 		goTo(goal);
+		
+		hidden = true;
 	}
 }

@@ -19,7 +19,10 @@ public class LadroController
                 
         robot.connectToServer();
 
-        while (robot.myStep(SharedVariables.TIME_STEP, null) != -1);
+        while (robot.step(SharedVariables.TIME_STEP) != -1)
+        {
+        	robot.hide();
+        }
     }
     
     public static ArrayList<Point> potentialShelters(int[][] map)

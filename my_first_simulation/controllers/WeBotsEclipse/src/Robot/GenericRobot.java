@@ -24,7 +24,8 @@ public abstract class GenericRobot extends Robot
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
 	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	private final int OBSTACLE_TRESHOLD = 80;
+	private final int FRONTAL_OBSTACLE_TRESHOLD = 100;
+	private final int LATERAL_OBSTACLE_TRESHOLD = 100;
 	
 	//Valori di supporto per la direzione del robot
 	public static final int NORD = 0;
@@ -36,6 +37,15 @@ public abstract class GenericRobot extends Robot
 	private Motor leftMotor, rightMotor;
 	private PositionSensor leftMotorSensor, rightMotorSensor;
 	private DistanceSensor sensors[];
+	private DistanceSensor leftSensor, rightSensor;
+	private boolean leftObstacle, rightObstacle;
+	
+	private int myFlag;
+	
+	private final int MORE = 1;
+	private final int NOTHING = 0;
+	private final int LESS = -1;
+	
 	private double sensorValue[], pose[];
 	
 	//Variabili per memorizzare la posizione e la direzione del robot
@@ -46,13 +56,13 @@ public abstract class GenericRobot extends Robot
 	protected Mappa mappa;
 	
 	//Flag per la gestione tra thread
-	private boolean stepFlag;
+	//private boolean stepFlag;
 	
 	public GenericRobot(int direction)
 	{
 		super();
 		
-		this.stepFlag = false;
+		//this.stepFlag = false;
 		this.mappa = null;
 		
 		this.direction = direction;
@@ -70,6 +80,7 @@ public abstract class GenericRobot extends Robot
 	    leftMotorSensor.enable(SharedVariables.TIME_STEP);
 	    rightMotorSensor.enable(SharedVariables.TIME_STEP);
 	    
+	    
 	    sensors = new DistanceSensor[2];
 	    sensors[0] = getDistanceSensor("ps0");
 	    sensors[0].enable(SharedVariables.TIME_STEP);
@@ -77,36 +88,59 @@ public abstract class GenericRobot extends Robot
 	    sensors[1] = getDistanceSensor("ps7");
 	    sensors[1].enable(SharedVariables.TIME_STEP);
 	    
+	    leftSensor = getDistanceSensor("ps5");
+	    leftSensor.enable(SharedVariables.TIME_STEP);
+	    
+	    rightSensor = getDistanceSensor("ps2");
+	    rightSensor.enable(SharedVariables.TIME_STEP);
+	    
+	    leftObstacle = rightObstacle = false;
+	    
+	    myFlag = NOTHING;
+	    
 	    sensorValue = new double[2];
 	    
 	    stop();
 	}
 	
 	
-	public synchronized boolean goStraightOn(Thread caller)
+	public boolean goStraightOn(Thread caller)
 	{
 		return goStraightOn(caller, 1);
 	}
 	
-	public synchronized boolean goStraightOn(Thread caller, int times)
-	{
-		stepFlag = true;
-		
+	public boolean goStraightOn(Thread caller, int times)
+	{		
 	    leftMotor.setVelocity(1 * MAX_SPEED);
 	    rightMotor.setVelocity(1 * MAX_SPEED);
 	    
+	    int initialValue = 50;
+	    int volteInPiù = 3;
+	    
+	    int count = initialValue;
+	    
+	    if (myFlag == MORE)
+	    	count += volteInPiù;
+	    else if (myFlag == LESS)
+	    	count -= volteInPiù;
+	    
+	    myFlag = NOTHING;
+	    
 	    for(int i=0; i < times; ++i) 
-	    {
-	    	
-	    	for (int j = 0; j < 50; ++j)
-	    	{
+	    {	
+	    	for (int j = 0; j < count; ++j)
+	    	{	    		
+	    		checkObstaclesLateral();
+	    		
 	    		if (checkObstaclesInFront())
 	    		{
 	    			stop();
 	    			return false;
 	    		}
-	        myStep(SharedVariables.TIME_STEP, caller);
+	    		step(SharedVariables.TIME_STEP);
 	    	}
+	    	
+	    	count = initialValue;
 	    	
 	    	switch(direction)
 		    {
@@ -127,36 +161,29 @@ public abstract class GenericRobot extends Robot
 	    
 	    stop();
 	    
-	    stepFlag = false;
-	    notifyAll();
-	    
-	    
-	    
 	    return true;
 	}
 	
-	public synchronized void goBack(Thread caller)
+	public void goBack(Thread caller)
 	{
 		goBack(50, caller); //Va indietro di una casella
 	}
 	
-	public synchronized void goBack(int times, Thread caller)
+	public void goBack(int times, Thread caller)
 	{
 	    leftMotor.setVelocity(-1 * MAX_SPEED);
 	    rightMotor.setVelocity(-1 * MAX_SPEED);
 
 	    for (int i = 0; i < times; ++i)
-	    	myStep(SharedVariables.TIME_STEP, caller);
+	    	step(SharedVariables.TIME_STEP);
 	    
 	    stop();
 	}
 	
-	public synchronized void turnLeft(Thread caller)
+	public void turnLeft(Thread caller)
 	{
-		stepFlag = true;
-		
 	    stop();
-	    myStep(SharedVariables.TIME_STEP, caller);
+	    step(SharedVariables.TIME_STEP);
 	    sensorValue[0] = leftMotorSensor.getValue();
 	    sensorValue[1] = rightMotorSensor.getValue();
 
@@ -167,23 +194,27 @@ public abstract class GenericRobot extends Robot
         
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
 	    {	    	
-	        myStep(SharedVariables.TIME_STEP, caller);
+	    	step(SharedVariables.TIME_STEP);
 	        updatePose(OVEST);
 	    }
 
 	    stop();
 	    direction = (direction + 1) % 4;
 	    
-	    stepFlag = false;
-	    notifyAll();
+	    if (leftObstacle)
+	    	myFlag = LESS;
+	    if (rightObstacle)
+	    	myFlag = MORE;
+	    else if (!leftObstacle && !rightObstacle)
+	    	myFlag = NOTHING;
+	    
+	    leftObstacle = rightObstacle = false;
 	}
 	
-	public synchronized void turnRight(Thread caller)
-	{
-		stepFlag = true;
-		
+	public void turnRight(Thread caller)
+	{	
 	    stop();
-	    myStep(SharedVariables.TIME_STEP, caller);
+	    step(SharedVariables.TIME_STEP);
 	    sensorValue[0] = leftMotorSensor.getValue();
 	    sensorValue[1] = rightMotorSensor.getValue();
 
@@ -193,7 +224,7 @@ public abstract class GenericRobot extends Robot
 	    {	    	
 	        leftMotor.setVelocity(0.5);
 	        rightMotor.setVelocity(-0.5);
-	        myStep(SharedVariables.TIME_STEP, caller);
+	        step(SharedVariables.TIME_STEP);
 	        updatePose(EST);
 	    }
 	    
@@ -202,8 +233,14 @@ public abstract class GenericRobot extends Robot
 	    
 	    stop();
 	    
-	    stepFlag = false;
-	    notifyAll();
+	    if (leftObstacle)
+	    	myFlag = MORE;
+	    if (rightObstacle)
+	    	myFlag = LESS;
+	    else if (!leftObstacle && !rightObstacle)
+	    	myFlag = NOTHING;
+	    
+	    leftObstacle = rightObstacle = false;
 	}
 	
 	public void stop()
@@ -251,9 +288,18 @@ public abstract class GenericRobot extends Robot
 	
 	private boolean checkObstaclesInFront()
 	{
-	    return (sensors[0].getValue() > OBSTACLE_TRESHOLD && sensors[1].getValue() > OBSTACLE_TRESHOLD);
+	    return (sensors[0].getValue() > FRONTAL_OBSTACLE_TRESHOLD && sensors[1].getValue() > FRONTAL_OBSTACLE_TRESHOLD);
 	}
 	
+	private void checkObstaclesLateral()
+	{
+		if (leftSensor.getValue() > LATERAL_OBSTACLE_TRESHOLD)
+			leftObstacle = true;
+		if (rightSensor.getValue() > LATERAL_OBSTACLE_TRESHOLD)
+			rightObstacle = true;
+	}
+	
+	/*
 	public synchronized int myStep(int time, Thread caller)
 	{
 		if (caller == null)
@@ -273,6 +319,7 @@ public abstract class GenericRobot extends Robot
 		}
 		return step(time);
 	}
+	*/
 	
 	public Mappa getMappa()
 	{
