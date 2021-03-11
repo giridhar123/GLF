@@ -89,11 +89,13 @@ public abstract class GenericRobot extends Robot
 	    leftMotor.setVelocity(1 * MAX_SPEED);
 	    rightMotor.setVelocity(1 * MAX_SPEED);
 	    
-	    for (int i = 0; i < 50; ++i)
+	    for (int i = 0; i < 50 ; ++i)
 	    {
 	        if (checkObstaclesInFront())
-	            return false;
-	        
+	        {
+	            stop();
+				return false;
+	        }
 	        myStep(SharedVariables.TIME_STEP, caller);
 	    }
 	    
@@ -186,8 +188,6 @@ public abstract class GenericRobot extends Robot
 	    if(direction == 0) direction = 3;
 	    else --direction;
 	    
-	    System.out.println(direction);
-
 	    stop();
 	    
 	    stepFlag = false;

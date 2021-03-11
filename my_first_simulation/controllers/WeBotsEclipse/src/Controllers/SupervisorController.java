@@ -28,6 +28,8 @@ public class SupervisorController
     	
     	supervisor.connectToServer();
         
+    	supervisor.connectToServer();
+    	
         while (supervisor.step(SharedVariables.TIME_STEP) != -1);
     }
  }
