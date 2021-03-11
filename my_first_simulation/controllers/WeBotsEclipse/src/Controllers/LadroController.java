@@ -26,9 +26,11 @@ public class LadroController
 	{
 		ArrayList<Point> pts= new ArrayList<Point>();
 		
-		for(int x=0; x<20; ++x)
+		int mapDim = map[0].length;
+		
+		for(int x=0; x<mapDim; ++x)
 		{
-			for(int y=0; y<20; ++y)
+			for(int y=0; y<mapDim; ++y)
 			{
 				if(map[x][y]==0) 
 				{

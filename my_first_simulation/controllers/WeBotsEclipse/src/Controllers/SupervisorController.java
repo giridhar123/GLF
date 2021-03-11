@@ -25,8 +25,6 @@ public class SupervisorController
     public static void main(String[] args) throws InterruptedException
     {
     	SupervisorRobot supervisor = new SupervisorRobot();
-    	
-    	supervisor.connectToServer();
         
     	supervisor.connectToServer();
     	

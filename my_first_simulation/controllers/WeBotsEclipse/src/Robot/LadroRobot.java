@@ -42,24 +42,34 @@ public class LadroRobot extends GenericRobot implements Client {
 		ArrayList<Integer> convertedPath = convertToDirections(path);
 		
 		Random r = new Random();
-		int value;
+		int value, count;
+		count = 1;
+		
 		for (int i = 0; i < convertedPath.size(); ++i)
 		{
 			value = convertedPath.get(i);
 			int sig = this.direction - value;
 			
 			if (sig < 0)
-				sig += 4;
+					sig += 4;
 			
-			//N.B. Ma siamo sicuri che il modulo è necessario?
+			if(i > 0 && sig != 0)
+			{
+				goStraightOn(clientConnectionHandler, count);
+				count = 1;
+			}
+			
+			//N.B. Ma siamo sicuri che il modulo sia necessario?
 			switch (sig % 4)
 			{
+				case 0: ++count;
+					break;
 				case 1:
 					turnRight(clientConnectionHandler);
 					break;
 				case 2:
 					{
-						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180°
+						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
 						if (r.nextInt(2) == 0)
 						{
 							turnLeft(clientConnectionHandler);
@@ -75,10 +85,11 @@ public class LadroRobot extends GenericRobot implements Client {
 				case 3:
 					turnLeft(clientConnectionHandler);
 					break;
-			} 
-		
-			goStraightOn(clientConnectionHandler);
+				default: break;
+			}
 		}
+		
+		goStraightOn(clientConnectionHandler, count);
 		
 		return true;
 	}

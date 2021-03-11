@@ -13,7 +13,8 @@ public class GuardiaController
     	
         while (robot.myStep(SharedVariables.TIME_STEP, null) != -1)
         {
-        	robot.explore();
+        	//robot.explore();
+        	//robot.goStraightOn(null, 3);
         }
     }
 }

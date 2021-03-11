@@ -24,7 +24,7 @@ public abstract class GenericRobot extends Robot
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
 	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	private final int OBSTACLE_TRESHOLD = 100;
+	private final int OBSTACLE_TRESHOLD = 80;
 	
 	//Valori di supporto per la direzione del robot
 	public static final int NORD = 0;
@@ -82,21 +82,47 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	}
 	
+	
 	public synchronized boolean goStraightOn(Thread caller)
+	{
+		return goStraightOn(caller, 1);
+	}
+	
+	public synchronized boolean goStraightOn(Thread caller, int times)
 	{
 		stepFlag = true;
 		
 	    leftMotor.setVelocity(1 * MAX_SPEED);
 	    rightMotor.setVelocity(1 * MAX_SPEED);
 	    
-	    for (int i = 0; i < 50 ; ++i)
+	    for(int i=0; i < times; ++i) 
 	    {
-	        if (checkObstaclesInFront())
-	        {
-	            stop();
-				return false;
-	        }
+	    	
+	    	for (int j = 0; j < 50; ++j)
+	    	{
+	    		if (checkObstaclesInFront())
+	    		{
+	    			stop();
+	    			return false;
+	    		}
 	        myStep(SharedVariables.TIME_STEP, caller);
+	    	}
+	    	
+	    	switch(direction)
+		    {
+		    case NORD:
+		    	robotPosition.setX(robotPosition.getX() - 1);
+		    	break;
+		    case EST:
+		    	robotPosition.setY(robotPosition.getY() + 1);
+		    	break;
+		    case SUD:
+		    	robotPosition.setX(robotPosition.getX() + 1);
+		    	break;
+		    case OVEST:
+		    	robotPosition.setY(robotPosition.getY() - 1);
+		    	break;
+		    }
 	    }
 	    
 	    stop();
@@ -104,21 +130,7 @@ public abstract class GenericRobot extends Robot
 	    stepFlag = false;
 	    notifyAll();
 	    
-	    switch(direction)
-	    {
-	    case NORD:
-	    	robotPosition.setX(robotPosition.getX() + 1);
-	    	break;
-	    case EST:
-	    	robotPosition.setY(robotPosition.getY() + 1);
-	    	break;
-	    case SUD:
-	    	robotPosition.setX(robotPosition.getX() - 1);
-	    	break;
-	    case OVEST:
-	    	robotPosition.setY(robotPosition.getY() - 1);
-	    	break;
-	    }
+	    
 	    
 	    return true;
 	}
