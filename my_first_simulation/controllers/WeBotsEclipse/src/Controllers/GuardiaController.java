@@ -11,6 +11,9 @@ public class GuardiaController
         GuardiaRobot robot = new GuardiaRobot(GenericRobot.EST);
         robot.connectToServer();
     	
-        while (robot.myStep(SharedVariables.TIME_STEP, null) != -1);
+        while (robot.myStep(SharedVariables.TIME_STEP, null) != -1)
+        {
+        	robot.explore();
+        }
     }
 }

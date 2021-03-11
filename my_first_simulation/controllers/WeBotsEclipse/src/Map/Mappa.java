@@ -27,15 +27,19 @@ public class Mappa
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
 		// Questo costruttore � richiamato enlla classe STC_SEND_MAP
-		 // A questo costruttore passo gi� i dati ed i calcoli fatti dal server.
+		// A questo costruttore passo gi� i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
 		this.xDim = xDim;
 		this.yDim = yDim;
-		this.mappa = mappa;
-		//this.mappa = mappa;
-		
+		this.mappa = mappa;	
 	}
 	
+	public Mappa(int xDim, int yDim)
+	{
+		this.xDim = xDim;
+		this.yDim = yDim;
+		this.mappa = new int[xDim][yDim];
+	}
 	
 	public int getXSize()
 	{
@@ -137,9 +141,13 @@ public class Mappa
 		
 	}
 
-
 	public String getDifficolta() {
 		return Difficolta;
+	}
+	
+	public void setValue(int row, int col, int value)
+	{
+		this.mappa[row][col] = value;
 	}
 	
 }

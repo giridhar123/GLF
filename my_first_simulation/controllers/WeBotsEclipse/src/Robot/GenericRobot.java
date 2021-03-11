@@ -53,6 +53,7 @@ public abstract class GenericRobot extends Robot
 		super();
 		
 		this.stepFlag = false;
+		this.mappa = null;
 		
 		this.direction = direction;
 		pose = new double[3];
@@ -81,7 +82,7 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	}
 	
-	public synchronized void goStraightOn(Thread caller)
+	public synchronized boolean goStraightOn(Thread caller)
 	{
 		stepFlag = true;
 		
@@ -91,10 +92,8 @@ public abstract class GenericRobot extends Robot
 	    for (int i = 0; i < 50; ++i)
 	    {
 	        if (checkObstaclesInFront())
-	        {
-	            goBack(i, caller);
-	            break;
-	        }    
+	            return false;
+	        
 	        myStep(SharedVariables.TIME_STEP, caller);
 	    }
 	    
@@ -102,6 +101,24 @@ public abstract class GenericRobot extends Robot
 	    
 	    stepFlag = false;
 	    notifyAll();
+	    
+	    switch(direction)
+	    {
+	    case NORD:
+	    	robotPosition.setX(robotPosition.getX() + 1);
+	    	break;
+	    case EST:
+	    	robotPosition.setY(robotPosition.getY() + 1);
+	    	break;
+	    case SUD:
+	    	robotPosition.setX(robotPosition.getX() - 1);
+	    	break;
+	    case OVEST:
+	    	robotPosition.setY(robotPosition.getY() - 1);
+	    	break;
+	    }
+	    
+	    return true;
 	}
 	
 	public synchronized void goBack(Thread caller)
@@ -243,5 +260,10 @@ public abstract class GenericRobot extends Robot
 			}
 		}
 		return step(time);
+	}
+	
+	public Mappa getMappa()
+	{
+		return mappa;
 	}
 }

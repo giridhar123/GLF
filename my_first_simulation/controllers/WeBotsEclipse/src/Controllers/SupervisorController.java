@@ -25,6 +25,8 @@ public class SupervisorController
     public static void main(String[] args) throws InterruptedException
     {
     	SupervisorRobot supervisor = new SupervisorRobot();
+    	
+    	supervisor.connectToServer();
         
         while (supervisor.step(SharedVariables.TIME_STEP) != -1);
     }
