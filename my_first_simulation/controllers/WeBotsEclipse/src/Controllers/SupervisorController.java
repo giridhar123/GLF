@@ -26,6 +26,8 @@ public class SupervisorController
     {
     	SupervisorRobot supervisor = new SupervisorRobot();
         
+    	supervisor.connectToServer();
+    	
         while (supervisor.step(SharedVariables.TIME_STEP) != -1);
     }
  }
