@@ -16,16 +16,13 @@ public class LadroController
     {
         LadroRobot robot = new LadroRobot(GenericRobot.SUD);
         
-        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, robot);
-        clientConnectionHandler.start();
-        
         //ArrayList<Point> pts = potentialShelters(map);  pts contiene i possibili nascondigli
         //estrai un punto da pts
         
 
         while (true)
         {
-        	robot.step(SharedVariables.TIME_STEP);
+        	robot.myStep(SharedVariables.TIME_STEP, null);
         }
     }
     

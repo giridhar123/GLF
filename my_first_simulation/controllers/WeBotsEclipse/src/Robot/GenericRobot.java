@@ -8,6 +8,7 @@ import com.cyberbotics.webots.controller.Robot;
 import General.SharedVariables;
 import Map.Mappa;
 import Map.Point;
+import Network.ClientConnectionHandler;
 
 public abstract class GenericRobot extends Robot 
 {
@@ -36,6 +37,7 @@ public abstract class GenericRobot extends Robot
 	private Motor leftMotor, rightMotor;
 	private PositionSensor leftMotorSensor, rightMotorSensor;
 	private DistanceSensor sensors[];
+	private boolean abc;
 	private double sensorValue[], pose[];
 	
 	//Variabili per memorizzare la posizione e la direzione del robot
@@ -48,6 +50,8 @@ public abstract class GenericRobot extends Robot
 	public GenericRobot(int direction)
 	{
 		super();
+		
+		this.abc = false;
 		
 		this.direction = direction;
 		pose = new double[3];
@@ -76,8 +80,9 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	}
 	
-	public void goStraightOn()
+	public synchronized void goStraightOn(Thread caller)
 	{
+		abc = true;
 	    leftMotor.setVelocity(1 * MAX_SPEED);
 	    rightMotor.setVelocity(1 * MAX_SPEED);
 	    
@@ -85,72 +90,85 @@ public abstract class GenericRobot extends Robot
 	    {
 	        if (checkObstaclesInFront())
 	        {
-	            goBack(i);
+	            goBack(i, caller);
 	            break;
 	        }    
-	        step(SharedVariables.TIME_STEP);
+	        myStep(SharedVariables.TIME_STEP, caller);
 	    }
 	    
 	    stop();
+	    abc = false;
+	    notifyAll();
 	}
 	
-	public void goBack()
+	public synchronized void goBack(Thread caller)
 	{
-		goBack(50); //Va indietro di una casella
+		goBack(50, caller); //Va indietro di una casella
 	}
 	
-	public void goBack(int times)
+	public synchronized void goBack(int times, Thread caller)
 	{
 	    leftMotor.setVelocity(-1 * MAX_SPEED);
 	    rightMotor.setVelocity(-1 * MAX_SPEED);
 
 	    for (int i = 0; i < times; ++i)
-	    	step(SharedVariables.TIME_STEP);
+	    	myStep(SharedVariables.TIME_STEP, caller);
 	    
 	    stop();
 	}
 	
-	public void turnLeft()
+	public synchronized void turnLeft(Thread caller)
 	{
+		abc = true;
 	    stop();
-	    step(SharedVariables.TIME_STEP);
+	    myStep(SharedVariables.TIME_STEP, caller);
 	    sensorValue[0] = leftMotorSensor.getValue();
 	    sensorValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = pose[2] + PI/2.00 % PI2;
+	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.001)
+	    leftMotor.setVelocity(-0.5);
+        rightMotor.setVelocity(0.5);
+        
+	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
 	    {	    	
-	        leftMotor.setVelocity(-0.5);
-	        rightMotor.setVelocity(0.5);
-	        step(SharedVariables.TIME_STEP);
+	        myStep(SharedVariables.TIME_STEP, caller);
 	        updatePose(OVEST);
 	    }
 
-	    direction = (direction + 1) % 4;
 	    stop();
+	    direction = (direction + 1) % 4;
+	    
+	    abc = false;
+	    notifyAll();
 	}
 	
-	public void turnRight()
+	public synchronized void turnRight(Thread caller)
 	{
+		abc = true;
 	    stop();
-	    step(SharedVariables.TIME_STEP);
+	    myStep(SharedVariables.TIME_STEP, caller);
 	    sensorValue[0] = leftMotorSensor.getValue();
 	    sensorValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = pose[2] + PI/2.00 % PI2;
+	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.001)
+	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
 	    {	    	
 	        leftMotor.setVelocity(0.5);
 	        rightMotor.setVelocity(-0.5);
-	        step(SharedVariables.TIME_STEP);
+	        myStep(SharedVariables.TIME_STEP, caller);
 	        updatePose(EST);
 	    }
 	    
-	    direction = (direction - 1) % 4;
+	    if(direction == 0) direction = 3;
+	    else --direction;
+	    
+	    System.out.println(direction);
 
 	    stop();
+	    abc = false;
+	    notifyAll();
 	}
 	
 	public void stop()
@@ -199,5 +217,25 @@ public abstract class GenericRobot extends Robot
 	private boolean checkObstaclesInFront()
 	{
 	    return (sensors[0].getValue() > OBSTACLE_TRESHOLD && sensors[1].getValue() > OBSTACLE_TRESHOLD);
+	}
+	
+	public synchronized void myStep (int time, Thread caller)
+	{
+		if (caller == null)
+		{
+			while(abc) 
+			{
+				try 
+				{
+					wait();
+				} 
+				catch (InterruptedException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		step(time);
 	}
 }

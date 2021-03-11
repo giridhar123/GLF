@@ -5,12 +5,19 @@ import java.util.ArrayList;
 import General.AStarSearcher;
 import Map.Mappa;
 import Map.Point;
+import Network.ClientConnectionHandler;
+import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
 public class LadroRobot extends GenericRobot implements Client {
+
+	private ClientConnectionHandler clientConnectionHandler;
 	
 	public LadroRobot(int direction)
 	{
 		super(direction);
+		
+		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
+        clientConnectionHandler.start();
 	}
 	
 	private boolean goTo(Point goal)
@@ -30,18 +37,23 @@ public class LadroRobot extends GenericRobot implements Client {
 		ArrayList<Integer> convertedPath = convertToDirections(path);
 		
 		int value;
+		
 		for (int i = 0; i < convertedPath.size(); ++i)
 		{
 			value = convertedPath.get(i);
+			int sig = this.direction - value;
 			
-			while (this.direction != value)
+			if(sig < 0) sig +=4;
+			
+			if((sig % 4) == 1) turnRight(clientConnectionHandler);
+			else if((sig % 4) == 2)
 			{
-				turnLeft();
-				System.out.println("Rotating");
+				turnLeft(clientConnectionHandler);
+				turnLeft(clientConnectionHandler);
 			}
-			
-			System.out.println("Moving");
-			goStraightOn();
+			else if((sig % 4) == 3) turnLeft(clientConnectionHandler); 
+		
+			goStraightOn(clientConnectionHandler);
 		}
 		
 		return true;
