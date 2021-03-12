@@ -180,9 +180,9 @@ public class SupervisorRobot extends Supervisor implements Client {
 			double pos[] = posizione.getSFVec3f();
 			
 			double newPosition[] = new double[3];
-			newPosition[0] = MatrixToWorldX((float) 10, mappa.getWeBotsTile());
+			newPosition[0] = MatrixToWorldX((float) 15, mappa.getWeBotsTile());
 			newPosition[1] = pos[1];
-			newPosition[2] = MatrixToWorldZ((float) 10, mappa.getWeBotsTile());
+			newPosition[2] = MatrixToWorldZ((float) 15, mappa.getWeBotsTile());
 			posizione.setSFVec3f(newPosition);
 			System.out.println("Robot spostato");
 		}

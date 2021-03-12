@@ -134,7 +134,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		if (mappa == null || hidden)
 			return;
 		
-		for (int i = 0; i < mappa.getXSize(); ++i)
+		/*for (int i = 0; i < mappa.getXSize(); ++i)
 		{
 			for (int j = 0; j < mappa.getYSize(); ++j)
 			{
@@ -147,12 +147,52 @@ public class LadroRobot extends GenericRobot implements Client {
 			}
 			
 			System.out.println("");
+		}*/
+		
+		this.robotPosition = new Point(15, 15);
+		
+		ArrayList<Point> pts = potentialShelters(mappa);
+		Point dest;
+		Random r = new Random();
+		
+		do 
+		{
+			int index = r.nextInt(pts.size());
+			dest = pts.get(index);
+			dest.print();
 		}
-		//funzione cerca punto buono
-		this.robotPosition = new Point(10, 10);
-		Point goal = new Point(20, 20);
-		goTo(goal);
+		while(!goTo(dest));
 		
 		hidden = true;
+	}
+	
+	public static ArrayList<Point> potentialShelters(Mappa mappa)
+	{
+		ArrayList<Point> pts= new ArrayList<Point>();
+		
+		for(int x=0; x < mappa.getXSize(); ++x)
+		{
+			for(int y=0; y < mappa.getYSize(); ++y)
+			{
+				if(mappa.get(x, y)==0) 
+				{
+					if(check(mappa, x, y)) pts.add(new Point(x,y));
+				}
+			}
+		}
+		
+		return pts;
+	}
+    
+    public static Boolean check(Mappa mappa,int x,int y) 
+	{
+		int north, south, east, west;
+		
+		north = x - 1 >= 0 ? mappa.get(x-1, y) : 0;
+		south = x + 1 < mappa.getXSize() ? mappa.get(x+1, y) : 0;
+		east = y + 1 < mappa.getYSize() ? mappa.get(x, y+1) : 0;
+		west = y - 1 >= 0 ? mappa.get(x, y-1) : 0;
+		
+		return ((north + south + east + west) == 3);
 	}
 }
