@@ -17,7 +17,7 @@ DEF World RectangleArena {
   floorTileSize 0.2 0.2
   wallHeight 0.05
 }
-E-puck {
+DEF Guardia E-puck {
   translation -0.444603 -0.0110043 1.37738
   rotation -2.820089500800361e-06 0.9999993920187574 0.0011027031163733164 3.141566176222079
   name "guardia"

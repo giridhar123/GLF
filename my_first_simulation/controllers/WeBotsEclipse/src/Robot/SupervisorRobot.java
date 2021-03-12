@@ -131,25 +131,25 @@ public class SupervisorRobot extends Supervisor implements Client {
 			posizione.setSFVec3f(newPosition);
 			System.out.println("Robot spostato");
 
-		for(int i=0; i < 20; i++)
-		{
-			for(int j=0; j< 20; j++)
-		 {
-			 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-			 	TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
-			 	TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
+			for(int i=0; i < 20; i++)
+			{
+				for(int j=0; j< 20; j++)
+				{
+					// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
+				 	TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
+				 	TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
+	
+					 if(matrice[i][j] == 1)
+					 {
+						 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
+						 RootChildrenField.importMFNodeFromString(4,SpawnBox);
+					 }
 
-			 if(matrice[i][j] == 1)
-			 {
-				 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
-				 RootChildrenField.importMFNodeFromString(4,SpawnBox);
-			 }
-
-		}
+				}
 		
-		Packet worldReady = new CTS_WORLD_READY();
-		clientConnectionHandler.sendPacket(worldReady);
-	}
+				Packet worldReady = new CTS_WORLD_READY();
+				clientConnectionHandler.sendPacket(worldReady);
+			}
 		}
 	}
 
@@ -172,10 +172,10 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 		RootChildrenField.importMFNodeFromString(4,SpawnBox);
 		
-		final Node robot_node = getFromDef("Ladro");
+		Node robot_node = getFromDef("Ladro");
 		if (robot_node != null)
 		{
-			System.out.println("Sposto il robot...");
+			System.out.println("Sposto il ladro...");
 			Field posizione = robot_node.getField("translation");
 			double pos[] = posizione.getSFVec3f();
 			
@@ -184,7 +184,22 @@ public class SupervisorRobot extends Supervisor implements Client {
 			newPosition[1] = pos[1];
 			newPosition[2] = MatrixToWorldZ((float) 15, mappa.getWeBotsTile());
 			posizione.setSFVec3f(newPosition);
-			System.out.println("Robot spostato");
+			System.out.println("Ladro spostato");
+		}
+		
+		robot_node = getFromDef("Guardia");
+		if (robot_node != null)
+		{
+			System.out.println("Sposto la guardia...");
+			Field posizione = robot_node.getField("translation");
+			double pos[] = posizione.getSFVec3f();
+			
+			double newPosition[] = new double[3];
+			newPosition[0] = MatrixToWorldX((float) 4, mappa.getWeBotsTile());
+			newPosition[1] = pos[1];
+			newPosition[2] = MatrixToWorldZ((float) 4, mappa.getWeBotsTile());
+			posizione.setSFVec3f(newPosition);
+			System.out.println("Guardia spostata");
 		}
 	}
 	
