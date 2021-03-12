@@ -1,6 +1,7 @@
 package Robot;
 
 import Map.Mappa;
+import Map.Point;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
@@ -33,10 +34,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		boolean qualcosa = true;
 		boolean obstaclesInFront = false;
+		
+		this.robotPosition = new Point(4,4);
+		
 		while (qualcosa)
 		{
 			obstaclesInFront = goStraightOn(clientConnectionHandler);
-			if (obstaclesInFront)
+			if (!obstaclesInFront)
 			{
 				int row = -1;
 				int col = -1;
@@ -62,6 +66,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			    }
 				
 				mappa.setValue(row, col, 1);
+				
+				turnRight(clientConnectionHandler);
+				
+				System.out.println(mappa);
 			}
 		}
 	}
