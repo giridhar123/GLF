@@ -130,7 +130,9 @@ public abstract class GenericRobot extends Robot
 	    myFlag = NOTHING;
 	    maxProx= 0;
 	    
-	    for(int i=0; i < times; ++i) 
+	    boolean obstacle = false;
+	    
+	    abc: for(int i=0; i < times; ++i) 
 	    {	
 	    	for (int j = 0; j < count; ++j)
 	    	{	    		
@@ -139,7 +141,8 @@ public abstract class GenericRobot extends Robot
 	    		if (checkObstaclesInFront())
 	    		{
 	    			stop();
-	    			return false;
+	    			obstacle = true;
+	    			break abc;
 	    		}
 	    		step(SharedVariables.TIME_STEP);
 	    	}
@@ -190,7 +193,7 @@ public abstract class GenericRobot extends Robot
 	    	stop();
 	    }
 	    
-	    return true;
+	    return !obstacle;
 	}
 	
 	public void goBack(Thread caller)

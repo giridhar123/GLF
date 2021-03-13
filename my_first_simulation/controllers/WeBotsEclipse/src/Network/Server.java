@@ -71,4 +71,8 @@ public class Server extends Thread {
 	public ArrayList<AsynchronousSocketChannel> getLadri() {
 		return this.ladri;
 	}
+	
+	public ArrayList<AsynchronousSocketChannel> getGuardie() {
+		return this.guardie;
+	}
 }

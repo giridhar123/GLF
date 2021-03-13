@@ -92,6 +92,14 @@ public class ServerConnectionHandler extends Thread {
 					ByteBuffer buffer = stc_send_map.encode();
 					ladri.get(i).write(buffer);
 				}
+				
+				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+				for (int i = 0; i < guardie.size(); ++i)
+				{
+					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
+					ByteBuffer buffer = stc_send_map.encode();
+					guardie.get(i).write(buffer);
+				}
 			}
 			break;
 			default:

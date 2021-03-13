@@ -8,7 +8,7 @@ public class GuardiaController
 {  
     public static void main(String[] args) throws Exception
     {
-        GuardiaRobot robot = new GuardiaRobot(GenericRobot.EST);
+        GuardiaRobot robot = new GuardiaRobot(GenericRobot.SUD);
         robot.connectToServer();
     	
         while (robot.step(SharedVariables.TIME_STEP) != -1)
