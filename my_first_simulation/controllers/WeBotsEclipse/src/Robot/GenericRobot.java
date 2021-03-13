@@ -1,7 +1,6 @@
 package Robot;
 
 import com.cyberbotics.webots.controller.DistanceSensor;
-import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
 
@@ -11,12 +10,12 @@ import Map.Point;
 
 public abstract class GenericRobot extends Robot 
 {
+	//Test
+	private final double MAX_SPEED = 6.28;
+	
 	//Valori di supporto
 	private final double PI = Math.PI;
 	private final double PI2 = 2 * PI;
-	
-	//Velocità massima delrobot
-	private final double MAX_SPEED = 6.28;
 	
 	//Valori di supporto per il calcolo della rotazione effettuata in base ai valori ricevuti dall'encoder
 	private final double WHEEL_RADIUS = 0.0205; // in m
@@ -34,20 +33,19 @@ public abstract class GenericRobot extends Robot
 	public static final int EST = 3;	
 	
 	//Motori e sensori
-	private Motor leftMotor, rightMotor;
+	private Motors motors;
 	private PositionSensor leftMotorSensor, rightMotorSensor;
-	private DistanceSensor sensors[];
+	private FrontalSensors frontalSensors;
 	private DistanceSensor leftSensor, rightSensor;
 	private int maxProx = 0;
 	private boolean leftObstacle, rightObstacle;
 	
-	private int myFlag;
-	
+	private int motorAdjustment;
 	private final int MORE = 1;
 	private final int NOTHING = 0;
 	private final int LESS = -1;
 	
-	private double sensorValue[], pose[];
+	private double encodersValue[], pose[];
 	
 	//Variabili per memorizzare la posizione e la direzione del robot
 	protected int direction;
@@ -62,32 +60,25 @@ public abstract class GenericRobot extends Robot
 	public GenericRobot(int direction)
 	{
 		super();
+		this.direction = direction;		
 		
 		//this.stepFlag = false;
-		this.mappa = null;
+		this.mappa = null;		
 		
-		this.direction = direction;
 		pose = new double[3];
 		pose[0] = pose[1] = pose[2] = 0;
 		
-		leftMotor = getMotor("left wheel motor");
-	    rightMotor = getMotor("right wheel motor");
-	    leftMotor.setPosition(Double.POSITIVE_INFINITY);
-	    rightMotor.setPosition(Double.POSITIVE_INFINITY);
+		motors = new Motors(this, "left wheel motor", "right wheel motor");
+		stop();
 
+		encodersValue = new double[2];
 	    leftMotorSensor = getPositionSensor("left wheel sensor");
 	    rightMotorSensor = getPositionSensor("right wheel sensor");
 
 	    leftMotorSensor.enable(SharedVariables.TIME_STEP);
 	    rightMotorSensor.enable(SharedVariables.TIME_STEP);
 	    
-	    
-	    sensors = new DistanceSensor[2];
-	    sensors[0] = getDistanceSensor("ps0");
-	    sensors[0].enable(SharedVariables.TIME_STEP);
-
-	    sensors[1] = getDistanceSensor("ps7");
-	    sensors[1].enable(SharedVariables.TIME_STEP);
+	    frontalSensors = new FrontalSensors(this, "ps7", "ps0", FRONTAL_OBSTACLE_TRESHOLD);
 	    
 	    leftSensor = getDistanceSensor("ps5");
 	    leftSensor.enable(SharedVariables.TIME_STEP);
@@ -96,55 +87,42 @@ public abstract class GenericRobot extends Robot
 	    rightSensor.enable(SharedVariables.TIME_STEP);
 	    
 	    leftObstacle = rightObstacle = false;
-	    
-	    myFlag = NOTHING;
-	    
-	    sensorValue = new double[2];
-	    
-	    stop();
-	}
+	    motorAdjustment = NOTHING;
+	}	
 	
-	
-	public boolean goStraightOn(Thread caller)
-	{
-		return goStraightOn(caller, 1);
-	}
-	
-	public boolean goStraightOn(Thread caller, int times)
-	{		
-	    leftMotor.setVelocity(1 * MAX_SPEED);
-	    rightMotor.setVelocity(1 * MAX_SPEED);
-	    
-	    int initialValue = 50;
-	   
+	public boolean goStraightOn(int times)
+	{		    
+	    int initialValue = 50;	   
 	    int Nvolte = (maxProx / 100) + 2;
 	    //System.out.println("Correggo di " + Nvolte);
 	    
 	    int count = initialValue;
 	    
-	    if (myFlag == MORE)
+	    if (motorAdjustment == MORE)
 	    	count += Nvolte;
-	    else if (myFlag == LESS)
+	    else if (motorAdjustment == LESS)
 	    	count -= Nvolte;
 	    
-	    myFlag = NOTHING;
+	    motorAdjustment = NOTHING;
 	    maxProx= 0;
 	    
 	    boolean obstacle = false;
 	    
-	    abc: for(int i=0; i < times; ++i) 
+	    motors.setVelocity(1);
+	    
+	    outerLoop: for(int i=0; i < times; ++i) 
 	    {	
 	    	for (int j = 0; j < count; ++j)
 	    	{	    		
 	    		checkObstaclesLateral();
 	    		
-	    		if (checkObstaclesInFront())
+	    		if (frontalSensors.thereAreObstacles())
 	    		{
 	    			stop();
 	    			obstacle = true;
-	    			break abc;
+	    			break outerLoop;
 	    		}
-	    		step(SharedVariables.TIME_STEP);
+	    		step();
 	    	}
 	    	
 	    	count = initialValue;
@@ -167,28 +145,26 @@ public abstract class GenericRobot extends Robot
 	    }
 	    
 	    stop();
+	    step();
 	    
-	    step(SharedVariables.TIME_STEP);
-	    double difference = sensors[1].getValue() - sensors[0].getValue();
+	    double difference = frontalSensors.getLeftValue() - frontalSensors.getRightValue();
 	    
 	    if(Math.abs(difference) >= 10)
 	    {
 	    	if(difference > 0)
 	    	{
-	    		leftMotor.setVelocity(-0.3*MAX_SPEED);
-	    		rightMotor.setVelocity(0.3*MAX_SPEED);
+	    		motors.setVelocity(-0.3, 0.3);
 	    		//System.out.println("Correggo a SX");
 	    	}
 	    	else 
 	    	{
-	    		leftMotor.setVelocity(0.3*MAX_SPEED);
-	    		rightMotor.setVelocity(-0.3*MAX_SPEED);
+	    		motors.setVelocity(0.3, -0.3);
 	    		//System.out.println("Correggo a DX");
 	    	}
 	    	
 	    	for(int i = 0; i < difference/5; ++i)
     		{
-    			step(SharedVariables.TIME_STEP);
+    			step();
     		}
 	    	stop();
 	    }
@@ -196,37 +172,30 @@ public abstract class GenericRobot extends Robot
 	    return !obstacle;
 	}
 	
-	public void goBack(Thread caller)
+	public void goBack(int times)
 	{
-		goBack(50, caller); //Va indietro di una casella
-	}
-	
-	public void goBack(int times, Thread caller)
-	{
-	    leftMotor.setVelocity(-1 * MAX_SPEED);
-	    rightMotor.setVelocity(-1 * MAX_SPEED);
+		motors.setVelocity(-1);
 
 	    for (int i = 0; i < times; ++i)
-	    	step(SharedVariables.TIME_STEP);
+	    	step();
 	    
 	    stop();
 	}
 	
-	public void turnLeft(Thread caller)
+	public void turnLeft()
 	{
 	    stop();
-	    step(SharedVariables.TIME_STEP);
-	    sensorValue[0] = leftMotorSensor.getValue();
-	    sensorValue[1] = rightMotorSensor.getValue();
+	    step();
+	    encodersValue[0] = leftMotorSensor.getValue();
+	    encodersValue[1] = rightMotorSensor.getValue();
 
 	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 
-	    leftMotor.setVelocity(-0.5);
-        rightMotor.setVelocity(0.5);
+	    motors.setVelocity(-0.5 / MAX_SPEED, 0.5 / MAX_SPEED);
         
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
 	    {	    	
-	    	step(SharedVariables.TIME_STEP);
+	    	step();
 	        updatePose(OVEST);
 	    }
 
@@ -234,59 +203,54 @@ public abstract class GenericRobot extends Robot
 	    direction = (direction + 1) % 4;
 	    
 	    if (leftObstacle)
-	    	myFlag = LESS;
+	    	motorAdjustment = LESS;
 	    if (rightObstacle)
-	    	myFlag = MORE;
+	    	motorAdjustment = MORE;
 	    else if (!leftObstacle && !rightObstacle)
-	    	myFlag = NOTHING;
+	    	motorAdjustment = NOTHING;
 	    
 	    leftObstacle = rightObstacle = false;
 	}
 	
-	public void turnRight(Thread caller)
+	public void turnRight()
 	{	
 	    stop();
-	    step(SharedVariables.TIME_STEP);
-	    sensorValue[0] = leftMotorSensor.getValue();
-	    sensorValue[1] = rightMotorSensor.getValue();
+	    step();
+	    encodersValue[0] = leftMotorSensor.getValue();
+	    encodersValue[1] = rightMotorSensor.getValue();
 
 	    double goalTheta = (pose[2] + PI/2.00) % PI2;
-
-	    leftMotor.setVelocity(0.5);
-        rightMotor.setVelocity(-0.5);
+	    
+	    motors.setVelocity(0.5 / MAX_SPEED, -0.5 / MAX_SPEED);
 	    
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
 	    {	    	
-	        step(SharedVariables.TIME_STEP);
+	        step();
 	        updatePose(EST);
 	    }
 	    
-	    if(direction == 0) direction = 3;
-	    else --direction;
+	    if(direction == 0)
+	    	direction = 3;
+	    else
+	    	--direction;
 	    
 	    stop();
 	    
 	    if (leftObstacle)
-	    	myFlag = MORE;
+	    	motorAdjustment = MORE;
 	    if (rightObstacle)
-	    	myFlag = LESS;
+	    	motorAdjustment = LESS;
 	    else if (!leftObstacle && !rightObstacle)
-	    	myFlag = NOTHING;
+	    	motorAdjustment = NOTHING;
 	    
 	    leftObstacle = rightObstacle = false;
-	}
-	
-	public void stop()
-	{
-	    leftMotor.setVelocity(0 * MAX_SPEED);
-	    rightMotor.setVelocity(0 * MAX_SPEED);
 	}
 	
 	private void updatePose(int direction)
 	{
 	    // compute current encoder positions
-	    double del_enLeftW = leftMotorSensor.getValue() - sensorValue[0];
-	    double del_enRightW = rightMotorSensor.getValue() - sensorValue[1];
+	    double del_enLeftW = leftMotorSensor.getValue() - encodersValue[0];
+	    double del_enRightW = rightMotorSensor.getValue() - encodersValue[1];
 	    
 	    // compute wheel displacements
 	    double values[] = getWheelDisplacements(del_enLeftW, del_enRightW);
@@ -319,11 +283,6 @@ public abstract class GenericRobot extends Robot
 		return values;
 	}
 	
-	private boolean checkObstaclesInFront()
-	{
-	    return (sensors[0].getValue() > FRONTAL_OBSTACLE_TRESHOLD && sensors[1].getValue() > FRONTAL_OBSTACLE_TRESHOLD);
-	}
-	
 	private void checkObstaclesLateral()
 	{
 		int leftVal= (int) leftSensor.getValue();
@@ -340,6 +299,18 @@ public abstract class GenericRobot extends Robot
 			if(rightVal > maxProx) maxProx = rightVal;
 		}
 	}
+	
+	//Va avanti di una casella
+	public boolean goStraightOn() { return goStraightOn(1); }
+	
+	//Va indietro di una casella
+	public void goBack() { goBack(50); }
+	
+	//Ferma il robot
+	public void stop() { motors.setVelocity(0); }
+	
+	private int step() { return step(SharedVariables.TIME_STEP); }
+	public Mappa getMappa() { return mappa; }
 	
 	/*
 	public synchronized int myStep(int time, Thread caller)
@@ -361,13 +332,5 @@ public abstract class GenericRobot extends Robot
 		}
 		return step(time);
 	}
-	*/
-	public void checkAngle () 
-	{
-		
-	}
-	public Mappa getMappa()
-	{
-		return mappa;
-	}
+	*/	
 }

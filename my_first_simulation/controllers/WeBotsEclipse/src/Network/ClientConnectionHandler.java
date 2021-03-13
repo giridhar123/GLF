@@ -9,7 +9,6 @@ import General.SharedVariables;
 import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
-import Robot.Client;
 
 public class ClientConnectionHandler extends Thread{
 	

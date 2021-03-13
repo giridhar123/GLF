@@ -1,7 +1,10 @@
 package Robot;
 
+import java.util.Random;
+
 import Map.Mappa;
 import Map.Point;
+import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
@@ -24,6 +27,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa)
 	{
+		System.out.println("Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getXSize(), mappa.getYSize());
 	}
 	
@@ -33,14 +37,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			return;
 		
 		boolean qualcosa = true;
-		boolean obstaclesInFront = false;
 		
 		this.robotPosition = new Point(4,4);
+		Random r = new Random();
 		
 		while (qualcosa)
 		{
-			obstaclesInFront = goStraightOn(clientConnectionHandler);
-			if (!obstaclesInFront)
+			if (!goStraightOn())
 			{
 				int row = -1;
 				int col = -1;
@@ -67,7 +70,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				
 				mappa.setValue(row, col, 1);
 				
-				turnRight(clientConnectionHandler);
+				if (r.nextDouble() < 0.5)
+					turnRight();
+				else
+					turnLeft();
 				
 				System.out.println(mappa);
 			}

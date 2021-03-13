@@ -85,20 +85,21 @@ public class ServerConnectionHandler extends Thread {
 			break;
 			case Packet.CTS_WORLD_READY:
 			{
-				ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
-				for (int i = 0; i < ladri.size(); ++i)
+				STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
+				ByteBuffer buffer = stc_send_map.encode();
+				
+				ArrayList<AsynchronousSocketChannel> clients = server.getLadri();
+				for (int i = 0; i < clients.size(); ++i)
 				{
-					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
-					ByteBuffer buffer = stc_send_map.encode();
-					ladri.get(i).write(buffer);
+					clients.get(i).write(buffer);
+					buffer.position(0);
 				}
 				
-				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-				for (int i = 0; i < guardie.size(); ++i)
+				clients = server.getGuardie();
+				for (int i = 0; i < clients.size(); ++i)
 				{
-					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
-					ByteBuffer buffer = stc_send_map.encode();
-					guardie.get(i).write(buffer);
+					clients.get(i).write(buffer);
+					buffer.position(0);
 				}
 			}
 			break;
@@ -107,5 +108,4 @@ public class ServerConnectionHandler extends Thread {
 			break;
 		}
 	}
-
 }

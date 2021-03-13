@@ -5,6 +5,7 @@ import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 import Map.Mappa;
+import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
