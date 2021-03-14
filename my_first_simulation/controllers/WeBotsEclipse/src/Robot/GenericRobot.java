@@ -10,9 +10,6 @@ import Map.Point;
 
 public abstract class GenericRobot extends Robot 
 {
-	//Test
-	private final double MAX_SPEED = 6.28;
-	
 	//Valori di supporto
 	private final double PI = Math.PI;
 	private final double PI2 = 2 * PI;
@@ -108,7 +105,7 @@ public abstract class GenericRobot extends Robot
 	    
 	    boolean obstacle = false;
 	    
-	    motors.setVelocity(1);
+	    motors.setVelocityMS(1);
 	    
 	    outerLoop: for(int i = 0; i < times; ++i) 
 	    {	    	
@@ -166,7 +163,7 @@ public abstract class GenericRobot extends Robot
 	
 	public void goBack(int times)
 	{
-		motors.setVelocity(-1);
+		motors.setVelocityMS(-1);
 
 	    for (int i = 0; i < times; ++i)
 	    	step();
@@ -183,7 +180,7 @@ public abstract class GenericRobot extends Robot
 
 	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 
-	    motors.setVelocity(-0.5 / MAX_SPEED, 0.5 / MAX_SPEED);
+	    motors.setVelocity(-0.5, 0.5);
         
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
 	    {	    	
@@ -213,7 +210,7 @@ public abstract class GenericRobot extends Robot
 
 	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 	    
-	    motors.setVelocity(0.5 / MAX_SPEED, -0.5 / MAX_SPEED);
+	    motors.setVelocity(0.5, -0.5);
 	    
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
 	    {	    	
@@ -302,7 +299,7 @@ public abstract class GenericRobot extends Robot
 	public void goBack() { goBack(50); }
 	
 	//Ferma il robot
-	public void stop() { motors.setVelocity(0); }
+	public void stop() { motors.setVelocityMS(0); }
 	
 	private int step() { return step(SharedVariables.TIME_STEP); }
 	public Mappa getMappa() { return mappa; }

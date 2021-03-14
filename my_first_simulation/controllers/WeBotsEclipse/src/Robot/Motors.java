@@ -18,15 +18,27 @@ public class Motors {
 		rightMotor.setPosition(Double.POSITIVE_INFINITY);
 	}
 	
-	public void setVelocity(double velocity)
+	public void setVelocityMS(double velocity)
 	{
 		leftMotor.setVelocity(velocity * MAX_SPEED);
 		rightMotor.setVelocity(velocity * MAX_SPEED);
 	}
 	
-	public void setVelocity(double leftVelocity, double rightVelocity)
+	public void setVelocityMS(double leftVelocity, double rightVelocity)
 	{
 		leftMotor.setVelocity(leftVelocity * MAX_SPEED);
 		rightMotor.setVelocity(rightVelocity * MAX_SPEED);
 	}	
+	
+	public void setVelocity(double velocity)
+	{
+		leftMotor.setVelocity(velocity);
+		rightMotor.setVelocity(velocity);
+	}
+	
+	public void setVelocity(double leftVelocity, double rightVelocity)
+	{
+		leftMotor.setVelocity(leftVelocity);
+		rightMotor.setVelocity(rightVelocity);
+	}
 }
