@@ -75,7 +75,7 @@ public class ControllerExecutor extends Thread
             }
 
             int exitCode = process.waitFor();
-           System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
+            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
       
             reader.close();
             

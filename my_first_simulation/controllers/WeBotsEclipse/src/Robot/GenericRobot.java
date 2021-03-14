@@ -23,7 +23,7 @@ public abstract class GenericRobot extends Robot
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
 	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	private final int FRONTAL_OBSTACLE_TRESHOLD = 95;
+	private final int FRONTAL_OBSTACLE_TRESHOLD = 80;
 	private final int LATERAL_OBSTACLE_TRESHOLD = 100;
 	
 	//Valori di supporto per la direzione del robot
@@ -35,8 +35,8 @@ public abstract class GenericRobot extends Robot
 	//Motori e sensori
 	private Motors motors;
 	private PositionSensor leftMotorSensor, rightMotorSensor;
-	private FrontalSensors frontalSensors;
-	private DistanceSensor leftSensor, rightSensor;
+	protected FrontalSensors frontalSensors;
+	protected DistanceSensor leftSensor, rightSensor;
 	private int maxProx = 0;
 	private boolean leftObstacle, rightObstacle;
 	
@@ -110,8 +110,8 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(1);
 	    
-	    outerLoop: for(int i=0; i < times; ++i) 
-	    {	
+	    outerLoop: for(int i = 0; i < times; ++i) 
+	    {	    	
 	    	for (int j = 0; j < count; ++j)
 	    	{	    		
 	    		checkObstaclesLateral();
@@ -120,28 +120,19 @@ public abstract class GenericRobot extends Robot
 	    		{
 	    			stop();
 	    			obstacle = true;
+	    			//System.out.println(j);
+	    			
+	    			if (j > 35)
+	    				incrementaPosizione();
+	    			
 	    			break outerLoop;
 	    		}
 	    		step();
 	    	}
 	    	
-	    	count = initialValue;
+	    	incrementaPosizione();
 	    	
-	    	switch(direction)
-		    {
-		    case NORD:
-		    	robotPosition.setX(robotPosition.getX() - 1);
-		    	break;
-		    case EST:
-		    	robotPosition.setY(robotPosition.getY() + 1);
-		    	break;
-		    case SUD:
-		    	robotPosition.setX(robotPosition.getX() + 1);
-		    	break;
-		    case OVEST:
-		    	robotPosition.setY(robotPosition.getY() - 1);
-		    	break;
-		    }
+	    	count = initialValue;
 	    }
 	    
 	    stop();
@@ -167,6 +158,7 @@ public abstract class GenericRobot extends Robot
     			step();
     		}
 	    	stop();
+	    	step();
 	    }
 	    
 	    return !obstacle;
@@ -291,12 +283,15 @@ public abstract class GenericRobot extends Robot
 		if (leftVal > LATERAL_OBSTACLE_TRESHOLD)
 		{
 			leftObstacle = true;
-			if(leftVal > maxProx) maxProx = leftVal;
+			
+			if(leftVal > maxProx)
+				maxProx = leftVal;
 		}
 		if (rightVal > LATERAL_OBSTACLE_TRESHOLD)
 		{
 			rightObstacle = true;
-			if(rightVal > maxProx) maxProx = rightVal;
+			if(rightVal > maxProx)
+				maxProx = rightVal;
 		}
 	}
 	
@@ -311,6 +306,25 @@ public abstract class GenericRobot extends Robot
 	
 	private int step() { return step(SharedVariables.TIME_STEP); }
 	public Mappa getMappa() { return mappa; }
+	
+	private void incrementaPosizione()
+	{
+		switch(direction)
+	    {
+	    case NORD:
+	    	robotPosition.setX(robotPosition.getX() - 1);
+	    	break;
+	    case EST:
+	    	robotPosition.setY(robotPosition.getY() + 1);
+	    	break;
+	    case SUD:
+	    	robotPosition.setX(robotPosition.getX() + 1);
+	    	break;
+	    case OVEST:
+	    	robotPosition.setY(robotPosition.getY() - 1);
+	    	break;
+	    }
+	}
 	
 	/*
 	public synchronized int myStep(int time, Thread caller)

@@ -109,8 +109,8 @@ public class AStarSearcher {
 		int y = point.getY();
 		
 		Point north = x - 1 >= 0 && mappa.get(x - 1, y) == 0 ? new Point(x - 1, y) : null;
-		Point south = x + 1 <= mappa.getXSize() && mappa.get(x + 1, y) == 0 ? new Point(x + 1, y) : null;
-		Point east = y + 1 <= mappa.getYSize() && mappa.get(x, y + 1) == 0 ? new Point(x, y + 1) : null;
+		Point south = x + 1 < mappa.getXSize() && mappa.get(x + 1, y) == 0 ? new Point(x + 1, y) : null;
+		Point east = y + 1 < mappa.getYSize() && mappa.get(x, y + 1) == 0 ? new Point(x, y + 1) : null;
 		Point west = y - 1 >= 0 && mappa.get(x, y - 1) == 0 ? new Point(x, y - 1) : null;
 		
 		if (north != null)

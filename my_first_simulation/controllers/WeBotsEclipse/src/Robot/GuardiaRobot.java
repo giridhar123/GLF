@@ -1,7 +1,12 @@
 package Robot;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
+import General.AStarSearcher;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
@@ -11,10 +16,17 @@ import Network.Packets.ClientToServer.CTS_PEER_INFO;
 public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
+	private ArrayList<Point> openSet;
+	private ArrayList<Point> closedSet;
+	private boolean ladroFound;
 
 	public GuardiaRobot(int direction)
 	{
 		super(direction);
+		
+		openSet = new ArrayList<>();
+		closedSet = new ArrayList<>();
+		ladroFound = false;
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 	}
@@ -29,54 +41,236 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		System.out.println("Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getXSize(), mappa.getYSize());
+		
+		for (int i = 0; i < mappa.getXSize(); i++)
+		{
+			for (int j = 0; j < mappa.getYSize(); ++j)
+			{
+				openSet.add(new Point(i, j));
+			}
+		}
 	}
+	
+	
 	
 	public void explore()
 	{
-		if (mappa == null)
+		if (mappa == null || ladroFound)
 			return;
 		
-		boolean qualcosa = true;
-		
+		boolean findObstacles = false;
+		int row, col;
+		row = col = -1;
+	
 		this.robotPosition = new Point(4,4);
-		Random r = new Random();
+		closedSet.add(robotPosition);
 		
-		while (qualcosa)
-		{
-			if (!goStraightOn())
+		for (int j = 0; j < openSet.size(); ++j)
+		{	
+			Point goal = openSet.get(j);
+			
+			if (closedSet.contains(goal))
 			{
-				int row = -1;
-				int col = -1;
+				System.out.println(goal + " già esaminato");
+				continue;
+			}
+			
+			AStarSearcher aStarSearcher = new AStarSearcher(mappa);
+			ArrayList<Point> path = aStarSearcher.getPath(robotPosition, goal);
+			if (path == null)
+			{
+				System.out.println("Non c'è un path per " + goal);
+				mappa.setValue(goal.getX(), goal.getY(), 1);
+				closedSet.add(goal);
+				continue;
+			}
+			
+			System.out.println("C'è un path per " + goal);
+			
+			path.add(0, robotPosition);
+			ArrayList<Integer> correctedPath = convertToDirections(path);
+			for (int i = 0; i < correctedPath.size(); ++i)
+			{			
+				findObstacles = false;
+				int value = correctedPath.get(i);
+				System.out.println("Value: " + value + " Direction: " + direction);
 				
-				switch(direction)
-			    {
-			    case NORD:
-			    	row = robotPosition.getX() - 1;
-			    	col = robotPosition.getY();
-			    	break;
-			    case EST:
-			    	row = robotPosition.getX();
-			    	col = robotPosition.getY() + 1;
-			    	break;
-			    case SUD:
-			    	row = robotPosition.getX() + 1;
-			    	col = robotPosition.getY();
-			    	break;
-			    case OVEST:
-			    	row = robotPosition.getX();
-			    	col = robotPosition.getY() - 1;
-			    	break;
-			    }
-				
-				mappa.setValue(row, col, 1);
-				
-				if (r.nextDouble() < 0.5)
-					turnRight();
-				else
+				while (this.direction != value)
+				{
+					checkLateral();
 					turnLeft();
+				}
 				
+				checkLateral();
+				
+				mappa.setValue(robotPosition.getX(), robotPosition.getY(), 0);
+				goStraightOn();
+				findObstacles = obstaclesInFront();
+				checkLateral();
+			
+				if (findObstacles)
+				{	
+					switch(direction)
+				    {
+				    case NORD:
+				    	row = robotPosition.getX() - 1;
+				    	col = robotPosition.getY();
+				    	break;
+				    case EST:
+				    	row = robotPosition.getX();
+				    	col = robotPosition.getY() + 1;
+				    	break;
+				    case SUD:
+				    	row = robotPosition.getX() + 1;
+				    	col = robotPosition.getY();
+				    	break;
+				    case OVEST:
+				    	row = robotPosition.getX();
+				    	col = robotPosition.getY() - 1;
+				    	break;
+			    	default:
+			    		break;
+				    }
+					
+					mappa.setValue(row, col, 1);
+					
+					aStarSearcher = new AStarSearcher(mappa);
+					path = aStarSearcher.getPath(robotPosition, goal);
+					if (path == null)
+					{
+						System.out.println("Non ho più un path per " + goal);
+						closedSet.add(goal);
+						i = correctedPath.size();
+					}			
+					else
+					{
+						System.out.println("Aggiorno il path per " + goal);
+						path.add(0, robotPosition);
+						correctedPath = convertToDirections(path);
+						i = -1;
+					}
+				}
 				System.out.println(mappa);
 			}
+		}
+		
+		ladroFound = true;
+	}
+	
+	private ArrayList<Integer> convertToDirections(ArrayList<Point> path)
+	{
+		ArrayList<Integer> newPath = new ArrayList<>();
+		
+		Point pos1 = path.get(0);
+		Point pos2;
+		for (int i = 1; i < path.size(); ++i)
+		{
+			pos2 = path.get(i);
+			
+			if (pos2.getX() < pos1.getX())
+				newPath.add(NORD);
+			else if (pos2.getX() > pos1.getX())
+				newPath.add(SUD);
+			else if (pos2.getY() > pos1.getY())
+				newPath.add(EST);
+			else if (pos2.getY() < pos1.getY())
+				newPath.add(OVEST);
+			
+			pos1 = pos2;
+		}
+		
+		return newPath;
+	}
+	
+	private boolean obstaclesInFront()
+	{
+		
+		Point punto = null;
+		switch(direction)
+		{
+		case NORD:
+	    	punto = new Point(robotPosition.getX() - 1, robotPosition.getY());
+	    	break;
+	    case EST:
+	    	punto = new Point(robotPosition.getX(), robotPosition.getY() + 1);
+	    	break;
+	    case SUD:
+	    	punto = new Point(robotPosition.getX() + 1, robotPosition.getY());
+	    	break;
+	    case OVEST:
+	    	punto = new Point(robotPosition.getX(), robotPosition.getY() - 1);
+	    	break;
+		}
+		
+		/*
+		if (mappa.get(punto.getX(), punto.getY()) == 1)
+			return true;
+		else
+		{
+			
+			*/
+			if (frontalSensors.getLeftValue() > 80 && frontalSensors.getRightValue() > 80)
+			{
+				System.out.println("HO visto un coso davanti");
+				mappa.setValue(punto.getX(), punto.getY(), 1);
+				return true;
+			}
+			return false;
+		//}		
+	}
+	
+	private void checkLateral()
+	{
+		int row, col;
+		row = col = -1;
+		
+		if (leftSensor.getValue() > 85)
+		{
+			switch(direction)
+		    {
+		    case NORD:
+		    	row = robotPosition.getX();
+		    	col = robotPosition.getY() - 1;
+		    	break;
+		    case EST:
+		    	row = robotPosition.getX() - 1;
+		    	col = robotPosition.getY();
+		    	break;
+		    case SUD:
+		    	row = robotPosition.getX();
+		    	col = robotPosition.getY() + 1;
+		    	break;
+		    case OVEST:
+		    	row = robotPosition.getX() + 1;
+		    	col = robotPosition.getY();
+		    	break;
+		    }
+			
+			mappa.setValue(row, col, 1);
+		}
+		if (rightSensor.getValue() > 85)
+		{
+			switch(direction)
+		    {
+		    case NORD:
+		    	row = robotPosition.getX();
+		    	col = robotPosition.getY() + 1;
+		    	break;
+		    case EST:
+		    	row = robotPosition.getX() + 1;
+		    	col = robotPosition.getY();
+		    	break;
+		    case SUD:
+		    	row = robotPosition.getX();
+		    	col = robotPosition.getY() - 1;
+		    	break;
+		    case OVEST:
+		    	row = robotPosition.getX() - 1;
+		    	col = robotPosition.getY();
+		    	break;
+		    }
+			
+			mappa.setValue(row, col, 1);
 		}
 	}
 }

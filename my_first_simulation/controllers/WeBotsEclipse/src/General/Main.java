@@ -82,6 +82,10 @@ public class Main
                 Thread.sleep(5);
 
             supervisorController.start();
+            
+            guardiaController.join();
+            ladroController.join();
+            supervisorController.join();
         }
         catch (InterruptedException e)
         {
