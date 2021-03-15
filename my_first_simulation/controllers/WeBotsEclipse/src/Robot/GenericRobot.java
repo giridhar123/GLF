@@ -1,5 +1,7 @@
 package Robot;
 
+import java.util.Random;
+
 import com.cyberbotics.webots.controller.DistanceSensor;
 import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
@@ -89,6 +91,9 @@ public abstract class GenericRobot extends Robot
 	
 	public boolean goStraightOn(int times)
 	{		    
+		if (times == 0)
+			return true;
+		
 	    int initialValue = 50;	   
 	    int Nvolte = (maxProx / 100) + 2;
 	    //System.out.println("Correggo di " + Nvolte);
@@ -139,18 +144,24 @@ public abstract class GenericRobot extends Robot
 	    
 	    if(Math.abs(difference) >= 10)
 	    {
+	    	if (this instanceof GuardiaRobot)
+	    		System.out.println("Difference is: " + difference);
+	    	
 	    	if(difference > 0)
 	    	{
-	    		motors.setVelocity(-0.3, 0.3);
-	    		//System.out.println("Correggo a SX");
+	    		motors.setVelocityMS(-0.3, 0.3);
+	    		
+	    		if (this instanceof GuardiaRobot)
+	    			System.out.println("Correggo a SX");
 	    	}
 	    	else 
 	    	{
-	    		motors.setVelocity(0.3, -0.3);
-	    		//System.out.println("Correggo a DX");
+	    		motors.setVelocityMS(0.3, -0.3);
+	    		if (this instanceof GuardiaRobot)
+	    			System.out.println("Correggo a DX");
 	    	}
 	    	
-	    	for(int i = 0; i < difference/5; ++i)
+	    	for(int i = 0; i < difference/10; ++i)
     		{
     			step();
     		}
@@ -321,6 +332,42 @@ public abstract class GenericRobot extends Robot
 	    	robotPosition.setY(robotPosition.getY() - 1);
 	    	break;
 	    }
+	}
+	
+	public void changeDirectionTo(int direction)
+	{
+		int sig = this.direction - direction;
+		
+		if (sig < 0)
+			sig += 4;
+		
+		switch (sig)
+		{
+			case 1:
+				turnRight();
+				break;
+			case 2:
+				{
+					Random r = new Random();
+					//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
+					if (r.nextInt(2) == 0)
+					{
+						turnLeft();
+						turnLeft();
+					}
+					else
+					{
+						turnRight();
+						turnRight();
+					}
+				}
+				break;
+			case 3:
+				turnLeft();
+				break;
+			default:
+				break;
+		}
 	}
 	
 	/*

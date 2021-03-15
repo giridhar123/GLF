@@ -78,56 +78,24 @@ public class LadroRobot extends GenericRobot implements Client {
 		else
 			System.out.println("Path found");
 		
-		path.add(0, robotPosition);
+		path.add(0, new Point(robotPosition));
 		ArrayList<Integer> convertedPath = convertToDirections(path);
 		
-		Random r = new Random();
 		int value, count;
-		count = 1;
+		count = 0;
 		
 		for (int i = 0; i < convertedPath.size(); ++i)
 		{
 			value = convertedPath.get(i);
-			int sig = this.direction - value;
 			
-			if (sig < 0)
-				sig += 4;
-			
-			if(i > 0 && sig != 0)
+			if (value != this.direction)
 			{
 				goStraightOn(count);
+				changeDirectionTo(value);
 				count = 1;
 			}
-			
-			switch (sig)
-			{
-				case 0:
-					++count;
-					break;
-				case 1:
-					turnRight();
-					break;
-				case 2:
-					{
-						//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
-						if (r.nextInt(2) == 0)
-						{
-							turnLeft();
-							turnLeft();
-						}
-						else
-						{
-							turnRight();
-							turnRight();
-						}
-					}
-					break;
-				case 3:
-					turnLeft();
-					break;
-				default:
-					break;
-			}
+			else
+				++count;
 		}
 		
 		goStraightOn(count);

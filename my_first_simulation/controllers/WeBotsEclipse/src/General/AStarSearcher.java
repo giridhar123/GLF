@@ -48,7 +48,7 @@ public class AStarSearcher {
 				return reconstruct_path(came_from, goal);
 			
          	openset.remove(x);
-         	closedset.add(x);
+         	closedset.add(new Point(x));
          	
          	Set<Point> neighbors = getNeighbors(x);
          	Iterator<Point> iterator = neighbors.iterator();
@@ -64,7 +64,7 @@ public class AStarSearcher {
          		boolean tentative_is_better = false;
          		if (!openset.contains(y))
          		{
-         			openset.add(y);
+         			openset.add(new Point(y));
          			tentative_is_better = true;
          		}
          		else if (tentative_g_score < g_score.get(y))

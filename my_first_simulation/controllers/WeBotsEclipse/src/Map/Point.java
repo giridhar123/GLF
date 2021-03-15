@@ -20,6 +20,9 @@ public class Point {
 	@Override
 	public boolean equals(Object o)
 	{		
+		if (o == null)
+			return false;
+		
 		Point otherPoint = (Point) o;
 		
 		return (this.x == otherPoint.x && this.y == otherPoint.y);
