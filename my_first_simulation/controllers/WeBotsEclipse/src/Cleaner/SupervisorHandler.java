@@ -56,7 +56,7 @@ public class SupervisorHandler extends Thread
                 readResult.get();	                
                 buffer.position(0);
                
-                parse(buffer);
+                parse(sizeToAllocate, buffer);
 			}
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
@@ -67,9 +67,9 @@ public class SupervisorHandler extends Thread
 		}
 	}
 	
-	private void parse(ByteBuffer buf)
+	private void parse(int sizeToAllocate, ByteBuffer buf)
 	{
-		Packet packet = new Packet(buf);
+		Packet packet = new Packet(sizeToAllocate, buf);
 		
 		switch (packet.getOpcode())
 		{

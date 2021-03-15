@@ -12,6 +12,7 @@ import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
 
 public class GuardiaRobot extends GenericRobot implements Client {
 	
@@ -83,6 +84,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			{
 				//System.out.println("Non c'è un path per " + goal);
 				mappa.setValue(goal.getX(), goal.getY(), 1);
+				clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
 				closedSet.add(new Point(goal));
 				continue;
 			}
@@ -99,7 +101,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				changeDirectionTo(value);
 				checkLateral();
 				
-				mappa.setValue(robotPosition.getX(), robotPosition.getY(), 0);
 				goStraightOn();
 				closedSet.add(new Point(robotPosition));
 				checkLateral();
@@ -129,6 +130,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				    }
 					
 					mappa.setValue(row, col, 1);
+					clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
 					
 					//Cerco un nuovo path per lo stesso punto
 					aStarSearcher = new AStarSearcher(mappa);
@@ -137,6 +139,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					{
 						//System.out.println("Non ho più un path per " + goal);
 						mappa.setValue(goal.getX(), goal.getY(), 1);
+						clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
 						closedSet.add(new Point(goal));
 						i = correctedPath.size();
 					}			
@@ -209,8 +212,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			*/
 			if (frontalSensors.getLeftValue() > 80 && frontalSensors.getRightValue() > 80)
 			{
-				System.out.println("HO visto un coso davanti");
+				//System.out.println("HO visto un coso davanti");
 				mappa.setValue(punto.getX(), punto.getY(), 1);
+				clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto));
 				return true;
 			}
 			return false;
@@ -245,6 +249,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		    }
 			
 			mappa.setValue(row, col, 1);
+			clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(row, col));
 		}
 		if (rightSensor.getValue() > 85)
 		{
@@ -269,6 +274,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		    }
 			
 			mappa.setValue(row, col, 1);
+			clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(row, col));
 		}
 	}
 }

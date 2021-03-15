@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ServerConnectionHandler extends Thread {
@@ -41,7 +42,7 @@ public class ServerConnectionHandler extends Thread {
 	                readResult.get();	                
 	                buffer.position(0);
 	               
-	                parse(buffer);
+	                parse(sizeToAllocate, buffer);
 	                
 	                /*
 	                Future<Integer> writeResult = clientChannel.write(buffer);
@@ -60,9 +61,9 @@ public class ServerConnectionHandler extends Thread {
 		}
 	}
 	
-	private void parse(ByteBuffer buf)
+	private void parse(int sizeToAllocate, ByteBuffer buf)
 	{
-		Packet packet = new Packet(buf);
+		Packet packet = new Packet(sizeToAllocate, buf);
 		
 		switch (packet.getOpcode())
 		{
@@ -99,6 +100,22 @@ public class ServerConnectionHandler extends Thread {
 				for (int i = 0; i < clients.size(); ++i)
 				{
 					clients.get(i).write(buffer);
+					buffer.position(0);
+				}
+			}
+			break;
+			case Packet.CTS_UPDATE_MAP_POINT:
+			{
+				CTS_UPDATE_MAP_POINT cts_update_map_point = new CTS_UPDATE_MAP_POINT(packet, buf);
+				
+				System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+				
+				ByteBuffer buffer = cts_update_map_point.encode();
+				
+				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+				for (int i = 0; i < guardie.size(); ++i)
+				{
+					guardie.get(i).write(buffer);
 					buffer.position(0);
 				}
 			}
