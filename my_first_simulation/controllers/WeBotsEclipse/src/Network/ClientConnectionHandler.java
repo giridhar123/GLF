@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
@@ -93,6 +94,12 @@ public class ClientConnectionHandler extends Thread{
 	public void sendPacket(Packet packet)
 	{
 		ByteBuffer buf = packet.encode();
-		channel.write(buf);
+		Future<Integer> abc = channel.write(buf);
+		try {
+			abc.get();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

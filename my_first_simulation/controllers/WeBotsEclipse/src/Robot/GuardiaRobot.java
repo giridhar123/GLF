@@ -122,7 +122,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			    		break;
 				    }
 					
-					updateMapAndSendPacket(goal);
+					updateMapAndSendPacket(new Point(row, col));
 					
 					//Cerco un nuovo path per lo stesso punto
 					aStarSearcher = new AStarSearcher(mappa);
@@ -226,7 +226,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private void updateMapAndSendPacket(Point punto)
 	{
+		if(mappa.get(punto.getX(), punto.getY()) == 1) return;
+		
+		//System.out.println("1");
 		mappa.setValue(punto.getX(), punto.getY(), 1);
+		//System.out.println("2 : " + punto.getX() + " " + punto.getY());
 		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto.getX(), punto.getY()));
+		//System.out.println("3");
 	}
 }

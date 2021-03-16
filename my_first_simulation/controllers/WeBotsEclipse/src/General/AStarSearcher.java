@@ -48,7 +48,7 @@ public class AStarSearcher {
 			if (x.equals(goal))
 			{
 				ArrayList<Point> path = reconstruct_path(came_from, goal);
-				path.add(0, start);
+				path.add(0, new Point (start));
 				return path;
 			}
 			

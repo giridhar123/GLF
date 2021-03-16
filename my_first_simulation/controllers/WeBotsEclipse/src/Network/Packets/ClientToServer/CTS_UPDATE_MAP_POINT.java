@@ -11,7 +11,7 @@ public class CTS_UPDATE_MAP_POINT extends Packet
 	
     public CTS_UPDATE_MAP_POINT(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	System.out.println("AAA: " + getSize());
+    	//System.out.println("ZZZ: " + getSize());
     	this.x = buf.getInt();
     	this.y = buf.getInt();
     }

@@ -4,9 +4,7 @@ import java.nio.ByteBuffer;
 import Network.Packet;
 
 public class CTS_PEER_INFO extends Packet 
-{
-	private static final int size = 1;
-	
+{	
     private byte type;
     
     public static final byte GUARDIA = 1;
@@ -19,7 +17,7 @@ public class CTS_PEER_INFO extends Packet
     }
 
     public CTS_PEER_INFO(byte type) {
-        super(size, Packet.CTS_PEER_INFO);
+        super(1, Packet.CTS_PEER_INFO);
         this.type = type;
     }
 
