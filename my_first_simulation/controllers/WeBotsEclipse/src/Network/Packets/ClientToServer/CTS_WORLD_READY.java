@@ -4,16 +4,14 @@ import java.nio.ByteBuffer;
 
 import Network.Packet;
 
-public class CTS_WORLD_READY extends Packet {
-	
-	private static final int size = 0;
-	
+public class CTS_WORLD_READY extends Packet
+{
 	public CTS_WORLD_READY(Packet packet, ByteBuffer buf) {
     	super(packet);
     }
 
     public CTS_WORLD_READY() {
-        super(size, Packet.CTS_WORLD_READY);
+        super(0, Packet.CTS_WORLD_READY);
     }
     
     @Override

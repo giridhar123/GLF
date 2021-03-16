@@ -87,20 +87,21 @@ public class ServerConnectionHandler extends Thread {
 			case Packet.CTS_WORLD_READY:
 			{
 				STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
-				ByteBuffer buffer = stc_send_map.encode();
+				
+				ByteBuffer buffer = null;
 				
 				ArrayList<AsynchronousSocketChannel> clients = server.getLadri();
 				for (int i = 0; i < clients.size(); ++i)
 				{
+					buffer = stc_send_map.encode();
 					clients.get(i).write(buffer);
-					buffer.position(0);
 				}
 				
 				clients = server.getGuardie();
 				for (int i = 0; i < clients.size(); ++i)
 				{
+					buffer = stc_send_map.encode();
 					clients.get(i).write(buffer);
-					buffer.position(0);
 				}
 			}
 			break;
@@ -110,13 +111,13 @@ public class ServerConnectionHandler extends Thread {
 				
 				System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
 				
-				ByteBuffer buffer = cts_update_map_point.encode();
+				ByteBuffer buffer = null;
 				
 				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
 				for (int i = 0; i < guardie.size(); ++i)
 				{
+					buffer = cts_update_map_point.encode();
 					guardie.get(i).write(buffer);
-					buffer.position(0);
 				}
 			}
 			break;
