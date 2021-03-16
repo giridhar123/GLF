@@ -1,6 +1,10 @@
 package Robot;
 
 import java.util.ArrayList;
+
+import com.cyberbotics.webots.controller.Camera;
+import com.cyberbotics.webots.controller.CameraRecognitionObject;
+
 import General.AStarSearcher;
 import Map.Mappa;
 import Map.Point;
@@ -65,6 +69,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		for (int j = 0; j < openSet.size(); ++j)
 		{	
+			CameraCheck();
 			goal = openSet.get(j);
 			
 			if (closedSet.contains(goal))
@@ -88,6 +93,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
+				CameraCheck();
+
 				int value = correctedPath.get(i);
 				
 				checkLateral();
@@ -234,4 +241,24 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto.getX(), punto.getY()));
 		//System.out.println("3");
 	}
+
+	private void CameraCheck()
+	{
+		Camera camera = new Camera("camera");    
+        camera.enable(150);
+        camera.recognitionEnable(150);
+        CameraRecognitionObject[] CCC = camera.getCameraRecognitionObjects();
+        CCC = camera.getCameraRecognitionObjects();
+
+        System.out.println("Ho trovato " + camera.getRecognitionNumberOfObjects() + " oggetti ");
+        if(camera.getRecognitionNumberOfObjects()  != 0)
+        {
+           System.out.println(CCC[0].getModel());  // 154 è la soda 
+          // System.out.println(CCC[1].getId());  // 164 è la mela
+        }
+          
+
+		
+	}
+
 }
