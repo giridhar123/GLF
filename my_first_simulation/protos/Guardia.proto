@@ -851,7 +851,7 @@ Robot {
             baseColor 0.8 0.8 0.8
             roughness 0.2
             metalness 0.5
-            emissiveIntensity 700
+            emissiveIntensity 100
           }
           geometry DEF EPUCK_LED_GEOMETRY Box {
             size 0.004 0.003 0.003

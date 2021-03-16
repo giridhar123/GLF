@@ -255,8 +255,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
         System.out.println("Ho trovato " + camera.getRecognitionNumberOfObjects() + " oggetti ");
         if(camera.getRecognitionNumberOfObjects()  != 0)
         {
-           System.out.println(CCC[0].getModel());  // 154 è la soda 
-          // System.out.println(CCC[1].getId());  // 164 è la mela
+           System.out.println(CCC[0].getModel());  // 154 ï¿½ la soda 
+          // System.out.println(CCC[1].getId());  // 164 ï¿½ la mela
         }
 	}
 	
@@ -267,7 +267,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
         LED led2 = getLED("led_2"); //blu
         
         
-        if(led1.get()==0) // se rosso è spento
+        if(led1.get()==0) // se rosso ï¿½ spento
         {
         	led1.set(255);
         	led2.set(0); // accendi rosso
