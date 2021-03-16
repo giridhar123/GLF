@@ -78,8 +78,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		else
 			System.out.println("Path found");
 		
-		path.add(0, new Point(robotPosition));
-		ArrayList<Integer> convertedPath = convertToDirections(path);
+		ArrayList<Integer> convertedPath = AStarSearcher.pathToRobotDirections(path);
 		
 		int value, count;
 		count = 0;
@@ -101,31 +100,6 @@ public class LadroRobot extends GenericRobot implements Client {
 		goStraightOn(count);
 		
 		return true;
-	}
-	
-	private ArrayList<Integer> convertToDirections(ArrayList<Point> path)
-	{
-		ArrayList<Integer> newPath = new ArrayList<>();
-		
-		Point pos1 = path.get(0);
-		Point pos2;
-		for (int i = 1; i < path.size(); ++i)
-		{
-			pos2 = path.get(i);
-			
-			if (pos2.getX() < pos1.getX())
-				newPath.add(NORD);
-			else if (pos2.getX() > pos1.getX())
-				newPath.add(SUD);
-			else if (pos2.getY() > pos1.getY())
-				newPath.add(EST);
-			else if (pos2.getY() < pos1.getY())
-				newPath.add(OVEST);
-			
-			pos1 = pos2;
-		}
-		
-		return newPath;
 	}
 	
 	private ArrayList<Point> potentialShelters(Mappa mappa)

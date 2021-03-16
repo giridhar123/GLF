@@ -1,11 +1,6 @@
 package Robot;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
-
 import General.AStarSearcher;
 import Map.Mappa;
 import Map.Point;
@@ -40,7 +35,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa)
 	{
-		System.out.println("Mappa ricevuta");
+		//System.out.println("Guardia: Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getXSize(), mappa.getYSize());
 		
 		for (int i = 0; i < mappa.getXSize(); i++)
@@ -83,16 +78,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			if (path == null)
 			{
 				//System.out.println("Non c'è un path per " + goal);
-				mappa.setValue(goal.getX(), goal.getY(), 1);
-				clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
+				updateMapAndSendPacket(goal);
 				closedSet.add(new Point(goal));
 				continue;
 			}
 			
 			//System.out.println("C'è un path per " + goal);
 			
-			path.add(0, new Point(robotPosition));
-			correctedPath = convertToDirections(path);
+			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
 				int value = correctedPath.get(i);
@@ -129,8 +122,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			    		break;
 				    }
 					
-					mappa.setValue(row, col, 1);
-					clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
+					updateMapAndSendPacket(goal);
 					
 					//Cerco un nuovo path per lo stesso punto
 					aStarSearcher = new AStarSearcher(mappa);
@@ -138,16 +130,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					if (path == null)
 					{
 						//System.out.println("Non ho più un path per " + goal);
-						mappa.setValue(goal.getX(), goal.getY(), 1);
-						clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(goal));
+						updateMapAndSendPacket(goal);
 						closedSet.add(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
 					{
 						//System.out.println("Aggiorno il path per " + goal);
-						path.add(0, new Point(robotPosition));
-						correctedPath = convertToDirections(path);
+						correctedPath = AStarSearcher.pathToRobotDirections(path);
 						i = -1;
 					}
 				}
@@ -158,33 +148,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		ladroFound = true;
 	}
 	
-	private ArrayList<Integer> convertToDirections(ArrayList<Point> path)
-	{
-		ArrayList<Integer> newPath = new ArrayList<>();
-		
-		Point pos1 = path.get(0);
-		Point pos2;
-		for (int i = 1; i < path.size(); ++i)
-		{
-			pos2 = path.get(i);
-			
-			if (pos2.getX() < pos1.getX())
-				newPath.add(NORD);
-			else if (pos2.getX() > pos1.getX())
-				newPath.add(SUD);
-			else if (pos2.getY() > pos1.getY())
-				newPath.add(EST);
-			else if (pos2.getY() < pos1.getY())
-				newPath.add(OVEST);
-			
-			pos1 = pos2;
-		}
-		
-		return newPath;
-	}
-	
 	private boolean obstaclesInFront()
-	{
+	{			
+		if (frontalSensors.getLeftValue() < 80 && frontalSensors.getRightValue() < 80)
+			return false;
 		
 		Point punto = null;
 		switch(direction)
@@ -203,78 +170,63 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	    	break;
 		}
 		
-		/*
-		if (mappa.get(punto.getX(), punto.getY()) == 1)
-			return true;
-		else
-		{
-			
-			*/
-			if (frontalSensors.getLeftValue() > 80 && frontalSensors.getRightValue() > 80)
-			{
-				//System.out.println("HO visto un coso davanti");
-				mappa.setValue(punto.getX(), punto.getY(), 1);
-				clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto));
-				return true;
-			}
-			return false;
-		//}		
+		//System.out.println("HO visto un coso davanti");
+		updateMapAndSendPacket(punto);
+		
+		return true;
 	}
 	
 	private void checkLateral()
 	{
-		int row, col;
-		row = col = -1;
+		int x = robotPosition.getX();
+		int y = robotPosition.getY();
+		Point punto = null;
 		
 		if (leftSensor.getValue() > 85)
 		{
 			switch(direction)
 		    {
 		    case NORD:
-		    	row = robotPosition.getX();
-		    	col = robotPosition.getY() - 1;
+		    	punto = new Point(x, y - 1);
 		    	break;
 		    case EST:
-		    	row = robotPosition.getX() - 1;
-		    	col = robotPosition.getY();
+		    	punto = new Point(x - 1, y);
 		    	break;
 		    case SUD:
-		    	row = robotPosition.getX();
-		    	col = robotPosition.getY() + 1;
+		    	punto = new Point(x, y + 1);
 		    	break;
 		    case OVEST:
-		    	row = robotPosition.getX() + 1;
-		    	col = robotPosition.getY();
+		    	punto = new Point(x + 1, y);
 		    	break;
 		    }
 			
-			mappa.setValue(row, col, 1);
-			clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(row, col));
+			updateMapAndSendPacket(punto);
 		}
 		if (rightSensor.getValue() > 85)
 		{
 			switch(direction)
 		    {
 		    case NORD:
-		    	row = robotPosition.getX();
-		    	col = robotPosition.getY() + 1;
+		    	punto = new Point(x, y + 1);
 		    	break;
 		    case EST:
-		    	row = robotPosition.getX() + 1;
-		    	col = robotPosition.getY();
+		    	punto = new Point(x + 1, y);
 		    	break;
 		    case SUD:
-		    	row = robotPosition.getX();
-		    	col = robotPosition.getY() - 1;
+		    	punto = new Point(x, y - 1);
 		    	break;
 		    case OVEST:
-		    	row = robotPosition.getX() - 1;
-		    	col = robotPosition.getY();
+		    	punto = new Point(x - 1, y);
 		    	break;
 		    }
 			
-			mappa.setValue(row, col, 1);
-			clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(row, col));
+			updateMapAndSendPacket(punto);
 		}
+	}
+	
+	private void updateMapAndSendPacket(Point punto)
+	{
+		mappa.setValue(punto.getX(), punto.getY(), 1);
+		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto.getX(), punto.getY()));
 	}
 }

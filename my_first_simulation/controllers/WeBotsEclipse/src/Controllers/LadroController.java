@@ -1,9 +1,6 @@
 package Controllers;
 
-import java.util.ArrayList;
-
 import General.SharedVariables;
-import Map.Point;
 import Robot.GenericRobot;
 import Robot.LadroRobot;
 
@@ -24,7 +21,5 @@ public class LadroController
         	robot.hide();
         }
     }
-    
-    
 }
  

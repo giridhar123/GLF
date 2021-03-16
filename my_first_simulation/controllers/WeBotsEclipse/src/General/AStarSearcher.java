@@ -9,6 +9,7 @@ import java.util.Set;
 
 import Map.Mappa;
 import Map.Point;
+import Robot.GenericRobot;
 
 public class AStarSearcher {
 	
@@ -45,7 +46,11 @@ public class AStarSearcher {
 			Point x = getHelp(openset, f_score); 		//The node in openset having the lowest f_score[] value
 						
 			if (x.equals(goal))
-				return reconstruct_path(came_from, goal);
+			{
+				ArrayList<Point> path = reconstruct_path(came_from, goal);
+				path.add(0, start);
+				return path;
+			}
 			
          	openset.remove(x);
          	closedset.add(new Point(x));
@@ -146,5 +151,30 @@ public class AStarSearcher {
 		yDiff = Math.pow(yDiff, 2);
 		
 		return (float) (Math.sqrt(xDiff + yDiff));
+	}
+	
+	public static ArrayList<Integer> pathToRobotDirections(ArrayList<Point> path)
+	{
+		ArrayList<Integer> newPath = new ArrayList<>();
+		
+		Point pos1 = path.get(0);
+		Point pos2;
+		for (int i = 1; i < path.size(); ++i)
+		{
+			pos2 = path.get(i);
+			
+			if (pos2.getX() < pos1.getX())
+				newPath.add(GenericRobot.NORD);
+			else if (pos2.getX() > pos1.getX())
+				newPath.add(GenericRobot.SUD);
+			else if (pos2.getY() > pos1.getY())
+				newPath.add(GenericRobot.EST);
+			else if (pos2.getY() < pos1.getY())
+				newPath.add(GenericRobot.OVEST);
+			
+			pos1 = pos2;
+		}
+		
+		return newPath;
 	}
 }

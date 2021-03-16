@@ -157,14 +157,14 @@ public abstract class GenericRobot extends Robot
 	    	else 
 	    	{
 	    		motors.setVelocityMS(0.3, -0.3);
+	    		
 	    		if (this instanceof GuardiaRobot)
 	    			System.out.println("Correggo a DX");
 	    	}
 	    	
 	    	for(int i = 0; i < difference/10; ++i)
-    		{
     			step();
-    		}
+
 	    	stop();
 	    	step();
 	    }
@@ -343,30 +343,30 @@ public abstract class GenericRobot extends Robot
 		
 		switch (sig)
 		{
-			case 1:
-				turnRight();
-				break;
-			case 2:
+		case 1:
+			turnRight();
+			break;
+		case 2:
+			{
+				Random r = new Random();
+				//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
+				if (r.nextInt(2) == 0)
 				{
-					Random r = new Random();
-					//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
-					if (r.nextInt(2) == 0)
-					{
-						turnLeft();
-						turnLeft();
-					}
-					else
-					{
-						turnRight();
-						turnRight();
-					}
+					turnLeft();
+					turnLeft();
 				}
-				break;
-			case 3:
-				turnLeft();
-				break;
-			default:
-				break;
+				else
+				{
+					turnRight();
+					turnRight();
+				}
+			}
+			break;
+		case 3:
+			turnLeft();
+			break;
+		default:
+			break;
 		}
 	}
 	
