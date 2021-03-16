@@ -90,7 +90,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				continue;
 			}
 			
-			//System.out.println("C'è un path per " + goal);
+			System.out.println("C'è un path per " + goal);
 			
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
@@ -108,7 +108,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				checkLateral();
 			
 				if (obstaclesInFront())
-				{	
+				{						
 					switch(direction)
 				    {
 				    case NORD:
@@ -150,7 +150,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 						i = -1;
 					}
 				}
-				//System.out.println(mappa);
+				System.out.println(mappa);
 			}
 		}
 		
@@ -159,7 +159,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private boolean obstaclesInFront()
 	{			
-		if (frontalSensors.getLeftValue() < 80 && frontalSensors.getRightValue() < 80)
+		if (frontalSensors.getLeftValue() < FRONTAL_OBSTACLE_TRESHOLD && frontalSensors.getRightValue() < FRONTAL_OBSTACLE_TRESHOLD)
 			return false;
 		
 		Point punto = null;
@@ -250,17 +250,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
         camera.enable(150);
         camera.recognitionEnable(150);
         CameraRecognitionObject[] CCC = camera.getCameraRecognitionObjects();
-        CCC = camera.getCameraRecognitionObjects();
         
-        int ObjCounter = 0 ;
-       ObjCounter = camera.getRecognitionNumberOfObjects() ;
-        while( ObjCounter > 0)
+        for (int i = 0; i < camera.getRecognitionNumberOfObjects(); ++i)
         {
-          //System.out.println(CCC[ObjCounter-1].getModel());  // Wooden box oppure Ladro
-          ObjCounter--;
-
-        }
-        
+        	System.out.println(CCC[i].getModel());  // Wooden box oppure Ladro
+        }   
 	}
 	
 	private void SirenOn()
@@ -269,8 +263,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
         LED led1 = getLED("led_1"); //rosso
         LED led2 = getLED("led_2"); //blu
         
-        
-        if(led1.get()==0) // se rosso � spento
+        if(led1.get() == 0) // se rosso è spento
         {
         	led1.set(255);
         	led2.set(0); // accendi rosso

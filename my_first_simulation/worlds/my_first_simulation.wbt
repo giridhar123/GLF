@@ -1,11 +1,11 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2021a utf8
 WorldInfo {
   basicTimeStep 16
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
-  orientation -0.11915275019396916 0.9901656154895947 0.0733121819571995 1.0223452752645688
-  position 1.0622390455922395 0.39948326401784817 0.6859556609275048
+  orientation 0.0031750109925861992 0.7361536265180272 0.6768070311909841 3.1395013039730117
+  position -0.6959229450822612 3.9225156063532856 -0.5202387536497829
 }
 TexturedBackground {
 }
@@ -21,11 +21,12 @@ DEF Guardia Guardia {
   translation 0.1 0 0.1
   name "guardia"
   controller "<extern>"
+  distance_sensor_numberOfRays 5
 }
 DEF Ladro Ladro {
   translation 0 0 0.1
-  name "Ladro"
   controller "<extern>"
+  distance_sensor_numberOfRays 5
 }
 DEF supervisor E-puck {
   translation 0.000724763 -0.148281 7.62636e-07

@@ -22,7 +22,7 @@ public abstract class GenericRobot extends Robot
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
 	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	private final int FRONTAL_OBSTACLE_TRESHOLD = 80;
+	protected final int FRONTAL_OBSTACLE_TRESHOLD = 80;
 	private final int LATERAL_OBSTACLE_TRESHOLD = 100;
 	
 	//Valori di supporto per la direzione del robot
@@ -56,6 +56,8 @@ public abstract class GenericRobot extends Robot
 	//Flag per la gestione tra thread
 	//private boolean stepFlag;
 	
+	private double goalTheta;
+	
 	public GenericRobot(int direction)
 	{
 		super();
@@ -66,6 +68,7 @@ public abstract class GenericRobot extends Robot
 		
 		pose = new double[3];
 		pose[0] = pose[1] = pose[2] = 0;
+		goalTheta = 0;
 		
 		motors = new Motors(this, "left wheel motor", "right wheel motor");
 		stop();
@@ -142,28 +145,36 @@ public abstract class GenericRobot extends Robot
 	    
 	    double difference = frontalSensors.getLeftValue() - frontalSensors.getRightValue();
 	    
-	    if(Math.abs(difference) >= 10)
+	    if (obstacle)
+	    {
+			goBack(2);
+	    }
+	    
+	    if(Math.abs(difference) >= 8)
 	    {
 	    	if (this instanceof GuardiaRobot)
 	    		System.out.println("Difference is: " + difference);
 	    	
 	    	if(difference > 0)
 	    	{
-	    		motors.setVelocityMS(-0.3, 0.3);
+	    		motors.setVelocity(-0.30, 0.30);
 	    		
 	    		if (this instanceof GuardiaRobot)
 	    			System.out.println("Correggo a SX");
 	    	}
 	    	else 
 	    	{
-	    		motors.setVelocityMS(0.3, -0.3);
+	    		difference *= -1;
+	    		motors.setVelocity(0.30, -0.30);
 	    		
 	    		if (this instanceof GuardiaRobot)
 	    			System.out.println("Correggo a DX");
 	    	}
 	    	
-	    	for(int i = 0; i < difference/10; ++i)
+	    	for(int i = 0; i < (difference / 2); ++i)
+	    	{
     			step();
+	    	}
 
 	    	stop();
 	    	step();
@@ -189,8 +200,13 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = (pose[2] + PI/2.00) % PI2;
+	    goalTheta = (goalTheta + PI/2.00) % PI2;
 
+	    /*
+	    if (this instanceof GuardiaRobot)
+	    	System.out.println("GoalTheta is: " + goalTheta);
+	    */
+	    
 	    motors.setVelocity(-0.5, 0.5);
         
 	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
@@ -219,7 +235,7 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = (pose[2] + PI/2.00) % PI2;
+	    goalTheta = (goalTheta + PI/2.00) % PI2;
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
@@ -270,6 +286,11 @@ public abstract class GenericRobot extends Robot
 	    	pose[2] += (values[1] - values[0])/AXLE_LENGTH; // orientation
 	    
 	    pose[2] = pose[2] % PI2;
+	    
+	    /*
+	    if (this instanceof GuardiaRobot)
+	    	System.out.println(pose[2] * 360 / PI2);
+	    	*/
 	}
 	
 	private double[] getWheelDisplacements(double del_enLeftW, double del_enRightW)
@@ -360,6 +381,7 @@ public abstract class GenericRobot extends Robot
 					turnRight();
 					turnRight();
 				}
+				motorAdjustment = NOTHING;
 			}
 			break;
 		case 3:
