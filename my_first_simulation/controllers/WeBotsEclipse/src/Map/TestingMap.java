@@ -24,7 +24,7 @@ public class TestingMap {
 			{
 				case "facile" :
 				{
-				NumeroCubi = 100; 
+				NumeroCubi = 55; 
 				break;
 				}
 				case "normale" :

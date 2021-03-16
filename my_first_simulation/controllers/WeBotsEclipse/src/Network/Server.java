@@ -32,12 +32,12 @@ public class Server extends Thread {
 
 	public void run() {
 		// Creazione dell'oggetto che mi genera la mappa
-		int DimMapX = 40; // Dimensione Matrice in x
-		int DimMapY = 40; // Dimensione Matrice in y
+		int DimMapX = 20; // Dimensione Matrice in x
+		int DimMapY = 20; // Dimensione Matrice in y
 		double WeBotsTile = 6.95; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
 
-		mappa = new Mappa("meow", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
+		mappa = new Mappa("facile", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
 
 		while (true) {
 			try {

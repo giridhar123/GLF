@@ -251,13 +251,16 @@ public class GuardiaRobot extends GenericRobot implements Client {
         camera.recognitionEnable(150);
         CameraRecognitionObject[] CCC = camera.getCameraRecognitionObjects();
         CCC = camera.getCameraRecognitionObjects();
-
-        System.out.println("Ho trovato " + camera.getRecognitionNumberOfObjects() + " oggetti ");
-        if(camera.getRecognitionNumberOfObjects()  != 0)
+        
+        int ObjCounter = 0 ;
+       ObjCounter = camera.getRecognitionNumberOfObjects() ;
+        while( ObjCounter > 0)
         {
-           System.out.println(CCC[0].getModel());  // 154 � la soda 
-          // System.out.println(CCC[1].getId());  // 164 � la mela
+          //System.out.println(CCC[ObjCounter-1].getModel());  // Wooden box oppure Ladro
+          ObjCounter--;
+
         }
+        
 	}
 	
 	private void SirenOn()
