@@ -8,13 +8,14 @@ PROTO Proto1 [
   field SFVec3f    translation         0 0.3 0
   field SFRotation rotation            0 1 0 0
   field SFString   name                "wooden box"
-  field SFVec3f    size                0.6 0.6 0.6  # Defines the size of the wooden box.
+  field SFVec3f    size                0.099 0.099 0.099  # Defines the size of the wooden box.
   field SFFloat    mass                0            # Defines the mass of the wooden box in kg. A value smaller or equal to 0 remove the physics of the wooden box.
   field MFNode     immersionProperties []           # Is `Solid.immersionProperties`.
   field SFBool     locked              FALSE        # Is `Solid.locked`.
 ]
 {
 Solid {
+    recognitionColors [ 0.59 0.75 0.28 ]
   %{
     local size = fields.size.value
     local volume = size.x * size.y * size.z
