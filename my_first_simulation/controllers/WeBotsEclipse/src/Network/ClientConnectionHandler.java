@@ -26,7 +26,7 @@ public class ClientConnectionHandler extends Thread{
 				
 		try {
 			channel = AsynchronousSocketChannel.open();
-			hostAddress = new InetSocketAddress("localhost", SharedVariables.TCP_PORT);
+			hostAddress = new InetSocketAddress("localhost", SharedVariables.getTcpServerPort());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

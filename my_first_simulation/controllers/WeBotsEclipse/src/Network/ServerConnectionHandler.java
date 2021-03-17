@@ -36,13 +36,12 @@ public class ServerConnectionHandler extends Thread {
 		        {
 	                buffer = ByteBuffer.allocate(4);
 	                readResult = clientChannel.read(buffer);
-	                System.out.println("A: Server: " + readResult.get());
+	                readResult.get();
 	                buffer.position(0);
 	                int packetSize = buffer.getInt();
-	                System.out.println("Size to allocate ios: " + packetSize);
 	                buffer = ByteBuffer.allocate(packetSize - 4);
 	                readResult = clientChannel.read(buffer);
-	                System.out.println("B: Server: " + readResult.get());
+	                readResult.get();
 	                buffer.position(0);
 	               
 	                parse(packetSize, buffer);

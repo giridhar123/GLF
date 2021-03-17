@@ -76,7 +76,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 			if (closedSet.contains(goal))
 			{
-				//System.out.println(goal + " già esaminato");
+				System.out.println(goal + " già esaminato");
 				continue;
 			}
 			
@@ -84,7 +84,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			path = aStarSearcher.getPath(robotPosition, goal);
 			if (path == null)
 			{
-				//System.out.println("Non c'è un path per " + goal);
+				System.out.println("Non c'è un path per " + goal);
 				updateMapAndSendPacket(goal);
 				closedSet.add(new Point(goal));
 				continue;
@@ -103,49 +103,27 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				changeDirectionTo(value);
 				checkLateral();
 				
-				goStraightOn();
+				boolean obstaclesInFront = !goStraightOn();
 				closedSet.add(new Point(robotPosition));
 				checkLateral();
 			
-				if (obstaclesInFront())
-				{						
-					switch(direction)
-				    {
-				    case NORD:
-				    	row = robotPosition.getX() - 1;
-				    	col = robotPosition.getY();
-				    	break;
-				    case EST:
-				    	row = robotPosition.getX();
-				    	col = robotPosition.getY() + 1;
-				    	break;
-				    case SUD:
-				    	row = robotPosition.getX() + 1;
-				    	col = robotPosition.getY();
-				    	break;
-				    case OVEST:
-				    	row = robotPosition.getX();
-				    	col = robotPosition.getY() - 1;
-				    	break;
-			    	default:
-			    		break;
-				    }
-					
-					updateMapAndSendPacket(new Point(row, col));
+				if (obstaclesInFront)
+				{		
+					obstaclesInFront();
 					
 					//Cerco un nuovo path per lo stesso punto
 					aStarSearcher = new AStarSearcher(mappa);
 					path = aStarSearcher.getPath(robotPosition, goal);
 					if (path == null)
 					{
-						//System.out.println("Non ho più un path per " + goal);
+						System.out.println("Non ho più un path per " + goal);
 						updateMapAndSendPacket(goal);
 						closedSet.add(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
 					{
-						//System.out.println("Aggiorno il path per " + goal);
+						System.out.println("Aggiorno il path per " + goal);
 						correctedPath = AStarSearcher.pathToRobotDirections(path);
 						i = -1;
 					}
@@ -157,10 +135,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		ladroFound = true;
 	}
 	
-	private boolean obstaclesInFront()
-	{			
+	private void obstaclesInFront()
+	{	
+		/*		
 		if (frontalSensors.getLeftValue() < FRONTAL_OBSTACLE_TRESHOLD && frontalSensors.getRightValue() < FRONTAL_OBSTACLE_TRESHOLD)
 			return false;
+		*/
 		
 		Point punto = null;
 		switch(direction)
@@ -181,8 +161,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		//System.out.println("HO visto un coso davanti");
 		updateMapAndSendPacket(punto);
-		
-		return true;
 	}
 	
 	private void checkLateral()
@@ -235,7 +213,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private void updateMapAndSendPacket(Point punto)
 	{
-		if(mappa.get(punto.getX(), punto.getY()) == 1) return;
+		if(mappa.get(punto.getX(), punto.getY()) == 1)
+			return;
 		
 		//System.out.println("1");
 		mappa.setValue(punto.getX(), punto.getY(), 1);

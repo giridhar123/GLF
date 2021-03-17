@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import General.SharedVariables;
 import Map.Mappa;
 
 public class Server extends Thread {
-	private final int TCP_PORT = 6868;
 	private Mappa mappa;
 	AsynchronousServerSocketChannel server;
 
@@ -24,7 +24,7 @@ public class Server extends Thread {
 		ladri = new ArrayList<>();
 		try {
 			server = AsynchronousServerSocketChannel.open();
-			server.bind(new InetSocketAddress("127.0.0.1", TCP_PORT));
+			server.bind(new InetSocketAddress("127.0.0.1", SharedVariables.getTcpServerPort()));
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}

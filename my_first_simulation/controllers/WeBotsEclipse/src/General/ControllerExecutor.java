@@ -10,16 +10,12 @@ public class ControllerExecutor extends Thread
 {
     private String controllerName;
     private String robotName;
-    private String webotsPath;
-    private String projectPath;
     public boolean ready;
 
-    public ControllerExecutor(String controllerName, String robotName, String webotsPath, String projectPath)
+    public ControllerExecutor(String controllerName, String robotName)
     {
         this.controllerName = controllerName;
         this.robotName = robotName;
-        this.webotsPath = webotsPath;
-        this.projectPath = projectPath;
         ready = false;
     }
 
@@ -29,9 +25,10 @@ public class ControllerExecutor extends Thread
 
         //in windows
         String OS = System.getProperty("os.name");
+        System.out.println(robotName);
 
         if (OS.equals(new String("Mac OS X")))
-            processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=\"" + robotName + "\"");
+            processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=" + robotName);
         else
             processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME=" + robotName);
 
@@ -60,17 +57,25 @@ public class ControllerExecutor extends Thread
         
         //System.out.println("javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
 
+        String webotsPath = SharedVariables.getWebotsPath();
+        String projectPath = SharedVariables.getProjectPath();
+        int tcp_port = SharedVariables.getTcpServerPort();
+        int time_step = SharedVariables.getTimeStep();
+        
         if (OS.equals(new String("Mac OS X")))
-            processBuilder.command("/bin/bash", "-c", "java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar Controllers." + controllerName);
+            processBuilder.command("/bin/bash", "-c", "java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step);
         else
-        	processBuilder.command("cmd.exe", "/c", "javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages Controllers." + controllerName);        
+        	processBuilder.command("cmd.exe", "/c", "javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step);        
         try {
             Process process = processBuilder.start();
-            ready = true;
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
+
+                if (line.equals(controllerName + " avviato..."))
+                	ready = true;
+                
                 System.out.println(line);
             }
 

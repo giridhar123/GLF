@@ -17,8 +17,6 @@ public class Main
 
     private static ControllerExecutor guardiaController;
     private static ControllerExecutor ladroController;
-    private static String webotsPath;
-    private static String projectPath;
 
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
@@ -28,9 +26,14 @@ public class Main
         Properties properties = new Properties();
         properties.load(inputStreamReader);
 
-        webotsPath = properties.getProperty("webotspath");
-        projectPath = properties.getProperty("projectpath");
-
+        String webotsPath = properties.getProperty("webotspath");
+        String projectPath = properties.getProperty("projectpath");
+        int serverTcpPort = Integer.parseInt(properties.getProperty("tcp_port"));
+        int timeStep = Integer.parseInt(properties.getProperty("time_step"));
+        
+        //Inizializzo variabili globali
+        SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort);
+        
         Server server = new Server();
         server.start();
 
@@ -62,14 +65,13 @@ public class Main
         System.out.println("HEY");
     }
 
-    public static void eseguiTutto() 
-
+    public static void eseguiTutto()
     {
     	//Cleaner cleaner = new Cleaner();
     	
-        guardiaController = new ControllerExecutor("GuardiaController", "guardia", webotsPath, projectPath);
-        ladroController = new ControllerExecutor("LadroController", "ladro", webotsPath, projectPath);
-        supervisorController = new ControllerExecutor("SupervisorController", "supervisor", webotsPath, projectPath);
+        guardiaController = new ControllerExecutor("GuardiaController", "guardia");
+        ladroController = new ControllerExecutor("LadroController", "ladro");
+        supervisorController = new ControllerExecutor("SupervisorController", "supervisor");
         try
         {
             guardiaController.start();

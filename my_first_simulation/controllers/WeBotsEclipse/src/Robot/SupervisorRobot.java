@@ -26,43 +26,19 @@ public class SupervisorRobot extends Supervisor implements Client {
 	}
 		
 	public void spawnaMappa(Mappa mappa)
-	{	
-		// Node
-		final Node RootNode = getRoot();
-        final Node Floor = getFromDef("World");
-        final Node robot_node = getFromDef("supervisor");
+	{
         final Node viewpoint_node = getFromDef("viewpoint");
-       
-        // Field
-        Field RootChildrenField = RootNode.getField("children");
-        
+        final Node robot_node = getFromDef("supervisor");
         robot_node.setVisibility(viewpoint_node, false);
         
-        // Controlli 
-        /*
-        if (robot_node == null) 
-        {
-            System.err.println("No DEF MY_ROBOT node found in the current world file");
-            System.exit(1);
-        }
-        if (viewpoint_node == null) 
-        {
-        	System.err.println("No DEF ViewPoint node found in the current world file");
-            System.exit(1);
-        }
-		*/
-        // Inizializzazione Scenario
-      
-        
+        final Node Floor = getFromDef("World");
     	Field pavimento = Floor.getField("floorSize");
-    	System.out.println(pavimento.getSFVec2f()[0]);
     	pavimento.setSFVec2f(mappa.getWeBotsXYMap());
 
+    	final Node RootNode = getRoot();
+        Field RootChildrenField = RootNode.getField("children");
     	Spawn(mappa, RootChildrenField);
-	
 	}
-	
-	
 
 	private void Spawn(Mappa mappa, Field RootChildrenField) 
 	{
@@ -78,10 +54,10 @@ public class SupervisorRobot extends Supervisor implements Client {
 				TempZ = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
 				
 				if(mappa.get(i, j) != 0 )
-					SpawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempZ+" rotation 0,0,0,0 size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-			}
+					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
+			} 
 		}
-		RootChildrenField.importMFNodeFromString(4,SpawnBox);
+		RootChildrenField.importMFNodeFromString(4, SpawnBox);
 		
 		Node robot_node = getFromDef("Ladro");
 		if (robot_node != null)
@@ -137,10 +113,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
 		clientConnectionHandler.sendPacket(cts_world_ready);
 	}
-	
-	
-	
-	
 	
 	// Da cancellare
     private static void SpawnTestBrutto(Field RootChildenField, Mappa mappa)

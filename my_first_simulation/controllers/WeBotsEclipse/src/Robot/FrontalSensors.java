@@ -12,10 +12,10 @@ public class FrontalSensors {
 	public FrontalSensors(GenericRobot robot, String leftSensorName, String rightSensorName, double obstaclesTreshold)
 	{
 		leftSensor = robot.getDistanceSensor(leftSensorName);
-		leftSensor.enable(SharedVariables.TIME_STEP);
+		leftSensor.enable(SharedVariables.getTimeStep());
 		
 		rightSensor = robot.getDistanceSensor(rightSensorName);
-		rightSensor.enable(SharedVariables.TIME_STEP);
+		rightSensor.enable(SharedVariables.getTimeStep());
 		
 		this.obstaclesTreshold = obstaclesTreshold;
 	}

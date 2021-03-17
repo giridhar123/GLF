@@ -28,18 +28,18 @@ public class AStarSearcher {
 		Point start = new Point(from);
 		Set<Point> closedset = new HashSet<>();			//The empty set % The set of nodes already evaluated.     
 		Set<Point> openset = new HashSet<>();			//Set containing the initial node % The set of tentative nodes to be evaluated.
-		openset.add(start);
+		openset.add(new Point(start));
 		
 		Map<Point, Float> g_score = new HashMap<>();	//Distance from start along optimal path.
-		g_score.put(start, (float) 0);
+		g_score.put(new Point(start), (float) 0);
 		
 		Map<Point, Point> came_from = new HashMap<>(); 	//The empty map % The map of navigated nodes.
 		Map<Point, Float> h_score = new HashMap<>();
 		float value = heuristic_estimate_of_distance(start, goal);
-		h_score.put(start, value);
+		h_score.put(new Point(start), value);
 		
 		Map<Point, Float> f_score = new HashMap<>();
-		f_score.put(start, value);						//Estimated total distance from start to goal through y.
+		f_score.put(new Point(start), value);						//Estimated total distance from start to goal through y.
 				
 		while (!openset.isEmpty())
 		{
@@ -77,10 +77,10 @@ public class AStarSearcher {
 
 		        if (tentative_is_better)
 		        {
-		        	came_from.put(y, x);
-		            g_score.put(y, tentative_g_score);
-		            h_score.put(y, heuristic_estimate_of_distance(y, goal));
-		            f_score.put(y, g_score.get(y) + h_score.get(y));
+		        	came_from.put(new Point(y), new Point(x));
+		            g_score.put(new Point(y), tentative_g_score);
+		            h_score.put(new Point(y), heuristic_estimate_of_distance(y, goal));
+		            f_score.put(new Point(y), g_score.get(y) + h_score.get(y));
 		        }
          	}
 		}

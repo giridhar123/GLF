@@ -39,6 +39,7 @@ public abstract class GenericRobot extends Robot
 	private int maxProx = 0;
 	private boolean leftObstacle, rightObstacle;
 	
+	private double goalTheta;
 	private int motorAdjustment;
 	private final int MORE = 1;
 	private final int NOTHING = 0;
@@ -74,19 +75,21 @@ public abstract class GenericRobot extends Robot
 	    leftMotorSensor = getPositionSensor("left wheel sensor");
 	    rightMotorSensor = getPositionSensor("right wheel sensor");
 
-	    leftMotorSensor.enable(SharedVariables.TIME_STEP);
-	    rightMotorSensor.enable(SharedVariables.TIME_STEP);
+	    leftMotorSensor.enable(SharedVariables.getTimeStep());
+	    rightMotorSensor.enable(SharedVariables.getTimeStep());
 	    
 	    frontalSensors = new FrontalSensors(this, "ps7", "ps0", FRONTAL_OBSTACLE_TRESHOLD);
 	    
 	    leftSensor = getDistanceSensor("ps5");
-	    leftSensor.enable(SharedVariables.TIME_STEP);
+	    leftSensor.enable(SharedVariables.getTimeStep());
 	    
 	    rightSensor = getDistanceSensor("ps2");
-	    rightSensor.enable(SharedVariables.TIME_STEP);
+	    rightSensor.enable(SharedVariables.getTimeStep());
 	    
 	    leftObstacle = rightObstacle = false;
 	    motorAdjustment = NOTHING;
+	   
+	    goalTheta = 0;
 	}	
 	
 	public boolean goStraightOn(int times)
@@ -95,7 +98,7 @@ public abstract class GenericRobot extends Robot
 			return true;
 		
 	    int initialValue = 50;	   
-	    int Nvolte = (maxProx / 100) + 3;
+	    int Nvolte = (maxProx / 100) + 2;
 	    //System.out.println("Correggo di " + Nvolte);
 	    
 	    int count = initialValue;
@@ -140,43 +143,45 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	    step();
 	    
-	    double difference = frontalSensors.getLeftValue() - frontalSensors.getRightValue();
+	    double leftValue = frontalSensors.getLeftValue();
+	    double rightValue = frontalSensors.getRightValue();
+	    double difference = leftValue - rightValue;
 	    
 	    if (obstacle)
-	    {
-			goBack(2);
-	    }
+			goBack(4);
 	    
-	    if(Math.abs(difference) >= 8 && Math.abs(difference) <= 40)
+	    if (leftValue > 50 && rightValue > 50)
 	    {
-	    	if (this instanceof GuardiaRobot)
-	    		System.out.println("Difference is: " + difference);
-	    	
-	    	double value = 0.7;
-	    	
-	    	if(difference > 0)
-	    	{
-	    		motors.setVelocity(-value, value);
-	    		
-	    		if (this instanceof GuardiaRobot)
-	    			System.out.println("Correggo a SX");
-	    	}
-	    	else 
-	    	{
-	    		difference *= -1;
-	    		motors.setVelocity(value, -value);
-	    		
-	    		if (this instanceof GuardiaRobot)
-	    			System.out.println("Correggo a DX");
-	    	}
-	    	
-	    	for(int i = 0; i < (difference / 2); ++i)
-	    	{
-    			step();
-	    	}
-
-	    	stop();
-	    	step();
+		    if(Math.abs(difference) >= 8)
+		    {
+		    	if (this instanceof GuardiaRobot)
+		    		System.out.println("Difference is: " + difference);
+		    	
+		    	double velocity = 0.7;
+		    	if(difference > 0)
+		    	{
+		    		motors.setVelocity(-velocity, velocity);
+		    		
+		    		if (this instanceof GuardiaRobot)
+		    			System.out.println("Correggo a SX");
+		    	}
+		    	else 
+		    	{
+		    		difference *= -1;
+		    		motors.setVelocity(velocity, -velocity);
+		    		
+		    		if (this instanceof GuardiaRobot)
+		    			System.out.println("Correggo a DX");
+		    	}
+		    	
+		    	for(int i = 0; i < (difference / 2); ++i)
+		    	{
+	    			step();
+		    	}
+	
+		    	stop();
+		    	step();
+		    }
 	    }
 	    
 	    return !obstacle;
@@ -199,7 +204,7 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = (pose[2] + PI/2.00) % PI2;
+	    goalTheta = (goalTheta + PI/2.00) % PI2;
 
 	    /*
 	    if (this instanceof GuardiaRobot)
@@ -234,7 +239,7 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    double goalTheta = (pose[2] + PI/2.00) % PI2;
+	    goalTheta = (goalTheta + PI/2.00) % PI2;
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
@@ -332,7 +337,7 @@ public abstract class GenericRobot extends Robot
 	//Ferma il robot
 	public void stop() { motors.setVelocityMS(0); }
 	
-	private int step() { return step(SharedVariables.TIME_STEP); }
+	private int step() { return step(SharedVariables.getTimeStep()); }
 	public Mappa getMappa() { return mappa; }
 	
 	private void incrementaPosizione()

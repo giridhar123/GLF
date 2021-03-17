@@ -776,8 +776,8 @@ Robot {
         aperture 0.44
         lookupTable [
             0.00    19.8  0.126
-            0.06    58.5  0.032
-            0.09   130.0  0.019
+            0.05    58.5  0.032
+            0.10   111.0  0.019
             0.20   218.9  0.009
             0.50   531.9  0.007
             1.00  1052.0  0.010
@@ -1109,8 +1109,37 @@ Robot {
     DEF EPUCK_EMITTER Emitter {
       channel IS emitter_channel
     }
-    DEF EPUCK_SPEAKER Speaker {
-    }
+    Speaker {
+        translation 0 0.085 0
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.5
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.01
+              radius 0.03
+              side FALSE
+              subdivision 24
+            }
+          }
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.01
+              radius 0.03
+              top FALSE
+              subdivision 24
+            }
+          }
+  ]
+}
     DEF TURRET_SLOT Transform {
       translation 0 0.0486 0.0095
       rotation 0 0 1 0

@@ -24,10 +24,24 @@ public class SupervisorController
 
     public static void main(String[] args) throws InterruptedException
     {
+    	System.out.println("SupervisorController avviato...");
+    	
+    	init(args);
+    	
     	SupervisorRobot supervisor = new SupervisorRobot();
         
     	supervisor.connectToServer();
     	
-        while (supervisor.step(SharedVariables.TIME_STEP) != -1);
+        while (supervisor.step(SharedVariables.getTimeStep()) != -1);
+    }
+    
+    public static void init(String[] args)
+    {
+    	String webotsPath = args[0];
+    	String projectPath = args[1];
+    	int serverTcpPort = Integer.parseInt(args[2]);
+    	int timeStep = Integer.parseInt(args[3]);
+    	
+    	SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort);
     }
  }

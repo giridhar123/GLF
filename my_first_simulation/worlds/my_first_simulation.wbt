@@ -5,7 +5,7 @@ WorldInfo {
 }
 DEF viewpoint Viewpoint {
   orientation 0.0031750109925861992 0.7361536265180272 0.6768070311909841 3.1395013039730117
-  position -0.6959229450822612 3.9225156063532856 -0.5202387536497829
+  position -0.07311474400959907 3.7114401783247546 -0.6015418544301506
 }
 TexturedBackground {
 }
@@ -18,19 +18,21 @@ DEF World RectangleArena {
   wallHeight 0.05
 }
 DEF Guardia Guardia {
-  translation 0.1 0 0.1
+  translation 0.307286 0 -0.0419713
   name "guardia"
   controller "<extern>"
+  controllerArgs [
+    ""
+  ]
   distance_sensor_numberOfRays 5
 }
 DEF Ladro Ladro {
-  translation 0 0 0.1
+  translation 0.14 0 0
+  name "ladro"
   controller "<extern>"
   distance_sensor_numberOfRays 5
 }
 DEF supervisor E-puck {
-  translation 0.000724763 -0.148281 7.62636e-07
-  rotation -0.0010156673748752199 0.01048336009845032 0.9999445322520794 0.0032325233342163696
   name "supervisor"
   controller "<extern>"
   supervisor TRUE
