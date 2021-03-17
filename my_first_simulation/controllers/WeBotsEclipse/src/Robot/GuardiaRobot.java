@@ -239,7 +239,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		//System.out.println("1");
 		mappa.setValue(punto.getX(), punto.getY(), 1);
-		//System.out.println("2 : " + punto.getX() + " " + punto.getY());
+		//System.out.println("2 Guardia invio pacchetto con punto: " + punto);
 		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto.getX(), punto.getY()));
 		//System.out.println("3");
 	}

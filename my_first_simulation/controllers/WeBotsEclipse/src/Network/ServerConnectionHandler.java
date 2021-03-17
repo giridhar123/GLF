@@ -25,24 +25,27 @@ public class ServerConnectionHandler extends Thread {
 	
 	public void run()
 	{
+		ByteBuffer buffer;
+		Future<Integer> readResult;
+		
 		while (true)
 		{
 			try
 			{
 		        if ((clientChannel != null) && (clientChannel.isOpen()))
 		        {
-	                ByteBuffer buffer = ByteBuffer.allocate(4);
-	                Future<Integer> readResult = clientChannel.read(buffer);
-	                readResult.get();
-	                buffer.position(0);
-	                
-	                int sizeToAllocate = buffer.getInt();
-	                buffer = ByteBuffer.allocate(sizeToAllocate);
+	                buffer = ByteBuffer.allocate(4);
 	                readResult = clientChannel.read(buffer);
-	                readResult.get();	                
+	                System.out.println("A: Server: " + readResult.get());
+	                buffer.position(0);
+	                int packetSize = buffer.getInt();
+	                System.out.println("Size to allocate ios: " + packetSize);
+	                buffer = ByteBuffer.allocate(packetSize - 4);
+	                readResult = clientChannel.read(buffer);
+	                System.out.println("B: Server: " + readResult.get());
 	                buffer.position(0);
 	               
-	                parse(sizeToAllocate, buffer);
+	                parse(packetSize, buffer);
 	                
 	                /*
 	                Future<Integer> writeResult = clientChannel.write(buffer);
@@ -61,9 +64,9 @@ public class ServerConnectionHandler extends Thread {
 		}
 	}
 	
-	private void parse(int sizeToAllocate, ByteBuffer buf)
+	private void parse(int packetSize, ByteBuffer buf)
 	{
-		Packet packet = new Packet(sizeToAllocate, buf);
+		Packet packet = new Packet(packetSize, buf);
 		
 		switch (packet.getOpcode())
 		{
@@ -122,7 +125,7 @@ public class ServerConnectionHandler extends Thread {
 			}
 			break;
 			default:
-				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
+				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
 		}
 	}

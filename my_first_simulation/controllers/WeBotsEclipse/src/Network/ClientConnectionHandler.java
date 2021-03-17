@@ -50,25 +50,28 @@ public class ClientConnectionHandler extends Thread{
 				
 				buffer = ByteBuffer.allocate(4);
                 Future<Integer> readResult = channel.read(buffer);
-                readResult.get();
+                if (readResult.get() == -1)
+                	continue;
+                
                 buffer.position(0);
                 
-                int sizeToAllocate = buffer.getInt();
-                buffer = ByteBuffer.allocate(sizeToAllocate);
+                int packetSize = buffer.getInt();
+                buffer = ByteBuffer.allocate(packetSize - 4);
                 readResult = channel.read(buffer);
-                readResult.get();	                
+                if (readResult.get() == -1)
+                	continue;
                 buffer.position(0);
                
-                parse(sizeToAllocate, buffer);
+                parse(packetSize, buffer);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void parse(int sizeToAllocate, ByteBuffer buf)
+	private void parse(int packetSize, ByteBuffer buf)
 	{
-		Packet packet = new Packet(sizeToAllocate, buf);
+		Packet packet = new Packet(packetSize, buf);
 		
 		switch (packet.getOpcode())
 		{
@@ -82,11 +85,11 @@ public class ClientConnectionHandler extends Thread{
 			case Packet.CTS_UPDATE_MAP_POINT:
 			{
 				CTS_UPDATE_MAP_POINT cts_update_map_point = new CTS_UPDATE_MAP_POINT(packet, buf);
-				System.out.println("Guardia: ho ricevuto ostacolo in: " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+				System.out.println("Packet Size: " + cts_update_map_point.getSize() + " Guardia: ho ricevuto ostacolo in: " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
 			}
 			break;
 			default:
-				System.out.println("Pacchetto sconosciuto ricevuto " + packet.getOpcode());
+				System.out.println("Client: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
 		}
 	}

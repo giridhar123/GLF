@@ -56,8 +56,6 @@ public abstract class GenericRobot extends Robot
 	//Flag per la gestione tra thread
 	//private boolean stepFlag;
 	
-	private double goalTheta;
-	
 	public GenericRobot(int direction)
 	{
 		super();
@@ -68,7 +66,6 @@ public abstract class GenericRobot extends Robot
 		
 		pose = new double[3];
 		pose[0] = pose[1] = pose[2] = 0;
-		goalTheta = 0;
 		
 		motors = new Motors(this, "left wheel motor", "right wheel motor");
 		stop();
@@ -98,7 +95,7 @@ public abstract class GenericRobot extends Robot
 			return true;
 		
 	    int initialValue = 50;	   
-	    int Nvolte = (maxProx / 100) + 2;
+	    int Nvolte = (maxProx / 100) + 3;
 	    //System.out.println("Correggo di " + Nvolte);
 	    
 	    int count = initialValue;
@@ -150,14 +147,16 @@ public abstract class GenericRobot extends Robot
 			goBack(2);
 	    }
 	    
-	    if(Math.abs(difference) >= 8)
+	    if(Math.abs(difference) >= 8 && Math.abs(difference) <= 40)
 	    {
 	    	if (this instanceof GuardiaRobot)
 	    		System.out.println("Difference is: " + difference);
 	    	
+	    	double value = 0.7;
+	    	
 	    	if(difference > 0)
 	    	{
-	    		motors.setVelocity(-0.30, 0.30);
+	    		motors.setVelocity(-value, value);
 	    		
 	    		if (this instanceof GuardiaRobot)
 	    			System.out.println("Correggo a SX");
@@ -165,7 +164,7 @@ public abstract class GenericRobot extends Robot
 	    	else 
 	    	{
 	    		difference *= -1;
-	    		motors.setVelocity(0.30, -0.30);
+	    		motors.setVelocity(value, -value);
 	    		
 	    		if (this instanceof GuardiaRobot)
 	    			System.out.println("Correggo a DX");
@@ -200,7 +199,7 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    goalTheta = (goalTheta + PI/2.00) % PI2;
+	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 
 	    /*
 	    if (this instanceof GuardiaRobot)
@@ -235,7 +234,7 @@ public abstract class GenericRobot extends Robot
 	    encodersValue[0] = leftMotorSensor.getValue();
 	    encodersValue[1] = rightMotorSensor.getValue();
 
-	    goalTheta = (goalTheta + PI/2.00) % PI2;
+	    double goalTheta = (pose[2] + PI/2.00) % PI2;
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
