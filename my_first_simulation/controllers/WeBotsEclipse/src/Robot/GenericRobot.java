@@ -22,7 +22,7 @@ public abstract class GenericRobot extends Robot
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
 	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	protected final int FRONTAL_OBSTACLE_TRESHOLD = 80;
+	protected int FRONTAL_OBSTACLE_TRESHOLD = 80;
 	private final int LATERAL_OBSTACLE_TRESHOLD = 100;
 	
 	//Valori di supporto per la direzione del robot
@@ -152,8 +152,9 @@ public abstract class GenericRobot extends Robot
 	    
 	    if (leftValue > 50 && rightValue > 50)
 	    {
-		    if(Math.abs(difference) >= 8)
-		    {
+		    //if(Math.abs(difference) >= 8)
+		    while(Math.abs(difference) >= 8)
+	    	{
 		    	if (this instanceof GuardiaRobot)
 		    		System.out.println("Difference is: " + difference);
 		    	
@@ -174,14 +175,18 @@ public abstract class GenericRobot extends Robot
 		    			System.out.println("Correggo a DX");
 		    	}
 		    	
-		    	for(int i = 0; i < (difference / 2); ++i)
+		    	step();
+		    	difference = frontalSensors.getLeftValue() - frontalSensors.getRightValue();
+		    	/*for(int i = 0; i < (difference / 2); ++i)
 		    	{
 	    			step();
 		    	}
-	
+				
 		    	stop();
 		    	step();
+		    	 */
 		    }
+		    stop();
 	    }
 	    
 	    return !obstacle;
@@ -213,7 +218,7 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(-0.5, 0.5);
         
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
+	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
 	    {	    	
 	    	step();
 	        updatePose(OVEST);
@@ -243,7 +248,7 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0003)
+	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
 	    {	    	
 	        step();
 	        updatePose(EST);
@@ -378,11 +383,13 @@ public abstract class GenericRobot extends Robot
 				if (r.nextInt(2) == 0)
 				{
 					turnLeft();
+					stop();
 					turnLeft();
 				}
 				else
 				{
 					turnRight();
+					stop();
 					turnRight();
 				}
 				motorAdjustment = NOTHING;

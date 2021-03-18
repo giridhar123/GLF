@@ -1,6 +1,7 @@
 package Robot;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.cyberbotics.webots.controller.Camera;
 import com.cyberbotics.webots.controller.CameraRecognitionObject;
@@ -28,6 +29,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		openSet = new ArrayList<>();
 		closedSet = new ArrayList<>();
 		ladroFound = false;
+		FRONTAL_OBSTACLE_TRESHOLD = 75;
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 	}
@@ -43,9 +45,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		//System.out.println("Guardia: Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getXSize(), mappa.getYSize());
 		
-		for (int i = 0; i < mappa.getXSize(); i++)
+		for (int i = 1; i < mappa.getXSize()-1; i++)
 		{
-			for (int j = 0; j < mappa.getYSize(); ++j)
+			for (int j = 1; j < mappa.getYSize()-1; ++j)
 			{
 				openSet.add(new Point(i, j));
 			}
@@ -67,12 +69,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		AStarSearcher aStarSearcher = null;
 		ArrayList<Point> path = null;
 		ArrayList<Integer> correctedPath = null;
+		Random r = new Random();
 		
-		for (int j = 0; j < openSet.size(); ++j)
+		while (openSet.size() != closedSet.size())
 		{	
-			CameraCheck();
-			SirenOn();
-			goal = openSet.get(j);
+			//CameraCheck();
+			//SirenOn();
+			
+			goal = openSet.get(r.nextInt(openSet.size()));
 			
 			if (closedSet.contains(goal))
 			{
@@ -95,8 +99,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
-				CameraCheck();
-				SirenOn();
+				//CameraCheck();
+				//SirenOn();
 				int value = correctedPath.get(i);
 				
 				checkLateral();
