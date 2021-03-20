@@ -1,6 +1,9 @@
 package Robot;
 
 import com.cyberbotics.webots.controller.Motor;
+import com.cyberbotics.webots.controller.PositionSensor;
+
+import General.SharedVariables;
 
 public class Motors {
 	
@@ -8,14 +11,26 @@ public class Motors {
 	private final double MAX_SPEED = 6.28;
 	private Motor leftMotor;
 	private Motor rightMotor;
+	
+	//Encoders
+	private PositionSensor leftEncoder, rightEncoder;
+	private double encodersValue[];
 
-	public Motors(GenericRobot robot, String leftMotorName, String rightMotorName)
+	public Motors(GenericRobot robot, String leftMotorName, String rightMotorName, String leftEncoderName, String rightEncoderName)
 	{
 		leftMotor = robot.getMotor(leftMotorName);
 		leftMotor.setPosition(Double.POSITIVE_INFINITY);
 
 		rightMotor = robot.getMotor(rightMotorName);
 		rightMotor.setPosition(Double.POSITIVE_INFINITY);
+		
+		leftEncoder = robot.getPositionSensor(leftEncoderName);
+		rightEncoder = robot.getPositionSensor(rightEncoderName);
+
+	    leftEncoder.enable(SharedVariables.getTimeStep());
+	    rightEncoder.enable(SharedVariables.getTimeStep());
+	    
+	    encodersValue = new double[2];
 	}
 	
 	public void setVelocityMS(double velocity)
@@ -40,5 +55,21 @@ public class Motors {
 	{
 		leftMotor.setVelocity(leftVelocity);
 		rightMotor.setVelocity(rightVelocity);
+	}
+	
+	public void resetEncoders()
+	{
+		encodersValue[0] = leftEncoder.getValue();
+		encodersValue[1] = rightEncoder.getValue();
+	}
+	
+	public double getLeftEncoderValue()
+	{
+		return (leftEncoder.getValue() - encodersValue[0]);
+	}
+	
+	public double getRightEncoderValue()
+	{
+		return (rightEncoder.getValue() - encodersValue[1]);
 	}
 }

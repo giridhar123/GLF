@@ -30,7 +30,8 @@ public class Packet
         this.opcode = opcode;
     }
     
-    public Packet(final int size, final short opcode) {
+    public Packet(final int size, final short opcode)
+    {
     	this(opcode);
     	this.size += size;
         this.opcode = opcode;
@@ -41,11 +42,13 @@ public class Packet
     	return size;
     }
     
-    public short getOpcode(){
+    public short getOpcode()
+    {
         return this.opcode;
     }
     
-    public void setOpcode(final short opcode){
+    public void setOpcode(final short opcode)
+    {
         this.opcode = opcode;
     }
 

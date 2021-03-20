@@ -20,6 +20,11 @@ public class FrontalSensors {
 		this.obstaclesTreshold = obstaclesTreshold;
 	}
 	
+	public void setTreshold(double obstaclesTreshold)
+	{
+		this.obstaclesTreshold = obstaclesTreshold;
+	}
+	
 	public double getLeftValue()
 	{
 		return leftSensor.getValue();
@@ -34,5 +39,4 @@ public class FrontalSensors {
 	{
 		return (getLeftValue() > obstaclesTreshold && getRightValue() > obstaclesTreshold);
 	}
-
 }

@@ -23,6 +23,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
 	}
 	
+	@Override
 	public void connectToServer()
 	{
 		clientConnectionHandler.start();
@@ -33,32 +34,18 @@ public class LadroRobot extends GenericRobot implements Client {
 		if (mappa == null || hidden)
 			return;
 		
-		/*for (int i = 0; i < mappa.getXSize(); ++i)
-		{
-			for (int j = 0; j < mappa.getYSize(); ++j)
-			{
-				if (i == 10 && j == 10)
-					System.out.print(" b" + mappa.get(i, j) + "b");
-				else if (i == 20 && j == 20)
-					System.out.print(" a" + mappa.get(i, j) + "a");
-				else
-					System.out.print(" " + mappa.get(i, j) + " ");
-			}
-			
-			System.out.println("");
-		}*/
-		
 		this.robotPosition = new Point(15, 15);
 		
-		ArrayList<Point> pts = potentialShelters(mappa);
+		ArrayList<Point> pts = getPotentialsPoints();
 		Point dest;
 		Random r = new Random();
 		
+		int index = -1;
 		do 
 		{
-			int index = r.nextInt(pts.size());
+			index = r.nextInt(pts.size());
 			dest = pts.get(index);
-			dest.print();
+			System.out.println("Ladro: Provo ad andare in: " + dest);
 		}
 		while(!goTo(dest));
 		
@@ -71,12 +58,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		ArrayList<Point> path = aStarSearcher.getPath(robotPosition, goal);
 		
 		if (path == null)
-		{
-			System.out.println("No path found");
 			return false;
-		}
-		else
-			System.out.println("Path found");
 		
 		ArrayList<Integer> convertedPath = AStarSearcher.pathToRobotDirections(path);
 		
@@ -102,17 +84,22 @@ public class LadroRobot extends GenericRobot implements Client {
 		return true;
 	}
 	
-	private ArrayList<Point> potentialShelters(Mappa mappa)
+	private ArrayList<Point> getPotentialsPoints()
 	{
+		if (mappa == null)
+			return null;
+		
 		ArrayList<Point> possiblePoints = new ArrayList<Point>();
+		Point punto = null;
 		
 		for(int x = 0; x < mappa.getXSize(); ++x)
 		{
 			for(int y = 0; y < mappa.getYSize(); ++y)
 			{
-				if(mappa.get(x, y) == 0) 
+				punto = new Point(x, y);
+				if(mappa.get(punto) == 0) 
 				{
-					if(checkPoint(mappa, x, y))
+					if(checkPoint(new Point(x, y)))
 						possiblePoints.add(new Point(x,y));
 				}
 			}
@@ -121,14 +108,20 @@ public class LadroRobot extends GenericRobot implements Client {
 		return possiblePoints;
 	}
     
-    private boolean checkPoint(Mappa mappa,int x,int y) 
+    private boolean checkPoint(Point punto) 
 	{
+    	if (mappa == null)
+    		return false;
+    	
+    	int x = punto.getX();
+    	int y = punto.getY();
+    	
 		int north, south, east, west;
 		
-		north = x - 1 >= 0 ? mappa.get(x-1, y) : 0;
-		south = x + 1 < mappa.getXSize() ? mappa.get(x+1, y) : 0;
-		east = y + 1 < mappa.getYSize() ? mappa.get(x, y+1) : 0;
-		west = y - 1 >= 0 ? mappa.get(x, y-1) : 0;
+		north = x - 1 >= 0 ? mappa.get(new Point(x - 1, y)) : 0;
+		south = x + 1 < mappa.getXSize() ? mappa.get(new Point(x + 1, y)) : 0;
+		east = y + 1 < mappa.getYSize() ? mappa.get(new Point(x, y + 1)) : 0;
+		west = y - 1 >= 0 ? mappa.get(new Point(x, y - 1)) : 0;
 		
 		return ((north + south + east + west) == 3);
 	}

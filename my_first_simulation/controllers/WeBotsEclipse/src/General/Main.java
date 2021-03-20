@@ -30,9 +30,11 @@ public class Main
         String projectPath = properties.getProperty("projectpath");
         int serverTcpPort = Integer.parseInt(properties.getProperty("tcp_port"));
         int timeStep = Integer.parseInt(properties.getProperty("time_step"));
+        int numeroGuardie = Integer.parseInt(properties.getProperty("guardie"));
+        int numeroLadri = Integer.parseInt(properties.getProperty("ladri"));
         
         //Inizializzo variabili globali
-        SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort);
+        SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri);
         
         Server server = new Server();
         server.start();

@@ -4,7 +4,10 @@ import java.util.Vector;
 import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
+
+import General.SharedVariables;
 import Map.Mappa;
+import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packet;
@@ -20,6 +23,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.SUPERVISOR, this);
 	}
 	
+	@Override
 	public void connectToServer()
 	{
 		clientConnectionHandler.start();
@@ -53,7 +57,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 				TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
 				TempZ = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
 				
-				if(mappa.get(i, j) != 0 )
+				if(mappa.get(new Point(i, j)) != 0 )
 					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
 			} 
 		}
@@ -90,12 +94,12 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 	
-	private static float MatrixToWorldZ(float point, double WeBotsTile)
-	{
-		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
-		return point;
-	}
-	
+    private static float MatrixToWorldZ(float point, double WeBotsTile)
+    {
+    	point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
+    	return point;
+    }
+
 	private static float MatrixToWorldX(float point, double WeBotsTile)
 	{	
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e'la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
@@ -104,7 +108,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 	
 	private static void RestartNode(Node robot_node)
 	{
-        robot_node.restartController();
+	    robot_node.restartController();
 	}
 	
 	@Override
@@ -113,72 +117,73 @@ public class SupervisorRobot extends Supervisor implements Client {
 		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
 		clientConnectionHandler.sendPacket(cts_world_ready);
 	}
-	
-	// Da cancellare
+
+    // Da cancellare
     private static void SpawnTestBrutto(Field RootChildenField, Mappa mappa)
     {
     	//String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
-    	//String SpawnBox2 = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
+        //String SpawnBox2 = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
     	
-    	 float TempX;
-    	 float TempY;
+    	float TempX;
+    	float TempY;
     	 
-    	 int i=0;
-    	 int j=0;
+    	int i=0;
+    	int j=0;
     	 
-    	 for(i=0; i<100; i++)
-		  {
-			 for(j=0; j<100; j++)
-			 {
-				 // Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				 	TempX = MatrixToWorldX((float) j, mappa.getWeBotsTile());
-				 	TempY = MatrixToWorldZ((float) i, mappa.getWeBotsTile());
-				 if(mappa.get(i, j) == 1 )
-				 {
-		    	  String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
-		          RootChildenField.importMFNodeFromString(4,SpawnBox);
-				 }
+    	for(i=0; i<100; i++)
+		{
+    		for(j=0; j<100; j++)
+			{
+    			// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
+    			TempX = MatrixToWorldX((float) j, mappa.getWeBotsTile());
+				TempY = MatrixToWorldZ((float) i, mappa.getWeBotsTile());
+				if(mappa.get(new Point(i, j)) == 1 )
+				{
+					String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
+					RootChildenField.importMFNodeFromString(4,SpawnBox);
+				}
 			}
-			 
-		  }
+		}
  
-    	  String SpawnBox1 = "DEF L1 Proto1 {translation 0,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-          String SpawnBox2 = "DEF L1 Proto1 {translation 0.1,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-          String SpawnBox3 = "DEF L1 Proto1 {translation 0.2,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-          String SpawnBox4 = "DEF L1 Proto1 {translation 0.3,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-          String SpawnBox5 = "DEF L1 Proto1 {translation 0.3,0.05,-0.1 size 0.1,0.1,0.1 mass 2} " ;
+    	String SpawnBox1 = "DEF L1 Proto1 {translation 0,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox2 = "DEF L1 Proto1 {translation 0.1,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox3 = "DEF L1 Proto1 {translation 0.2,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox4 = "DEF L1 Proto1 {translation 0.3,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
+        String SpawnBox5 = "DEF L1 Proto1 {translation 0.3,0.05,-0.1 size 0.1,0.1,0.1 mass 2} " ;
           
-          Vector<String> v = new Vector<String>(6);
-          	v.add(SpawnBox1) ;
-          	v.add(SpawnBox2) ;
-          	v.add(SpawnBox3) ;
-          	v.add(SpawnBox4) ;
-          	v.add(SpawnBox5) ;
+        Vector<String> v = new Vector<String>(6);
+        v.add(SpawnBox1) ;
+        v.add(SpawnBox2) ;
+        v.add(SpawnBox3) ;
+        v.add(SpawnBox4) ;
+        v.add(SpawnBox5) ;
    
-          for(i=0 ; i<5 ; i++)
-          	RootChildenField.importMFNodeFromString(4,v.get(i));
-          v.clear();
+        for(i=0 ; i<5 ; i++)
+        	RootChildenField.importMFNodeFromString(4,v.get(i));
+        v.clear();
           
-          // Seconda L
-	           SpawnBox1 = "DEF L2 Proto1 {translation 0,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-	           SpawnBox2 = "DEF L2 Proto1 {translation 0.1,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-	           SpawnBox3 = "DEF L2 Proto1 {translation 0.2,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-	           SpawnBox4 = "DEF L2 Proto1 {translation 0.3,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-	           SpawnBox5 = "DEF L2 Proto1 {translation 0.3,0.05,-0.70 size 0.1,0.1,0.1 mass 2} " ;
-	           
-	  	     	v.add(SpawnBox1) ;
-	  	     	v.add(SpawnBox2) ;
-	  	     	v.add(SpawnBox3) ;
-	  	     	v.add(SpawnBox4) ;
-	  	     	v.add(SpawnBox5) ;
-       	
-	  	      for(i=0 ; i<5 ; i++)
-	           	RootChildenField.importMFNodeFromString(4,v.get(i));
-	  	      v.clear();
-  	   
-	  	        String Ball = "DEF O Ball1 {translation 0.25,0.035,-0.35 mass 2 radius 0.10} " ;
-	           	RootChildenField.importMFNodeFromString(4,Ball);
+        // Seconda L
+	    SpawnBox1 = "DEF L2 Proto1 {translation 0,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+	    SpawnBox2 = "DEF L2 Proto1 {translation 0.1,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+        SpawnBox3 = "DEF L2 Proto1 {translation 0.2,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+		SpawnBox4 = "DEF L2 Proto1 {translation 0.3,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
+		SpawnBox5 = "DEF L2 Proto1 {translation 0.3,0.05,-0.70 size 0.1,0.1,0.1 mass 2} " ;
+		   
+		v.add(SpawnBox1) ;
+		v.add(SpawnBox2) ;
+		v.add(SpawnBox3) ;
+		v.add(SpawnBox4) ;
+		v.add(SpawnBox5) ;
+		   	
+		for(i=0 ; i<5 ; i++)
+			RootChildenField.importMFNodeFromString(4,v.get(i));
+		
+		v.clear();
+		   
+		String Ball = "DEF O Ball1 {translation 0.25,0.035,-0.35 mass 2 radius 0.10} " ;
+		RootChildenField.importMFNodeFromString(4,Ball);
     }
+    
     // Da cancellare
 	private void SpawnAMMERDA(Mappa mappa, Field RootChildrenField )
 	{
@@ -271,7 +276,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 
-    
-    
-	
+	public int step()
+	{
+		return this.step(SharedVariables.getTimeStep());
+	}
  }

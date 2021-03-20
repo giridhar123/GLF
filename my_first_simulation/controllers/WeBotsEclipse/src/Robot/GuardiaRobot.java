@@ -29,11 +29,16 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		openSet = new ArrayList<>();
 		closedSet = new ArrayList<>();
 		ladroFound = false;
+		
+		/*
 		FRONTAL_OBSTACLE_TRESHOLD = 75;
+		frontalSensors.setTreshold(FRONTAL_OBSTACLE_TRESHOLD);
+		*/
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 	}
 	
+	@Override
 	public void connectToServer()
 	{
 		clientConnectionHandler.start();
@@ -58,15 +63,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		if (mappa == null || ladroFound)
 			return;
-		
-		int row, col;
-		row = col = -1;
 	
 		this.robotPosition = new Point(4,4);
 		closedSet.add(new Point(robotPosition));
 		
 		Point goal = null;
-		AStarSearcher aStarSearcher = null;
+		AStarSearcher aStarSearcher = new AStarSearcher(mappa);
 		ArrayList<Point> path = null;
 		ArrayList<Integer> correctedPath = null;
 		Random r = new Random();
@@ -84,7 +86,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				continue;
 			}
 			
-			aStarSearcher = new AStarSearcher(mappa);
 			path = aStarSearcher.getPath(robotPosition, goal);
 			if (path == null)
 			{
@@ -113,10 +114,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 				if (obstaclesInFront)
 				{		
-					obstaclesInFront();
+					putObstaclesInFront();
 					
 					//Cerco un nuovo path per lo stesso punto
-					aStarSearcher = new AStarSearcher(mappa);
 					path = aStarSearcher.getPath(robotPosition, goal);
 					if (path == null)
 					{
@@ -139,7 +139,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		ladroFound = true;
 	}
 	
-	private void obstaclesInFront()
+	private void putObstaclesInFront()
 	{	
 		/*		
 		if (frontalSensors.getLeftValue() < FRONTAL_OBSTACLE_TRESHOLD && frontalSensors.getRightValue() < FRONTAL_OBSTACLE_TRESHOLD)
@@ -173,7 +173,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		int y = robotPosition.getY();
 		Point punto = null;
 		
-		if (leftSensor.getValue() > 85)
+		if (lateralSensors.getLeftValue() > 85)
 		{
 			switch(direction)
 		    {
@@ -193,7 +193,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 			updateMapAndSendPacket(punto);
 		}
-		if (rightSensor.getValue() > 85)
+		if (lateralSensors.getRightValue() > 85)
 		{
 			switch(direction)
 		    {
@@ -216,14 +216,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 	
 	private void updateMapAndSendPacket(Point punto)
-	{
-		if(mappa.get(punto.getX(), punto.getY()) == 1)
+	{if (mappa.get(punto) == 1)
 			return;
 		
 		//System.out.println("1");
-		mappa.setValue(punto.getX(), punto.getY(), 1);
+		mappa.setValue(punto, 1);
 		//System.out.println("2 Guardia invio pacchetto con punto: " + punto);
-		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto.getX(), punto.getY()));
+		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto));
 		//System.out.println("3");
 	}
 

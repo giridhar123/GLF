@@ -55,7 +55,7 @@ public class AStarSearcher {
          	openset.remove(x);
          	closedset.add(new Point(x));
          	
-         	Set<Point> neighbors = getNeighbors(x);
+         	Set<Point> neighbors = mappa.getNeighbors(x);
          	Iterator<Point> iterator = neighbors.iterator();
          	
          	while (iterator.hasNext())
@@ -104,30 +104,6 @@ public class AStarSearcher {
 		}
 		
 		return point;
-	}
-	
-	private Set<Point> getNeighbors(Point point)
-	{
-		Set<Point> set = new HashSet<>();
-		
-		int x = point.getX();
-		int y = point.getY();
-		
-		Point north = x - 1 >= 0 && mappa.get(x - 1, y) == 0 ? new Point(x - 1, y) : null;
-		Point south = x + 1 < mappa.getXSize() && mappa.get(x + 1, y) == 0 ? new Point(x + 1, y) : null;
-		Point east = y + 1 < mappa.getYSize() && mappa.get(x, y + 1) == 0 ? new Point(x, y + 1) : null;
-		Point west = y - 1 >= 0 && mappa.get(x, y - 1) == 0 ? new Point(x, y - 1) : null;
-		
-		if (north != null)
-			set.add(north);
-		if (south != null)
-			set.add(south);
-		if (east != null)
-			set.add(east);
-		if (west != null)
-			set.add(west);
-		
-		return set;
 	}
 
 	private ArrayList<Point> reconstruct_path(Map<Point, Point> came_from, Point current_node)

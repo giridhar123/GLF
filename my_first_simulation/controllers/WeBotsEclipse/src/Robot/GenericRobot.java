@@ -2,8 +2,6 @@ package Robot;
 
 import java.util.Random;
 
-import com.cyberbotics.webots.controller.DistanceSensor;
-import com.cyberbotics.webots.controller.PositionSensor;
 import com.cyberbotics.webots.controller.Robot;
 
 import General.SharedVariables;
@@ -15,44 +13,39 @@ public abstract class GenericRobot extends Robot
 	//Valori di supporto
 	private final double PI = Math.PI;
 	private final double PI2 = 2 * PI;
+
+	//Mappa in cui si trova il robot
+	protected Mappa mappa;
 	
-	//Valori di supporto per il calcolo della rotazione effettuata in base ai valori ricevuti dall'encoder
+	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
+	protected int FRONTAL_OBSTACLE_TRESHOLD = 80;
+	protected int LATERAL_OBSTACLE_TRESHOLD = 100;
+	
+	//Motori e sensori
+	private Motors motors;
+	protected FrontalSensors frontalSensors;
+	protected LateralSensors lateralSensors;
+	
+	private int motorAdjustment;
+	private final int MORE = 1;
+	private final int NOTHING = 0;
+	private final int LESS = -1;
+	
+	//Variabili per la rotazionedi 90°
+	private double pose, goalTheta;
 	private final double WHEEL_RADIUS = 0.0205; // in m
 	private final double AXLE_LENGTH = 0.052; 	// in m
 	private final double STEPS_ROT = 1000;		// 1000 steps per rotatation
 	
-	//Valore di soglia per i sensori affinchè venga rilevato un ostacolo
-	protected int FRONTAL_OBSTACLE_TRESHOLD = 80;
-	private final int LATERAL_OBSTACLE_TRESHOLD = 100;
+	//Variabili per memorizzare la posizione e la direzione del robot
+	protected int direction;
+	protected Point robotPosition;
 	
 	//Valori di supporto per la direzione del robot
 	public static final int NORD = 0;
 	public static final int OVEST = 1;
 	public static final int SUD = 2;
 	public static final int EST = 3;	
-	
-	//Motori e sensori
-	private Motors motors;
-	private PositionSensor leftMotorSensor, rightMotorSensor;
-	protected FrontalSensors frontalSensors;
-	protected DistanceSensor leftSensor, rightSensor;
-	private int maxProx = 0;
-	private boolean leftObstacle, rightObstacle;
-	
-	private double goalTheta;
-	private int motorAdjustment;
-	private final int MORE = 1;
-	private final int NOTHING = 0;
-	private final int LESS = -1;
-	
-	private double encodersValue[], pose[];
-	
-	//Variabili per memorizzare la posizione e la direzione del robot
-	protected int direction;
-	protected Point robotPosition;
-	
-	//Mappa in cui si trova il robot
-	protected Mappa mappa;
 	
 	//Flag per la gestione tra thread
 	//private boolean stepFlag;
@@ -63,33 +56,25 @@ public abstract class GenericRobot extends Robot
 		this.direction = direction;		
 		
 		//this.stepFlag = false;
-		this.mappa = null;		
+		this.mappa = null;
 		
-		pose = new double[3];
-		pose[0] = pose[1] = pose[2] = 0;
+		goalTheta = 0;
+		pose = 0;
 		
-		motors = new Motors(this, "left wheel motor", "right wheel motor");
+		motors = new Motors(this,
+							"left wheel motor",
+							"right wheel motor",
+							"left wheel sensor",
+							"right wheel sensor");
+		motorAdjustment = NOTHING;
 		stop();
-
-		encodersValue = new double[2];
-	    leftMotorSensor = getPositionSensor("left wheel sensor");
-	    rightMotorSensor = getPositionSensor("right wheel sensor");
-
-	    leftMotorSensor.enable(SharedVariables.getTimeStep());
-	    rightMotorSensor.enable(SharedVariables.getTimeStep());
 	    
-	    frontalSensors = new FrontalSensors(this, "ps7", "ps0", FRONTAL_OBSTACLE_TRESHOLD);
+	    frontalSensors = new FrontalSensors(this,
+								    		"ps7",
+								    		"ps0",
+								    		FRONTAL_OBSTACLE_TRESHOLD);
 	    
-	    leftSensor = getDistanceSensor("ps5");
-	    leftSensor.enable(SharedVariables.getTimeStep());
-	    
-	    rightSensor = getDistanceSensor("ps2");
-	    rightSensor.enable(SharedVariables.getTimeStep());
-	    
-	    leftObstacle = rightObstacle = false;
-	    motorAdjustment = NOTHING;
-	   
-	    goalTheta = 0;
+	    lateralSensors = new LateralSensors(this, "ps5", "ps2", LATERAL_OBSTACLE_TRESHOLD);
 	}	
 	
 	public boolean goStraightOn(int times)
@@ -98,7 +83,7 @@ public abstract class GenericRobot extends Robot
 			return true;
 		
 	    int initialValue = 50;	   
-	    int Nvolte = (maxProx / 100) + 2;
+	    int Nvolte = (lateralSensors.getMax() / 100) + 2;
 	    //System.out.println("Correggo di " + Nvolte);
 	    
 	    int count = initialValue;
@@ -109,7 +94,7 @@ public abstract class GenericRobot extends Robot
 	    	count -= Nvolte;
 	    
 	    motorAdjustment = NOTHING;
-	    maxProx= 0;
+	    lateralSensors.resetMax();
 	    
 	    boolean obstacle = false;
 	    
@@ -119,7 +104,7 @@ public abstract class GenericRobot extends Robot
 	    {	    	
 	    	for (int j = 0; j < count; ++j)
 	    	{	    		
-	    		checkObstaclesLateral();
+	    		lateralSensors.checkObstaclesLateral();
 	    		
 	    		if (frontalSensors.thereAreObstacles())
 	    		{
@@ -146,9 +131,6 @@ public abstract class GenericRobot extends Robot
 	    double leftValue = frontalSensors.getLeftValue();
 	    double rightValue = frontalSensors.getRightValue();
 	    double difference = leftValue - rightValue;
-	    
-	    if (obstacle)
-			goBack(4);
 	    
 	    if (leftValue > 50 && rightValue > 50)
 	    {
@@ -188,6 +170,9 @@ public abstract class GenericRobot extends Robot
 		    }
 		    stop();
 	    }
+
+	    if (obstacle)
+			goBack(4);
 	    
 	    return !obstacle;
 	}
@@ -206,9 +191,7 @@ public abstract class GenericRobot extends Robot
 	{
 	    stop();
 	    step();
-	    encodersValue[0] = leftMotorSensor.getValue();
-	    encodersValue[1] = rightMotorSensor.getValue();
-
+	    motors.resetEncoders();
 	    goalTheta = (goalTheta + PI/2.00) % PI2;
 
 	    /*
@@ -218,7 +201,7 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(-0.5, 0.5);
         
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
+	    while(Math.pow(pose - goalTheta, 2) > 0.0005)
 	    {	    	
 	    	step();
 	        updatePose(OVEST);
@@ -227,28 +210,27 @@ public abstract class GenericRobot extends Robot
 	    stop();
 	    direction = (direction + 1) % 4;
 	    
-	    if (leftObstacle)
+	    if (lateralSensors.isObstacleOnLeft())
 	    	motorAdjustment = LESS;
-	    if (rightObstacle)
+	    if (lateralSensors.isObstacleOnRight())
 	    	motorAdjustment = MORE;
-	    else if (!leftObstacle && !rightObstacle)
+	    else if (!lateralSensors.isObstacleOnLeft() && !lateralSensors.isObstacleOnRight())
 	    	motorAdjustment = NOTHING;
 	    
-	    leftObstacle = rightObstacle = false;
+	    lateralSensors.resetObstacles();
 	}
 	
 	public void turnRight()
 	{	
 	    stop();
 	    step();
-	    encodersValue[0] = leftMotorSensor.getValue();
-	    encodersValue[1] = rightMotorSensor.getValue();
+	    motors.resetEncoders();
 
 	    goalTheta = (goalTheta + PI/2.00) % PI2;
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
-	    while(Math.pow(pose[2] - goalTheta, 2) > 0.0005)
+	    while(Math.pow(pose - goalTheta, 2) > 0.0005)
 	    {	    	
 	        step();
 	        updatePose(EST);
@@ -261,40 +243,32 @@ public abstract class GenericRobot extends Robot
 	    
 	    stop();
 	    
-	    if (leftObstacle)
+	    if (lateralSensors.isObstacleOnLeft())
 	    	motorAdjustment = MORE;
-	    if (rightObstacle)
+	    if (lateralSensors.isObstacleOnRight())
 	    	motorAdjustment = LESS;
-	    else if (!leftObstacle && !rightObstacle)
+	    else if (!lateralSensors.isObstacleOnLeft() && !lateralSensors.isObstacleOnRight())
 	    	motorAdjustment = NOTHING;
 	    
-	    leftObstacle = rightObstacle = false;
+	    lateralSensors.resetObstacles();
 	}
 	
 	private void updatePose(int direction)
 	{
 	    // compute current encoder positions
-	    double del_enLeftW = leftMotorSensor.getValue() - encodersValue[0];
-	    double del_enRightW = rightMotorSensor.getValue() - encodersValue[1];
+	    double del_enLeftW = motors.getLeftEncoderValue();
+	    double del_enRightW = motors.getRightEncoderValue();
 	    
 	    // compute wheel displacements
 	    double values[] = getWheelDisplacements(del_enLeftW, del_enRightW);
 
-	    // displacement of robot
-	    double dispRobot = (values[0] + values[1])/2.0; 
-
-	    // Update position vector:
-	    // Update in position along X direction
-	    pose[0] +=  dispRobot * Math.cos(pose[2]); 
-	    // Update in position along Y direction
-	    pose[1] +=  dispRobot * Math.sin(pose[2]); // robot position w.r.to Y direction
 	    // Update in orientation
 	    if (direction == EST)
-	    	pose[2] += (values[0] - values[1])/AXLE_LENGTH; // orientation
+	    	pose += (values[0] - values[1])/AXLE_LENGTH; // orientation
 	    else if (direction == OVEST)
-	    	pose[2] += (values[1] - values[0])/AXLE_LENGTH; // orientation
+	    	pose += (values[1] - values[0])/AXLE_LENGTH; // orientation
 	    
-	    pose[2] = pose[2] % PI2;
+	    pose = pose % PI2;
 	    
 	    /*
 	    if (this instanceof GuardiaRobot)
@@ -313,26 +287,6 @@ public abstract class GenericRobot extends Robot
 		return values;
 	}
 	
-	private void checkObstaclesLateral()
-	{
-		int leftVal= (int) leftSensor.getValue();
-		int rightVal=  (int) rightSensor.getValue();
-		
-		if (leftVal > LATERAL_OBSTACLE_TRESHOLD)
-		{
-			leftObstacle = true;
-			
-			if(leftVal > maxProx)
-				maxProx = leftVal;
-		}
-		if (rightVal > LATERAL_OBSTACLE_TRESHOLD)
-		{
-			rightObstacle = true;
-			if(rightVal > maxProx)
-				maxProx = rightVal;
-		}
-	}
-	
 	//Va avanti di una casella
 	public boolean goStraightOn() { return goStraightOn(1); }
 	
@@ -342,7 +296,7 @@ public abstract class GenericRobot extends Robot
 	//Ferma il robot
 	public void stop() { motors.setVelocityMS(0); }
 	
-	private int step() { return step(SharedVariables.getTimeStep()); }
+	public int step() { return step(SharedVariables.getTimeStep()); }
 	public Mappa getMappa() { return mappa; }
 	
 	private void incrementaPosizione()
@@ -378,8 +332,12 @@ public abstract class GenericRobot extends Robot
 			break;
 		case 2:
 			{
+				/* 
+				 * Per non farlo girare SEMPRE e SOLO
+				 * due volte a sinistra/destra
+				 * quando deve girare di 180
+				 */
 				Random r = new Random();
-				//Giusto per non farlo girare SEMPRE e SOLO due volte a sinistra quando deve girare di 180�
 				if (r.nextInt(2) == 0)
 				{
 					turnLeft();

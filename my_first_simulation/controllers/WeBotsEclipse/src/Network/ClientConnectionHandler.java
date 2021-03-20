@@ -24,7 +24,8 @@ public class ClientConnectionHandler extends Thread{
 		this.clientType = clientType;
 		this.client = client;
 				
-		try {
+		try
+		{
 			channel = AsynchronousSocketChannel.open();
 			hostAddress = new InetSocketAddress("localhost", SharedVariables.getTcpServerPort());
 		} catch (IOException e) {
@@ -35,7 +36,8 @@ public class ClientConnectionHandler extends Thread{
 	
 	public void run()
 	{
-		try {
+		try
+		{
 			Future<Void> future = channel.connect(hostAddress);
 			future.get();
 			
@@ -56,15 +58,24 @@ public class ClientConnectionHandler extends Thread{
                 buffer.position(0);
                 
                 int packetSize = buffer.getInt();
+                
+                /*
+                 * 4 byte li ho letti prima quindi alloco un buffer
+                 * di dimensione pari al pacchetto in arrivo meno - 4
+                 */
+                
                 buffer = ByteBuffer.allocate(packetSize - 4);
                 readResult = channel.read(buffer);
                 if (readResult.get() == -1)
                 	continue;
+                
                 buffer.position(0);
                
                 parse(packetSize, buffer);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -97,10 +108,13 @@ public class ClientConnectionHandler extends Thread{
 	public void sendPacket(Packet packet)
 	{
 		ByteBuffer buf = packet.encode();
-		Future<Integer> abc = channel.write(buf);
-		try {
-			abc.get();
-		} catch (InterruptedException | ExecutionException e) {
+		Future<Integer> writeResult = channel.write(buf);
+		try
+		{
+			writeResult.get();
+		}
+		catch (InterruptedException | ExecutionException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

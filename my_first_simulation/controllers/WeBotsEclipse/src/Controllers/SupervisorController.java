@@ -32,7 +32,7 @@ public class SupervisorController
         
     	supervisor.connectToServer();
     	
-        while (supervisor.step(SharedVariables.getTimeStep()) != -1);
+        while (supervisor.step() != -1);
     }
     
     public static void init(String[] args)
@@ -41,7 +41,9 @@ public class SupervisorController
     	String projectPath = args[1];
     	int serverTcpPort = Integer.parseInt(args[2]);
     	int timeStep = Integer.parseInt(args[3]);
+    	int numeroGuardie = Integer.parseInt(args[4]);
+    	int numeroLadri = Integer.parseInt(args[5]);
     	
-    	SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort);
+    	SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri);
     }
  }

@@ -1,6 +1,8 @@
 package Map;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Mappa
 {	
@@ -61,9 +63,9 @@ public class Mappa
 		return WeBotsXYMap;
 	}
 	
-	public int get(int i, int j)
+	public int get(Point punto)
 	{
-		return mappa[i][j];
+		return mappa[punto.getX()][punto.getY()];
 	}
 	
 	public int[][] getMap()
@@ -145,9 +147,33 @@ public class Mappa
 		return Difficolta;
 	}
 	
-	public void setValue(int row, int col, int value)
+	public void setValue(Point punto, int value)
 	{
-		this.mappa[row][col] = value;
+		this.mappa[punto.getX()][punto.getY()] = value;
+	}
+	
+	public Set<Point> getNeighbors(Point point)
+	{
+		Set<Point> set = new HashSet<>();
+		
+		int x = point.getX();
+		int y = point.getY();
+		
+		Point north = x - 1 >= 0 && mappa[x - 1][y] == 0 ? new Point(x - 1, y) : null;
+		Point south = x + 1 < getXSize() && mappa[x + 1][y] == 0 ? new Point(x + 1, y) : null;
+		Point east = y + 1 < getYSize() && mappa[x][y + 1] == 0 ? new Point(x, y + 1) : null;
+		Point west = y - 1 >= 0 && mappa[x][y - 1] == 0 ? new Point(x, y - 1) : null;
+		
+		if (north != null)
+			set.add(north);
+		if (south != null)
+			set.add(south);
+		if (east != null)
+			set.add(east);
+		if (west != null)
+			set.add(west);
+		
+		return set;
 	}
 	
 }

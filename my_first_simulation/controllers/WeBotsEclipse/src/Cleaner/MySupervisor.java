@@ -7,6 +7,7 @@ import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 
 import Map.Mappa;
+import Map.Point;
 
 public class MySupervisor extends Supervisor {
 		
@@ -61,8 +62,8 @@ public class MySupervisor extends Supervisor {
 			 	TempX = MatrixToWorldX((float) i,mappa.getWeBotsTile());
 			 	TempY = MatrixToWorldY((float) j,mappa.getWeBotsTile());
 
-			if(mappa.get(i, j) != 0 )
-			 	System.out.println(mappa.get(i, j));
+			if(mappa.get(new Point(i, j)) != 0 )
+			 	System.out.println(mappa.get(new Point(i, j)));
 			 {
 				 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
 				 RootChildrenField.importMFNodeFromString(4,SpawnBox);
@@ -106,7 +107,7 @@ public class MySupervisor extends Supervisor {
 				 // Sto scorrendo l'array, se all'interno di questo valore c'� 1 allora faccio lo spawn su quel punto di posizione x,y
 				 	TempX = MatrixToWorldX((float) i, mappa.getWeBotsTile());
 				 	TempY = MatrixToWorldY((float) j, mappa.getWeBotsTile());
-				 if(mappa.get(i, j) == 1 )
+				 if(mappa.get(new Point(i, j)) == 1 )
 				 {
 		    	  String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
 		          RootChildenField.importMFNodeFromString(4,SpawnBox);

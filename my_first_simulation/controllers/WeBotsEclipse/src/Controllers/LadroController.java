@@ -19,7 +19,7 @@ public class LadroController
                 
         robot.connectToServer();
 
-        while (robot.step(SharedVariables.getTimeStep()) != -1)
+        while (robot.step() != -1)
         {
         	robot.hide();
         }
@@ -31,8 +31,10 @@ public class LadroController
     	String projectPath = args[1];
     	int serverTcpPort = Integer.parseInt(args[2]);
     	int timeStep = Integer.parseInt(args[3]);
+    	int numeroGuardie = Integer.parseInt(args[4]);
+    	int numeroLadri = Integer.parseInt(args[5]);
     	
-    	SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort);
+    	SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri);
     }
 }
  

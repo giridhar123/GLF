@@ -3,6 +3,7 @@ package Network.Packets.ServerToClient;
 import java.nio.ByteBuffer;
 
 import Map.Mappa;
+import Map.Point;
 import Network.Packet;
 
 public class STC_SEND_MAP extends Packet{
@@ -61,7 +62,7 @@ public class STC_SEND_MAP extends Packet{
     	{
     		for(int j = 0; j < ySize; ++j)
     		{
-    			buf.putInt(mappa.get(i, j));
+    			buf.putInt(mappa.get(new Point(i, j)));
     		}
     	}
     	

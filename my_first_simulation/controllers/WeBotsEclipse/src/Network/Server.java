@@ -22,10 +22,13 @@ public class Server extends Thread {
 	public Server() {
 		guardie = new ArrayList<>();
 		ladri = new ArrayList<>();
-		try {
+		try
+		{
 			server = AsynchronousServerSocketChannel.open();
 			server.bind(new InetSocketAddress("127.0.0.1", SharedVariables.getTcpServerPort()));
-		} catch (IOException exc) {
+		}
+		catch (IOException exc)
+		{
 			exc.printStackTrace();
 		}
 	}
@@ -39,40 +42,35 @@ public class Server extends Thread {
 
 		mappa = new Mappa("difficile", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap);
 
-		while (true) {
-			try {
+		while (true)
+		{
+			try
+			{
 				Future<AsynchronousSocketChannel> future = server.accept();
 				ServerConnectionHandler connectionHandler = new ServerConnectionHandler(this, future.get());
 				connectionHandler.start();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
+			}
+			catch (InterruptedException | ExecutionException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public Mappa getMappa() {
-		return mappa;
-	}
-
-	public void addGuardia(AsynchronousSocketChannel guardia) {
+	public void addGuardia(AsynchronousSocketChannel guardia)
+	{
 		System.out.println("aggiungo una guardia");
 		guardie.add(guardia);
 	}
 
-	public void addLadro(AsynchronousSocketChannel ladro) {
+	public void addLadro(AsynchronousSocketChannel ladro)
+	{
 		System.out.println("Aggiungo un ladro");
 		ladri.add(ladro);
 	}
 
-	public ArrayList<AsynchronousSocketChannel> getLadri() {
-		return this.ladri;
-	}
-	
-	public ArrayList<AsynchronousSocketChannel> getGuardie() {
-		return this.guardie;
-	}
+	public Mappa getMappa() { return mappa; }
+	public ArrayList<AsynchronousSocketChannel> getLadri() { return ladri; }
+	public ArrayList<AsynchronousSocketChannel> getGuardie() { return guardie; }
 }
