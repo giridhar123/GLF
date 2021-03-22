@@ -19,7 +19,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	{
 		super(direction);
 		
-		hidden = false;		
+		hidden = false;
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
 	}
 	
@@ -33,8 +33,6 @@ public class LadroRobot extends GenericRobot implements Client {
 	{
 		if (mappa == null || hidden)
 			return;
-		
-		this.robotPosition = new Point(15, 15);
 		
 		ArrayList<Point> pts = getPotentialsPoints();
 		Point dest;

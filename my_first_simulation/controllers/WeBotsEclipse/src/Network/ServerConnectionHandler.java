@@ -87,25 +87,7 @@ public class ServerConnectionHandler extends Thread {
 			}
 			break;
 			case Packet.CTS_WORLD_READY:
-			{
-				STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
-				
-				ByteBuffer buffer = null;
-				
-				ArrayList<AsynchronousSocketChannel> clients = server.getLadri();
-				for (int i = 0; i < clients.size(); ++i)
-				{
-					buffer = stc_send_map.encode();
-					clients.get(i).write(buffer);
-				}
-				
-				clients = server.getGuardie();
-				for (int i = 0; i < clients.size(); ++i)
-				{
-					buffer = stc_send_map.encode();
-					clients.get(i).write(buffer);
-				}
-			}
+				server.startControllers();
 			break;
 			case Packet.CTS_UPDATE_MAP_POINT:
 			{

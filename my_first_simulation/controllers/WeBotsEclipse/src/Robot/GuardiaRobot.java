@@ -63,8 +63,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		if (mappa == null || ladroFound)
 			return;
-	
-		this.robotPosition = new Point(4,4);
+		
 		closedSet.add(new Point(robotPosition));
 		
 		Point goal = null;

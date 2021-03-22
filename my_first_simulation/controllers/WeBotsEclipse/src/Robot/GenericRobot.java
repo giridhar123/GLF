@@ -5,6 +5,7 @@ import java.util.Random;
 import com.cyberbotics.webots.controller.Robot;
 
 import General.SharedVariables;
+import General.StartPositions;
 import Map.Mappa;
 import Map.Point;
 
@@ -57,6 +58,8 @@ public abstract class GenericRobot extends Robot
 		
 		//this.stepFlag = false;
 		this.mappa = null;
+		this.robotPosition = StartPositions.valueOf(getName()).getPosition();
+		System.out.println("Sono " + getName() + " - la mia position è: " + robotPosition);
 		
 		goalTheta = 0;
 		pose = 0;
