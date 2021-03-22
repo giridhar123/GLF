@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_MAP_POINT;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ServerConnectionHandler extends Thread {
@@ -89,22 +89,28 @@ public class ServerConnectionHandler extends Thread {
 			case Packet.CTS_WORLD_READY:
 				server.startControllers();
 			break;
-			case Packet.CTS_UPDATE_MAP_POINT:
+			case Packet.CTS_MAP_POINT:
 			{
-				CTS_UPDATE_MAP_POINT cts_update_map_point = new CTS_UPDATE_MAP_POINT(packet, buf);
-				
-				System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+				CTS_MAP_POINT cts_update_map_point = new CTS_MAP_POINT(packet, buf);
 				
 				ByteBuffer buffer = null;
 				
-				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-				for (int i = 0; i < guardie.size(); ++i)
+				if( server.getGuardie().contains(packet.getSender()))
 				{
-					if (guardie.get(i) == packet.getSender())
-						continue;
+					System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+					for (int i = 0; i < guardie.size(); ++i)
+					{
+						if (guardie.get(i) == packet.getSender())
+							continue;
 					
-					buffer = cts_update_map_point.encode();
-					guardie.get(i).write(buffer);
+						buffer = cts_update_map_point.encode();
+						guardie.get(i).write(buffer);
+					}
+				}
+				else
+				{
+					System.out.println("Server: il ladro mi ha inviato un map point");
 				}
 			}
 			break;

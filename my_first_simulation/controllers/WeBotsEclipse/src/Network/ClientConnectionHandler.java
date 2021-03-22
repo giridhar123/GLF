@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_MAP_POINT;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ClientConnectionHandler extends Thread{
@@ -93,9 +93,9 @@ public class ClientConnectionHandler extends Thread{
 				client.onStcSendMapReceived(mappa);
 			}
 			break;
-			case Packet.CTS_UPDATE_MAP_POINT:
+			case Packet.CTS_MAP_POINT:
 			{
-				CTS_UPDATE_MAP_POINT cts_update_map_point = new CTS_UPDATE_MAP_POINT(packet, buf);
+				CTS_MAP_POINT cts_update_map_point = new CTS_MAP_POINT(packet, buf);
 				System.out.println("Packet Size: " + cts_update_map_point.getSize() + " Guardia: ho ricevuto ostacolo in: " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
 			}
 			break;

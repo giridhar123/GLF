@@ -21,7 +21,7 @@ public class LadroController
 
         while (robot.step() != -1)
         {
-        	robot.hide();
+        	robot.work();
         }
     }
     

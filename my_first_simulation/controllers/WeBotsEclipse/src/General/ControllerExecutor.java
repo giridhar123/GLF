@@ -66,7 +66,7 @@ public class ControllerExecutor extends Thread
         if (OS.equals(new String("Mac OS X")))
             processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=" + robotName + "\n java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step + " " + numeroGuardie + " " + numeroLadri);
         else
-        	processBuilder.command("cmd.exe", "/c", "javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step + " " + numeroGuardie + " " + numeroLadri);        
+        	processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME=" + robotName + "&javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step + " " + numeroGuardie + " " + numeroLadri);        
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

@@ -59,7 +59,6 @@ public abstract class GenericRobot extends Robot
 		//this.stepFlag = false;
 		this.mappa = null;
 		this.robotPosition = StartPositions.valueOf(getName()).getPosition();
-		System.out.println("Sono " + getName() + " - la mia position è: " + robotPosition);
 		
 		goalTheta = 0;
 		pose = 0;
@@ -364,6 +363,7 @@ public abstract class GenericRobot extends Robot
 		}
 	}
 	
+	public void work () {}
 	/*
 	public synchronized int myStep(int time, Thread caller)
 	{
