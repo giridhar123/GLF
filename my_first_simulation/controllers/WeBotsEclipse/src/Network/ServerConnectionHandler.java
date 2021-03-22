@@ -44,7 +44,7 @@ public class ServerConnectionHandler extends Thread {
 	                readResult.get();
 	                buffer.position(0);
 	               
-	                parse(packetSize, buffer);
+	                parse(clientChannel, packetSize, buffer);
 	                
 	                /*
 	                Future<Integer> writeResult = clientChannel.write(buffer);
@@ -63,9 +63,9 @@ public class ServerConnectionHandler extends Thread {
 		}
 	}
 	
-	private void parse(int packetSize, ByteBuffer buf)
+	private void parse(AsynchronousSocketChannel sender, int packetSize, ByteBuffer buf)
 	{
-		Packet packet = new Packet(packetSize, buf);
+		Packet packet = new Packet(packetSize, buf, sender);
 		
 		switch (packet.getOpcode())
 		{
@@ -100,6 +100,9 @@ public class ServerConnectionHandler extends Thread {
 				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
 				for (int i = 0; i < guardie.size(); ++i)
 				{
+					if (guardie.get(i) == packet.getSender())
+						continue;
+					
 					buffer = cts_update_map_point.encode();
 					guardie.get(i).write(buffer);
 				}

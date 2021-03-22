@@ -1,6 +1,7 @@
 package Network;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 
 public class Packet
 {
@@ -12,16 +13,19 @@ public class Packet
 	private int size;
     private short opcode;
     
+    private AsynchronousSocketChannel sender;
+    
     public Packet(Packet otherPacket)
     {
     	this.opcode = otherPacket.opcode;
     	this.size = otherPacket.size;
     }
     
-    public Packet(int size, ByteBuffer buf)
+    public Packet(int size, ByteBuffer buf, AsynchronousSocketChannel sender)
     {
     	this.size = size;
     	this.opcode = buf.getShort();
+    	this.sender = sender;
     }
     
     public Packet(final short opcode)
@@ -35,6 +39,11 @@ public class Packet
     	this(opcode);
     	this.size += size;
         this.opcode = opcode;
+    }
+    
+    public AsynchronousSocketChannel getSender()
+    {
+    	return sender;
     }
     
     public int getSize()

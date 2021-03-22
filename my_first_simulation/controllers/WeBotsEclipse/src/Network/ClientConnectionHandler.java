@@ -71,7 +71,7 @@ public class ClientConnectionHandler extends Thread{
                 
                 buffer.position(0);
                
-                parse(packetSize, buffer);
+                parse(packetSize, buffer, channel);
 			}
 		}
 		catch (Exception e)
@@ -80,9 +80,9 @@ public class ClientConnectionHandler extends Thread{
 		}
 	}
 	
-	private void parse(int packetSize, ByteBuffer buf)
+	private void parse(int packetSize, ByteBuffer buf, AsynchronousSocketChannel sender)
 	{
-		Packet packet = new Packet(packetSize, buf);
+		Packet packet = new Packet(packetSize, buf, sender);
 		
 		switch (packet.getOpcode())
 		{
