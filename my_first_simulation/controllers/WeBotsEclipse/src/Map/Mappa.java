@@ -9,12 +9,12 @@ public class Mappa
 	private String Difficolta ;
 	private int xDim; //Dim Matrice
 	private int yDim;
-	private int[][] mappa;
 	private double[] WeBotsXYMap ; // Quanto deve essere la mappa di WeBots
 	private double WeBotsTile ; // Grandezza di una singola cella di WeBots
 	private int SpawnPort; // grandezza delle porte dello spawn
 	private int xDimSpawn;
-
+	private int[][] mappa;
+	
 	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap,int xDimSpawn,int SpawnPort)
 	{
 		// Questo costruttore � richiamato enlla classe SERVER
@@ -23,13 +23,15 @@ public class Mappa
 		this.yDim = yDim;
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
-		this.mappa = new int[xDim][yDim];
 		this.xDimSpawn = xDimSpawn;
 		this.SpawnPort = SpawnPort;
-		this.mappa= CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
 		
+		int[][] MappaInterna = CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
+		this.mappa = new int[xDim + 2*xDimSpawn][yDim];
+		
+		CompleteMap(MappaInterna);
+		GetSuperMap(mappa);
 	}
-	
 	
 	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
 	{
@@ -99,7 +101,7 @@ public class Mappa
 	public int[][] CreateMapClosed()
 	{
 			int min = 0;
-			int max = mappa[1].length-1;
+			int max = yDim-1;
 			
 			for(int i=0; i < xDim; i++)
 				{ 
@@ -121,7 +123,6 @@ public class Mappa
 						
 					}
 				}
-		//System.out.print(" x " + mappa[0].length + " y " + mappa[1].length + " x " + " " + xDim + " y " + yDim);
 		return mappa ;
 	}
 	
@@ -150,7 +151,6 @@ public class Mappa
 	{
 		TestingMap TM = new TestingMap();
 		return TM.CreateMap(this);
-		
 	}
 
 	public String getDifficolta() {
@@ -186,9 +186,34 @@ public class Mappa
 		return set;
 	}
 
+	public void GetSuperMap(int[][] SuperMappa)
+	{
+		for(int i=0; i < SuperMappa[0].length ; i++)
+		{
+			for(int j=0; j <  SuperMappa[1].length; j++)
+			{
+					System.out.print(" "+ SuperMappa[i][j] + " ");
+			}
+			System.out.println("\n");
+		}
+	}
 
+	
 	public int getxDimSpawn() {
 		return xDimSpawn;
 	}
+	
+	public void CompleteMap(int[][] MappaInterna)
+	{ 	
+		int temp = 0;
+		for(int i=xDimSpawn; i < xDim ; i++,temp++)
+		{
+			for(int j=0; j < yDim; j++)
+			{
+				mappa[i][j] = mappa[temp][j];
+			}
+		}
+	}
+
 	
 }

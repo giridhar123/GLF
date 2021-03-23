@@ -1,13 +1,15 @@
-#VRML_SIM R2021a utf8
+#VRML_SIM R2020b utf8
 WorldInfo {
   basicTimeStep 16
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
   orientation 0.0031750109925861992 0.7361536265180272 0.6768070311909841 3.1395013039730117
-  position -0.07311474400959907 3.7114401783247546 -0.6015418544301506
+  position -0.6936590818226321 14.365211906244847 -1.7142496563147456
 }
 TexturedBackground {
+}
+Group {
 }
 TexturedBackgroundLight {
 }

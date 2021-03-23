@@ -66,6 +66,7 @@ public class TestingMap {
     	
     	for (int i = 9; i < 19; ++i)
     		map[18][i] = 0;
+
     	
 		return map;
     }
