@@ -24,7 +24,7 @@ public class GuardiaController
         while (robot.step() != -1)
         {
         	Speaker.playSound(speaker , speaker, "sounds/lupin.wav", 50.0, 1, 0, true);
-        	robot.explore();
+        	robot.work();
         }
     }
     

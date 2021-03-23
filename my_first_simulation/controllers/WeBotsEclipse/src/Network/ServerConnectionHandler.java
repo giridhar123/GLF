@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_MAP_POINT;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ServerConnectionHandler extends Thread {
@@ -44,7 +44,7 @@ public class ServerConnectionHandler extends Thread {
 	                readResult.get();
 	                buffer.position(0);
 	               
-	                parse(packetSize, buffer);
+	                parse(clientChannel, packetSize, buffer);
 	                
 	                /*
 	                Future<Integer> writeResult = clientChannel.write(buffer);
@@ -63,9 +63,9 @@ public class ServerConnectionHandler extends Thread {
 		}
 	}
 	
-	private void parse(int packetSize, ByteBuffer buf)
+	private void parse(AsynchronousSocketChannel sender, int packetSize, ByteBuffer buf)
 	{
-		Packet packet = new Packet(packetSize, buf);
+		Packet packet = new Packet(packetSize, buf, sender);
 		
 		switch (packet.getOpcode())
 		{
@@ -87,39 +87,30 @@ public class ServerConnectionHandler extends Thread {
 			}
 			break;
 			case Packet.CTS_WORLD_READY:
-			{
-				STC_SEND_MAP stc_send_map = new STC_SEND_MAP(server.getMappa());
-				
-				ByteBuffer buffer = null;
-				
-				ArrayList<AsynchronousSocketChannel> clients = server.getLadri();
-				for (int i = 0; i < clients.size(); ++i)
-				{
-					buffer = stc_send_map.encode();
-					clients.get(i).write(buffer);
-				}
-				
-				clients = server.getGuardie();
-				for (int i = 0; i < clients.size(); ++i)
-				{
-					buffer = stc_send_map.encode();
-					clients.get(i).write(buffer);
-				}
-			}
+				server.startControllers();
 			break;
-			case Packet.CTS_UPDATE_MAP_POINT:
+			case Packet.CTS_MAP_POINT:
 			{
-				CTS_UPDATE_MAP_POINT cts_update_map_point = new CTS_UPDATE_MAP_POINT(packet, buf);
-				
-				System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+				CTS_MAP_POINT cts_update_map_point = new CTS_MAP_POINT(packet, buf);
 				
 				ByteBuffer buffer = null;
 				
-				ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-				for (int i = 0; i < guardie.size(); ++i)
+				if( server.getGuardie().contains(packet.getSender()))
 				{
-					buffer = cts_update_map_point.encode();
-					guardie.get(i).write(buffer);
+					System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+					for (int i = 0; i < guardie.size(); ++i)
+					{
+						if (guardie.get(i) == packet.getSender())
+							continue;
+					
+						buffer = cts_update_map_point.encode();
+						guardie.get(i).write(buffer);
+					}
+				}
+				else
+				{
+					System.out.println("Server: il ladro mi ha inviato un map point");
 				}
 			}
 			break;

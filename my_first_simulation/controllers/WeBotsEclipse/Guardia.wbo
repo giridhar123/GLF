@@ -1,0 +1,10 @@
+#VRML_OBJ R2021a utf8
+DEF Guardia Guardia {
+  translation 0.307286 0 -0.0419713
+  name "guardia"
+  controller "<extern>"
+  controllerArgs [
+    ""
+  ]
+  distance_sensor_numberOfRays 5
+}

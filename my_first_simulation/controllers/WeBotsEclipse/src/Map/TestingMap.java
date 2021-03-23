@@ -61,7 +61,11 @@ public class TestingMap {
 	    	map = TakePattern(MatrixIndexPoint,dim, map, RandomIndex);
     	}
     	
-    	map[15][15] = map[4][4] = 0;
+    	for (int i = 1; i < 11; ++i)
+    		map[1][i] = 0;
+    	
+    	for (int i = 9; i < 19; ++i)
+    		map[18][i] = 0;
     	
 		return map;
     }

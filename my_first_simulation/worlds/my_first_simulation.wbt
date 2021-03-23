@@ -17,21 +17,6 @@ DEF World RectangleArena {
   floorTileSize 0.2 0.2
   wallHeight 0.05
 }
-DEF Guardia Guardia {
-  translation 0.307286 0 -0.0419713
-  name "guardia"
-  controller "<extern>"
-  controllerArgs [
-    ""
-  ]
-  distance_sensor_numberOfRays 5
-}
-DEF Ladro Ladro {
-  translation 0.14 0 0
-  name "ladro"
-  controller "<extern>"
-  distance_sensor_numberOfRays 5
-}
 DEF supervisor E-puck {
   name "supervisor"
   controller "<extern>"

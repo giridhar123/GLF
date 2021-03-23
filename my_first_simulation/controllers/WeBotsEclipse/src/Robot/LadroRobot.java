@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import General.AStarSearcher;
+import General.SharedVariables;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
+import Network.Packets.ClientToServer.CTS_MAP_POINT;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
 public class LadroRobot extends GenericRobot implements Client {
@@ -19,7 +21,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	{
 		super(direction);
 		
-		hidden = false;		
+		hidden = false;
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
 	}
 	
@@ -29,12 +31,10 @@ public class LadroRobot extends GenericRobot implements Client {
 		clientConnectionHandler.start();
 	}
 	
-	public void hide()
+	private void hide()
 	{
 		if (mappa == null || hidden)
 			return;
-		
-		this.robotPosition = new Point(15, 15);
 		
 		ArrayList<Point> pts = getPotentialsPoints();
 		Point dest;
@@ -45,7 +45,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		{
 			index = r.nextInt(pts.size());
 			dest = pts.get(index);
-			System.out.println("Ladro: Provo ad andare in: " + dest);
+			System.out.println(getName() + ": Provo ad andare in: " + dest);
 		}
 		while(!goTo(dest));
 		
@@ -59,6 +59,8 @@ public class LadroRobot extends GenericRobot implements Client {
 		
 		if (path == null)
 			return false;
+		
+		clientConnectionHandler.sendPacket(new CTS_MAP_POINT(new Point(goal)));
 		
 		ArrayList<Integer> convertedPath = AStarSearcher.pathToRobotDirections(path);
 		
@@ -131,4 +133,21 @@ public class LadroRobot extends GenericRobot implements Client {
 	{
 		this.mappa = mappa;
 	}
+    
+    @Override
+    public void work ()
+    {
+    	String id = String.valueOf(getName().charAt(getName().length() - 1));
+    	
+		try 
+		{
+			step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
+		}
+		catch (NumberFormatException e)
+		{
+			e.printStackTrace();
+		}
+		
+    	hide();
+    }
 }

@@ -32,7 +32,10 @@ public class SupervisorController
         
     	supervisor.connectToServer();
     	
-        while (supervisor.step() != -1);
+        while (supervisor.step() != -1)
+        {
+        	supervisor.spawnWorld();
+        }
     }
     
     public static void init(String[] args)

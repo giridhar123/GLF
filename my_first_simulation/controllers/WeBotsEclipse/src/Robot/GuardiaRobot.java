@@ -8,12 +8,13 @@ import com.cyberbotics.webots.controller.CameraRecognitionObject;
 import com.cyberbotics.webots.controller.LED;
 
 import General.AStarSearcher;
+import General.SharedVariables;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_UPDATE_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_MAP_POINT;
 
 public class GuardiaRobot extends GenericRobot implements Client {
 	
@@ -59,12 +60,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		}
 	}
 	
-	public void explore()
+	private void explore()
 	{
 		if (mappa == null || ladroFound)
 			return;
-	
-		this.robotPosition = new Point(4,4);
+		
 		closedSet.add(new Point(robotPosition));
 		
 		Point goal = null;
@@ -82,20 +82,20 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 			if (closedSet.contains(goal))
 			{
-				System.out.println(goal + " già esaminato");
+				System.out.println(getName() + ": " + goal + " gia� esaminato");
 				continue;
 			}
 			
 			path = aStarSearcher.getPath(robotPosition, goal);
 			if (path == null)
 			{
-				System.out.println("Non c'è un path per " + goal);
+				System.out.println(getName() + ":Non c'e un path per " + goal);
 				updateMapAndSendPacket(goal);
 				closedSet.add(new Point(goal));
 				continue;
 			}
 			
-			System.out.println("C'è un path per " + goal);
+			System.out.println(getName() + ": C'e un path per " + goal);
 			
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
@@ -120,14 +120,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					path = aStarSearcher.getPath(robotPosition, goal);
 					if (path == null)
 					{
-						System.out.println("Non ho più un path per " + goal);
+						System.out.println(getName() + ": Non ho piu un path per " + goal);
 						updateMapAndSendPacket(goal);
 						closedSet.add(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
 					{
-						System.out.println("Aggiorno il path per " + goal);
+						System.out.println(getName() + ": Aggiorno il path per " + goal);
 						correctedPath = AStarSearcher.pathToRobotDirections(path);
 						i = -1;
 					}
@@ -222,7 +222,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		//System.out.println("1");
 		mappa.setValue(punto, 1);
 		//System.out.println("2 Guardia invio pacchetto con punto: " + punto);
-		clientConnectionHandler.sendPacket(new CTS_UPDATE_MAP_POINT(punto));
+		clientConnectionHandler.sendPacket(new CTS_MAP_POINT(punto));
 		//System.out.println("3");
 	}
 
@@ -257,4 +257,20 @@ public class GuardiaRobot extends GenericRobot implements Client {
         }        
 	}
 
+	@Override
+	public void work () 
+	{
+		String id = String.valueOf(getName().charAt(getName().length() - 1));
+		
+		try 
+		{
+			step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
+		}
+		catch (NumberFormatException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		explore();
+	}
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 import com.cyberbotics.webots.controller.Robot;
 
 import General.SharedVariables;
+import General.StartPositions;
 import Map.Mappa;
 import Map.Point;
 
@@ -57,6 +58,7 @@ public abstract class GenericRobot extends Robot
 		
 		//this.stepFlag = false;
 		this.mappa = null;
+		this.robotPosition = StartPositions.valueOf(getName()).getPosition();
 		
 		goalTheta = 0;
 		pose = 0;
@@ -361,6 +363,7 @@ public abstract class GenericRobot extends Robot
 		}
 	}
 	
+	public void work () {}
 	/*
 	public synchronized int myStep(int time, Thread caller)
 	{

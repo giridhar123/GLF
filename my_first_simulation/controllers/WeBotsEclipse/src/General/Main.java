@@ -15,9 +15,6 @@ public class Main
 {
     private static ControllerExecutor supervisorController;
 
-    private static ControllerExecutor guardiaController;
-    private static ControllerExecutor ladroController;
-
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
         FileInputStream fileInputStream = new FileInputStream(new File("path.txt"));
@@ -70,25 +67,11 @@ public class Main
     public static void eseguiTutto()
     {
     	//Cleaner cleaner = new Cleaner();
-    	
-        guardiaController = new ControllerExecutor("GuardiaController", "guardia");
-        ladroController = new ControllerExecutor("LadroController", "ladro");
+
         supervisorController = new ControllerExecutor("SupervisorController", "supervisor");
         try
         {
-            guardiaController.start();
-        
-            while (!(guardiaController.ready))
-                Thread.sleep(5);        
-            
-            ladroController.start();
-            while (!(ladroController.ready))
-                Thread.sleep(5);
-
             supervisorController.start();
-            
-            guardiaController.join();
-            ladroController.join();
             supervisorController.join();
         }
         catch (InterruptedException e)

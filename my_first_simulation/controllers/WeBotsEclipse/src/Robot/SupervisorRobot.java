@@ -6,6 +6,7 @@ import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 
 import General.SharedVariables;
+import General.StartPositions;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
@@ -17,10 +18,14 @@ import Network.Packets.ClientToServer.CTS_WORLD_READY;
 public class SupervisorRobot extends Supervisor implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
+	private Mappa mappa;
+	private boolean worldSpawned;
 	
 	public SupervisorRobot()
 	{
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.SUPERVISOR, this);
+		this.mappa = null;
+		this.worldSpawned = false;
 	}
 	
 	@Override
@@ -29,10 +34,13 @@ public class SupervisorRobot extends Supervisor implements Client {
 		clientConnectionHandler.start();
 	}
 		
-	public void spawnaMappa(Mappa mappa)
+	public void spawnWorld()
 	{
+		if (mappa == null || worldSpawned)
+			return;
+		
         final Node viewpoint_node = getFromDef("viewpoint");
-        final Node robot_node = getFromDef("supervisor");
+        Node robot_node = getFromDef("supervisor");
         robot_node.setVisibility(viewpoint_node, false);
         
         final Node Floor = getFromDef("World");
@@ -41,12 +49,58 @@ public class SupervisorRobot extends Supervisor implements Client {
 
     	final Node RootNode = getRoot();
         Field RootChildrenField = RootNode.getField("children");
-    	Spawn(mappa, RootChildrenField);
+    	
+        StringBuilder spawnString = new StringBuilder(createWoodenBoxsString());
+        spawnString.append(createRobotsString());
+    	
+    	RootChildrenField.importMFNodeFromString(4, spawnString.toString());
+		
+    	spostaRobot("Guardia");
+    	spostaRobot("Ladro");
+		
+		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
+		clientConnectionHandler.sendPacket(cts_world_ready);
+		
+		worldSpawned = true;
+	}
+	
+	private void spostaRobot(String robotName)
+	{
+		int n = robotName.compareTo(new String("Guardia")) == 0 ? SharedVariables.getNumeroGuardie() : SharedVariables.getNumeroLadri();
+		
+		String currentName = null;
+		Node robotNode = null;
+		
+		int x, y;
+		Point position;
+		for (int i = 0; i < n; ++i)
+		{
+			currentName = robotName.concat(Integer.toString(i));
+
+			robotNode = getFromDef(currentName);
+			if (robotNode != null)
+			{
+				System.out.println("Sposto il " + currentName);
+				position = StartPositions.valueOf(currentName).getPosition();
+				x = position.getX();
+				y = position.getY();
+				
+				Field posizione = robotNode.getField("translation");
+				double pos[] = posizione.getSFVec3f();
+				
+				double newPosition[] = new double[3];
+				newPosition[0] = MatrixToWorldX((float) y, mappa.getWeBotsTile());
+				newPosition[1] = pos[1];
+				newPosition[2] = MatrixToWorldZ((float) x, mappa.getWeBotsTile());
+				posizione.setSFVec3f(newPosition);
+				System.out.println("Ladro spostato");
+			}
+		}
 	}
 
-	private void Spawn(Mappa mappa, Field RootChildrenField) 
+	private String createWoodenBoxsString() 
 	{
-		String SpawnBox = "";
+		StringBuilder string = new StringBuilder();
 		float TempX, TempZ;
 		for(int i=0; i < mappa.getXSize(); i++)
 		{
@@ -67,33 +121,33 @@ public class SupervisorRobot extends Supervisor implements Client {
 
 		Node robot_node = getFromDef("Ladro");
 		if (robot_node != null)
+				if(mappa.get(new Point(i, j)) != 0 )
+					string.append("DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE} ");
+			} 
+		}
+		return string.toString();
+	}
+	
+	private String createRobotsString()
+	{
+		StringBuilder string = new StringBuilder();
+		
+		String name = new String("Guardia");
+		String currentName;
+		for (int i = 0; i < SharedVariables.getNumeroGuardie(); ++i)
 		{
-			System.out.println("Sposto il ladro...");
-			Field posizione = robot_node.getField("translation");
-			double pos[] = posizione.getSFVec3f();
-			
-			double newPosition[] = new double[3];
-			newPosition[0] = MatrixToWorldX((float) 15, mappa.getWeBotsTile());
-			newPosition[1] = pos[1];
-			newPosition[2] = MatrixToWorldZ((float) 15, mappa.getWeBotsTile());
-			posizione.setSFVec3f(newPosition);
-			System.out.println("Ladro spostato");
+			currentName = name.concat(Integer.toString(i));
+			string.append("DEF " + currentName + " Guardia { name \"" + currentName + "\", controller \"<extern>\" } ");
 		}
 		
-		robot_node = getFromDef("Guardia");
-		if (robot_node != null)
+		name = new String("Ladro");
+		for (int i = 0; i < SharedVariables.getNumeroLadri(); ++i)
 		{
-			System.out.println("Sposto la guardia...");
-			Field posizione = robot_node.getField("translation");
-			double pos[] = posizione.getSFVec3f();
-			
-			double newPosition[] = new double[3];
-			newPosition[0] = MatrixToWorldX((float) 4, mappa.getWeBotsTile());
-			newPosition[1] = pos[1];
-			newPosition[2] = MatrixToWorldZ((float) 4, mappa.getWeBotsTile());
-			posizione.setSFVec3f(newPosition);
-			System.out.println("Guardia spostata");
+			currentName = name.concat(Integer.toString(i));
+			string.append("DEF " + currentName + " Ladro { name \"" + currentName + "\", controller \"<extern>\" } ");
 		}
+		
+		return string.toString();
 	}
 	
     private void CreateSpawns(Field rootChildrenField, String SpawnBox,Mappa mappa) {
@@ -155,171 +209,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 	
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
-		spawnaMappa(mappa);
-		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
-		clientConnectionHandler.sendPacket(cts_world_ready);
+		this.mappa = mappa;
 	}
 
-    // Da cancellare
-    private static void SpawnTestBrutto(Field RootChildenField, Mappa mappa)
-    {
-    	//String SpawnEPuck = "DEF prova E-puck { controller \"MyController\", translation 0,1.5,0} " ;
-        //String SpawnBox2 = "DEF prova2 WoodenBox {translation 0,1.5,0 size 0.1,0.1,0.1 mass 2} " ;
-    	
-    	float TempX;
-    	float TempY;
-    	 
-    	int i=0;
-    	int j=0;
-    	 
-    	for(i=0; i<100; i++)
-		{
-    		for(j=0; j<100; j++)
-			{
-    			// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-    			TempX = MatrixToWorldX((float) j, mappa.getWeBotsTile());
-				TempY = MatrixToWorldZ((float) i, mappa.getWeBotsTile());
-				if(mappa.get(new Point(i, j)) == 1 )
-				{
-					String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.1,0.1,0.1 mass 2} " ;
-					RootChildenField.importMFNodeFromString(4,SpawnBox);
-				}
-			}
-		}
- 
-    	String SpawnBox1 = "DEF L1 Proto1 {translation 0,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-        String SpawnBox2 = "DEF L1 Proto1 {translation 0.1,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-        String SpawnBox3 = "DEF L1 Proto1 {translation 0.2,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-        String SpawnBox4 = "DEF L1 Proto1 {translation 0.3,0.05,0 size 0.1,0.1,0.1 mass 2} " ;
-        String SpawnBox5 = "DEF L1 Proto1 {translation 0.3,0.05,-0.1 size 0.1,0.1,0.1 mass 2} " ;
-          
-        Vector<String> v = new Vector<String>(6);
-        v.add(SpawnBox1) ;
-        v.add(SpawnBox2) ;
-        v.add(SpawnBox3) ;
-        v.add(SpawnBox4) ;
-        v.add(SpawnBox5) ;
-   
-        for(i=0 ; i<5 ; i++)
-        	RootChildenField.importMFNodeFromString(4,v.get(i));
-        v.clear();
-          
-        // Seconda L
-	    SpawnBox1 = "DEF L2 Proto1 {translation 0,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-	    SpawnBox2 = "DEF L2 Proto1 {translation 0.1,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-        SpawnBox3 = "DEF L2 Proto1 {translation 0.2,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-		SpawnBox4 = "DEF L2 Proto1 {translation 0.3,0.05,-0.60 size 0.1,0.1,0.1 mass 2} " ;
-		SpawnBox5 = "DEF L2 Proto1 {translation 0.3,0.05,-0.70 size 0.1,0.1,0.1 mass 2} " ;
-		   
-		v.add(SpawnBox1) ;
-		v.add(SpawnBox2) ;
-		v.add(SpawnBox3) ;
-		v.add(SpawnBox4) ;
-		v.add(SpawnBox5) ;
-		   	
-		for(i=0 ; i<5 ; i++)
-			RootChildenField.importMFNodeFromString(4,v.get(i));
-		
-		v.clear();
-		   
-		String Ball = "DEF O Ball1 {translation 0.25,0.035,-0.35 mass 2 radius 0.10} " ;
-		RootChildenField.importMFNodeFromString(4,Ball);
-    }
-    
-    // Da cancellare
-	private void SpawnAMMERDA(Mappa mappa, Field RootChildrenField )
-	{
-		float TempX, TempY;
-		
-		int[][] matrice= new int[21][21];
-		int x,y;
-		
-		int min = 0;
-		int max = matrice[1].length-1;
-		
-		for(int i=0; i < matrice[0].length ; i++)
-			{	
-				for(int j=0; j < matrice[1].length; j++)
-				{
-					if(i==min || i==max || j==min || j==max )
-					{
-						matrice[i][j] = 1 ;
-					}
-					else
-					{
-						matrice[i][j] = 0 ;
-					}
-					
-				}
-			}
-		
-		for(int i=0; i<100; i++)
-		{
-			x=(int) (Math.random()*21);
-			y=(int) (Math.random()*21);
-			
-			if ((x == 10 && y == 10) || (matrice[x][y] == 1))
-				i--;
-			
-			matrice[x][y]=1;
-		}
-
-		
-		String spawnBox = "";		
-		for(int i=0; i < 21; i++)
-		{
-			for(int j=0; j < 21; j++)
-			{
-				// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
-				TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
-				if(matrice[i][j] == 1)
-				{
-					spawnBox += "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} ";
-				}
-			}
-		}
-		
-		RootChildrenField.importMFNodeFromString(4, spawnBox);
-	
-		final Node robot_node = getFromDef("Ladro");
-		if (robot_node != null)
-		{
-			System.out.println("Sposto il robot...");
-			Field posizione = robot_node.getField("translation");
-			double pos[] = posizione.getSFVec3f();
-			
-			double newPosition[] = new double[3];
-			newPosition[0] = MatrixToWorldX((float) 10, mappa.getWeBotsTile());
-			newPosition[1] = pos[1];
-			newPosition[2] = MatrixToWorldZ((float) 10, mappa.getWeBotsTile());
-			posizione.setSFVec3f(newPosition);
-			System.out.println("Robot spostato");
-
-			for(int i=0; i < 20; i++)
-			{
-				for(int j=0; j< 20; j++)
-				{
-					// Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				 	TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
-				 	TempY = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
-	
-					 if(matrice[i][j] == 1)
-					 {
-						 String SpawnBox = "DEF L1 Proto1 {translation "+TempX+",0.05,"+TempY+" size 0.099,0.099,0.099 mass 2 locked TRUE} " ;
-						 RootChildrenField.importMFNodeFromString(4,SpawnBox);
-					 }
-
-				}
-		
-				Packet worldReady = new CTS_WORLD_READY();
-				clientConnectionHandler.sendPacket(worldReady);
-			}
-		}
-	}
-
-	public int step()
-	{
-		return this.step(SharedVariables.getTimeStep());
-	}
+	public int step() { return step(SharedVariables.getTimeStep());	}
  }
