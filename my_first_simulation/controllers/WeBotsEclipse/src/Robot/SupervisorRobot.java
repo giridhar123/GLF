@@ -55,6 +55,9 @@ public class SupervisorRobot extends Supervisor implements Client {
     	
     	RootChildrenField.importMFNodeFromString(4, spawnString.toString());
 		
+    	
+    	CreateSpawns(RootChildrenField,mappa);
+    	
     	spostaRobot("Guardia");
     	spostaRobot("Ladro");
 		
@@ -109,21 +112,9 @@ public class SupervisorRobot extends Supervisor implements Client {
 				//Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
 				TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
 				TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
-				
-				if(mappa.get(new Point(i, j)) != 0  )
-					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-			}
-		}
-		
-		RootChildrenField.importMFNodeFromString(4, SpawnBox);
-		CreateSpawns(RootChildrenField,SpawnBox,mappa);
-
-
-		Node robot_node = getFromDef("Ladro");
-		if (robot_node != null)
 				if(mappa.get(new Point(i, j)) != 0 )
 					string.append("DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE} ");
-			} 
+			}
 		}
 		return string.toString();
 	}
@@ -150,8 +141,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 		return string.toString();
 	}
 	
-    private void CreateSpawns(Field rootChildrenField, String SpawnBox,Mappa mappa) {
-    	SpawnBox = "";
+    private void CreateSpawns(Field rootChildrenField,Mappa mappa) {
+    	String SpawnBox = "";
     	int xDimSpawn = mappa.getxDimSpawn();
     	xDimSpawn=-10;
 		float TempX;
