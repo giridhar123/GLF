@@ -8,7 +8,9 @@ public class Packet
 	public static final short CTS_PEER_INFO = (short) 0x0000;
 	public static final short STC_SEND_MAP = (short) 0x0001;
 	public static final short CTS_WORLD_READY = (short) 0x0002;
-	public static final short CTS_MAP_POINT = (short) 0x0003;
+	public static final short CTS_OBSTACLE_IN_MAP = (short) 0x0003;
+	public static final short CTS_GOING_TO = (short) 0x0004;
+	public static final short CTS_NEW_GUARDIA_POS = (short) 0x0005;
 	
 	private int size;
     private short opcode;

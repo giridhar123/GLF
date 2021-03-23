@@ -137,26 +137,32 @@ public abstract class GenericRobot extends Robot
 	    if (leftValue > 50 && rightValue > 50)
 	    {
 		    //if(Math.abs(difference) >= 8)
-		    while(Math.abs(difference) >= 8)
+		    while (Math.abs(difference) >= 8)
 	    	{
+		    	/*
 		    	if (this instanceof GuardiaRobot)
 		    		System.out.println("Difference is: " + difference);
+		    	*/
 		    	
-		    	double velocity = 0.7;
+		    	double velocity = 0.65;
 		    	if(difference > 0)
 		    	{
 		    		motors.setVelocity(-velocity, velocity);
 		    		
+		    		/*
 		    		if (this instanceof GuardiaRobot)
 		    			System.out.println("Correggo a SX");
+		    			*/
 		    	}
 		    	else 
 		    	{
 		    		difference *= -1;
 		    		motors.setVelocity(velocity, -velocity);
 		    		
+		    		/*
 		    		if (this instanceof GuardiaRobot)
 		    			System.out.println("Correggo a DX");
+		    			*/
 		    	}
 		    	
 		    	step();
@@ -318,7 +324,11 @@ public abstract class GenericRobot extends Robot
 	    	robotPosition.setY(robotPosition.getY() - 1);
 	    	break;
 	    }
+		
+		onPosizioneIncrementata();
 	}
+	
+	public abstract void onPosizioneIncrementata();
 	
 	public void changeDirectionTo(int direction)
 	{
@@ -363,7 +373,7 @@ public abstract class GenericRobot extends Robot
 		}
 	}
 	
-	public void work () {}
+	public abstract void work();
 	/*
 	public synchronized int myStep(int time, Thread caller)
 	{

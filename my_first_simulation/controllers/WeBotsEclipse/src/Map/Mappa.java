@@ -6,6 +6,11 @@ import java.util.Set;
 
 public class Mappa
 {	
+	public static final int EMPTY = 0;
+	public static final int FULL = 1;
+	public static final int GUARDIA = 2;
+	public static final int LADRO = 3;
+
 	private String Difficolta ;
 	private int xDim; //Dim Matrice
 	private int yDim;

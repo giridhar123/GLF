@@ -14,7 +14,9 @@ import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
+import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 
 public class GuardiaRobot extends GenericRobot implements Client {
 	
@@ -22,7 +24,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	private ArrayList<Point> openSet;
 	private ArrayList<Point> closedSet;
 	private boolean ladroFound;
-
+	private Point oldPosition;
+	
 	public GuardiaRobot(int direction)
 	{
 		super(direction);
@@ -37,6 +40,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		*/
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
+		
+		oldPosition = new Point(robotPosition);
 	}
 	
 	@Override
@@ -82,20 +87,21 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 			if (closedSet.contains(goal))
 			{
-				System.out.println(getName() + ": " + goal + " gia  esaminato");
+				//System.out.println(getName() + ": " + goal + " giaï¿½ esaminato");
 				continue;
 			}
 			
 			path = aStarSearcher.getPath(robotPosition, goal);
 			if (path == null)
 			{
-				System.out.println(getName() + ":Non c'e un path per " + goal);
+				//System.out.println(getName() + ":Non c'e un path per " + goal);
 				updateMapAndSendPacket(goal);
 				closedSet.add(new Point(goal));
 				continue;
 			}
 			
-			System.out.println(getName() + ": C'e un path per " + goal);
+			//System.out.println(getName() + ": C'e un path per " + goal);
+			clientConnectionHandler.sendPacket(new CTS_GOING_TO(goal));
 			
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
@@ -120,19 +126,19 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					path = aStarSearcher.getPath(robotPosition, goal);
 					if (path == null)
 					{
-						System.out.println(getName() + ": Non ho piu un path per " + goal);
+						//System.out.println(getName() + ": Non ho piu un path per " + goal);
 						updateMapAndSendPacket(goal);
 						closedSet.add(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
 					{
-						System.out.println(getName() + ": Aggiorno il path per " + goal);
+						//System.out.println(getName() + ": Aggiorno il path per " + goal);
 						correctedPath = AStarSearcher.pathToRobotDirections(path);
 						i = -1;
 					}
 				}
-				System.out.println(mappa);
+				System.out.println(getName() + "\n" + mappa);
 			}
 		}
 		
@@ -222,7 +228,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		//System.out.println("1");
 		mappa.setValue(punto, 1);
 		//System.out.println("2 Guardia invio pacchetto con punto: " + punto);
-		clientConnectionHandler.sendPacket(new CTS_MAP_POINT(punto));
+		clientConnectionHandler.sendPacket(new CTS_OBSTACLE_IN_MAP(punto));
 		//System.out.println("3");
 	}
 
@@ -264,7 +270,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		try 
 		{
-			step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
+			//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 
+			step(10000 + ((SharedVariables.getNumeroLadri() + Integer.valueOf(id))* SharedVariables.getTimeStep() * 1000));
 		}
 		catch (NumberFormatException e) 
 		{
@@ -272,5 +279,30 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		}
 		
 		explore();
+	}
+
+	@Override
+	public void onCtsObstacleInMapReceived(Point point) {
+		//System.out.println(getName() + " ho ricevuto ostacolo in " + point);
+		mappa.setValue(point, Mappa.FULL);
+		closedSet.add(point);
+	}
+
+	@Override
+	public void onCtsGoingToReceived(Point point) {
+		//System.out.println(getName() + " un'altra guardia vuole andare in " + point);
+		closedSet.add(point);		
+	}
+
+	@Override
+	public void onPosizioneIncrementata() {
+		clientConnectionHandler.sendPacket(new CTS_NEW_GUARDIA_POS(oldPosition, robotPosition));
+		oldPosition = new Point(robotPosition);
+	}
+
+	@Override
+	public void onCtsNewGuardiaPosReceived(Point before, Point after) {
+		mappa.setValue(before, Mappa.EMPTY);
+		mappa.setValue(after, Mappa.GUARDIA);		
 	}
 }

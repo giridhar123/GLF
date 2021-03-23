@@ -9,19 +9,23 @@ import Map.Mappa;
 import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
-import Network.Packets.ClientToServer.CTS_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
 public class LadroRobot extends GenericRobot implements Client {
 
 	private ClientConnectionHandler clientConnectionHandler;
 	private boolean hidden;
+	private ArrayList<Point> possiblePoints;
 	
 	public LadroRobot(int direction)
 	{
 		super(direction);
 		
 		hidden = false;
+		possiblePoints = null;
+		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.LADRO, this);
 	}
 	
@@ -33,18 +37,20 @@ public class LadroRobot extends GenericRobot implements Client {
 	
 	private void hide()
 	{
-		if (mappa == null || hidden)
+		if (mappa == null || possiblePoints == null || hidden)
 			return;
 		
-		ArrayList<Point> pts = getPotentialsPoints();
 		Point dest;
 		Random r = new Random();
 		
+		for (int i = 0; i < possiblePoints.size(); ++i)
+			System.out.println(getName() + ": " + possiblePoints.get(i));
+			
 		int index = -1;
 		do 
 		{
-			index = r.nextInt(pts.size());
-			dest = pts.get(index);
+			index = r.nextInt(possiblePoints.size());
+			dest = possiblePoints.get(index);
 			System.out.println(getName() + ": Provo ad andare in: " + dest);
 		}
 		while(!goTo(dest));
@@ -60,7 +66,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		if (path == null)
 			return false;
 		
-		clientConnectionHandler.sendPacket(new CTS_MAP_POINT(new Point(goal)));
+		clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(goal)));
 		
 		ArrayList<Integer> convertedPath = AStarSearcher.pathToRobotDirections(path);
 		
@@ -132,6 +138,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	public void onStcSendMapReceived(Mappa mappa)
 	{
 		this.mappa = mappa;
+		possiblePoints = getPotentialsPoints();
 	}
     
     @Override
@@ -150,4 +157,33 @@ public class LadroRobot extends GenericRobot implements Client {
 		
     	hide();
     }
+
+	@Override
+	public void onCtsObstacleInMapReceived(Point point) { 
+		/*
+		 * DO NOTHING
+		 */
+		System.out.println("uuuuubuuuuurruuuuu" + getName() + " ho ricevuto ostacolo in " + point);
+	}
+
+	@Override
+	public void onCtsGoingToReceived(Point point) {
+		System.out.println(getName() + " un altro ladro vuole andare in " + point);
+		possiblePoints.remove(point);
+	}
+
+	@Override
+	public void onPosizioneIncrementata() {
+		/*
+		 * DO NOTHING
+		 */		
+	}
+
+	@Override
+	public void onCtsNewGuardiaPosReceived(Point before, Point after)
+	{
+		/*
+		 * DO NOTHING
+		 */
+	}
 }

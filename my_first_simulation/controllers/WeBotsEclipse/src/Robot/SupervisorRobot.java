@@ -204,4 +204,26 @@ public class SupervisorRobot extends Supervisor implements Client {
 	}
 
 	public int step() { return step(SharedVariables.getTimeStep());	}
+
+	@Override
+	public void onCtsObstacleInMapReceived(Point point) {
+		/*
+		 * DO NOTHING
+		 */
+	}
+
+	@Override
+	public void onCtsGoingToReceived(Point point) {
+		/*
+		 * DO NOTHING
+		 */
+	}
+	
+	@Override
+	public void onCtsNewGuardiaPosReceived(Point before, Point after)
+	{
+		/*
+		 * DO NOTHING
+		 */
+	}
  }

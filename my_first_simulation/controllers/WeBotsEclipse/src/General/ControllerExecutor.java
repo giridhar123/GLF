@@ -24,38 +24,6 @@ public class ControllerExecutor extends Thread
         ProcessBuilder processBuilder = new ProcessBuilder();
 
         //in windows
-        String OS = System.getProperty("os.name");
-
-        if (OS.equals(new String("Mac OS X")))
-            processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=" + robotName);
-        else
-            processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME=" + robotName);
-
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            int exitCode = process.waitFor();
-            if(exitCode == 0)
-            {
-            	System.out.println(robotName + " : Variabile d'ambiente settata correttamente " );
-            }
-            
-            reader.close();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        
-        //System.out.println("javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages " + controllerName + "." + controllerName);        
-
         String webotsPath = SharedVariables.getWebotsPath();
         String projectPath = SharedVariables.getProjectPath();
         int tcp_port = SharedVariables.getTcpServerPort();
@@ -63,6 +31,7 @@ public class ControllerExecutor extends Thread
         int numeroGuardie = SharedVariables.getNumeroGuardie();
         int numeroLadri = SharedVariables.getNumeroLadri();
         
+        String OS = System.getProperty("os.name");
         if (OS.equals(new String("Mac OS X")))
             processBuilder.command("/bin/bash", "-c", "export WEBOTS_ROBOT_NAME=" + robotName + "\n java -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=UTF-8 -classpath " + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin:" + webotsPath + "/lib/controller/java/Controller.jar Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step + " " + numeroGuardie + " " + numeroLadri);
         else
