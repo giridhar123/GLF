@@ -9,7 +9,9 @@ import java.util.concurrent.Future;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
+import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ServerConnectionHandler extends Thread {
@@ -66,6 +68,7 @@ public class ServerConnectionHandler extends Thread {
 	private void parse(AsynchronousSocketChannel sender, int packetSize, ByteBuffer buf)
 	{
 		Packet packet = new Packet(packetSize, buf, sender);
+		ByteBuffer buffer = null;
 		
 		switch (packet.getOpcode())
 		{
@@ -81,7 +84,7 @@ public class ServerConnectionHandler extends Thread {
 				{
 					Mappa mappa = server.getMappa();
 					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
-					ByteBuffer buffer = stc_send_map.encode();
+					buffer = stc_send_map.encode();
 			        clientChannel.write(buffer);
 				}
 			}
@@ -89,15 +92,12 @@ public class ServerConnectionHandler extends Thread {
 			case Packet.CTS_WORLD_READY:
 				server.startControllers();
 			break;
-			case Packet.CTS_MAP_POINT:
+			case Packet.CTS_OBSTACLE_IN_MAP:
 			{
-				CTS_MAP_POINT cts_update_map_point = new CTS_MAP_POINT(packet, buf);
-				
-				ByteBuffer buffer = null;
-				
-				if( server.getGuardie().contains(packet.getSender()))
+				CTS_OBSTACLE_IN_MAP cts_update_map_point = new CTS_OBSTACLE_IN_MAP(packet, buf);				
+				if(server.getGuardie().contains(packet.getSender()))
 				{
-					System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+					//System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getPoint());
 					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
 					for (int i = 0; i < guardie.size(); ++i)
 					{
@@ -108,9 +108,55 @@ public class ServerConnectionHandler extends Thread {
 						guardie.get(i).write(buffer);
 					}
 				}
+			}
+			break;
+			case Packet.CTS_GOING_TO:
+			{
+				CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
+				if (server.getGuardie().contains(packet.getSender()))
+				{
+					//System.out.println("Server: La guardia vuole andare in " + cts_going_to.getPoint());
+					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+					for (int i = 0; i < guardie.size(); ++i)
+					{
+						if (guardie.get(i) == packet.getSender())
+							continue;
+					
+						buffer = cts_going_to.encode();
+						guardie.get(i).write(buffer);
+					}
+				}
 				else
 				{
-					System.out.println("Server: il ladro mi ha inviato un map point");
+					//System.out.println("Server: Il ladro vuole andare in " + cts_going_to.getPoint());
+					ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
+					for (int i = 0; i < ladri.size(); ++i)
+					{
+						if (ladri.get(i) == packet.getSender())
+							continue;
+					
+						buffer = cts_going_to.encode();
+						ladri.get(i).write(buffer);
+					}
+				}
+				
+			}
+			break;
+			case Packet.CTS_NEW_GUARDIA_POS:
+			{
+				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
+				if (server.getGuardie().contains(packet.getSender()))
+				{
+					//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
+					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+					for (int i = 0; i < guardie.size(); ++i)
+					{
+						if (guardie.get(i) == packet.getSender())
+							continue;
+					
+						buffer = cts_new_guardia_pos.encode();
+						guardie.get(i).write(buffer);
+					}
 				}
 			}
 			break;

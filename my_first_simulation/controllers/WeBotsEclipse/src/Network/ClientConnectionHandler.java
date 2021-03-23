@@ -9,7 +9,9 @@ import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
-import Network.Packets.ClientToServer.CTS_MAP_POINT;
+import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
+import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class ClientConnectionHandler extends Thread{
@@ -93,10 +95,22 @@ public class ClientConnectionHandler extends Thread{
 				client.onStcSendMapReceived(mappa);
 			}
 			break;
-			case Packet.CTS_MAP_POINT:
+			case Packet.CTS_OBSTACLE_IN_MAP:
 			{
-				CTS_MAP_POINT cts_update_map_point = new CTS_MAP_POINT(packet, buf);
-				System.out.println("Packet Size: " + cts_update_map_point.getSize() + " Guardia: ho ricevuto ostacolo in: " + cts_update_map_point.getX() + " " + cts_update_map_point.getY());
+				CTS_OBSTACLE_IN_MAP cts_update_map_point = new CTS_OBSTACLE_IN_MAP(packet, buf);
+				client.onCtsObstacleInMapReceived(cts_update_map_point.getPoint());
+			}
+			break;
+			case Packet.CTS_GOING_TO:
+			{
+				CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
+				client.onCtsGoingToReceived(cts_going_to.getPoint());
+			}
+			break;
+			case Packet.CTS_NEW_GUARDIA_POS:
+			{
+				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
+				client.onCtsNewGuardiaPosReceived(cts_new_guardia_pos.getBefore(), cts_new_guardia_pos.getAfter());
 			}
 			break;
 			default:

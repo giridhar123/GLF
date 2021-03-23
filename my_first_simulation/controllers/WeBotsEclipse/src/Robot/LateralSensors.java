@@ -72,15 +72,13 @@ public class LateralSensors {
 			{
 				rightObstacle = false;
 				leftObstacle = true;
-				if(leftVal > maxValue)
-					maxValue = leftVal;
+				maxValue = leftVal > maxValue ? leftVal : maxValue;
 			}
 			else
 			{
 				leftObstacle = false;
 				rightObstacle = true;
-				if(rightVal > maxValue)
-					maxValue = rightVal;
+				maxValue = rightVal > maxValue ? rightVal : maxValue;
 			}
 		}
 	}
