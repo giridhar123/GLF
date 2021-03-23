@@ -65,11 +65,12 @@ public class TestingMap {
     	
 		return map;
     }
-    
+ 
+
 	private int[][] TakePattern(int[] MatrixIndexPoint,int dim, int[][] map,int RandomIndex) 
 	{
 		MatrixIndexPoint = PointToIndex(AL.get( RandomIndex ),dim); // Prendo l'equivalente di quel valore come [x],[y]
-		map = ControlloMatrice(QuattroAdiacenza(MatrixIndexPoint,dim,map), map); // primo punto ovunque
+		map = ControlloMatrice(QuattroAdiacenza(MatrixIndexPoint,map), map); // primo punto ovunque
 		int RandomIndex2 = 0;
 		int RandomIndex3 = 0;
 
@@ -84,11 +85,11 @@ public class TestingMap {
 			  //L'elemento a destra è quello a RandomIndex attuale in quanto la lista 
 			  RandomIndex2 = (RandomIndex+1)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex2),dim); //secondo punto solo dx,giu,su
-			  map = ControlloMatricePrimoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatricePrimoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 			  
 			  RandomIndex3 = (RandomIndex+2)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex3),dim); // terzo punto solo dx,giu,su
-			  map = ControlloMatricePrimoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatricePrimoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 
 			  // Il ragionamento ed il problema sta nella cancellazione dell'elemento.
 			  // Se io cancello l'elemento 90, il prossimo elemento alla posizione 90 sarà 91.
@@ -120,11 +121,11 @@ public class TestingMap {
 		  {
 			  RandomIndex2 = Math.abs((RandomIndex-1)%(AL.size()-1));
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); //secondo punto solo sx,giu,su
-			  map = ControlloMatriceSecondoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceSecondoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 			  
 			  RandomIndex3 = Math.abs(RandomIndex-2)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); // terzo punto solo sx,giu,su
-			  map = ControlloMatriceSecondoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceSecondoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 			  
 			  // Devo levare 3 elementi, quelli alla posizione x, x-1 , x-2 
 			  if (  AL.size()-1 > 4 )
@@ -151,11 +152,11 @@ public class TestingMap {
 		  { 
 			  RandomIndex2 = (RandomIndex+map[0].length)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); // terzo punto solo sx,giu,su
-			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 		  
 			  RandomIndex3 = (RandomIndex2+map[0].length)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); // terzo punto solo sx,giu,su
-			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 			  
 			  // Verifico che ci sono piu di quattro elementi ( per sicurezza ), se ci sono controllo che il valore non è all'inizio o alla fine del pool in modo da non creare problemi i ncaso di eliminazione.
 			  if (  AL.size()-1 > 4 )
@@ -174,11 +175,11 @@ public class TestingMap {
 		  { 
 			  RandomIndex2 = Math.abs(RandomIndex+map[0].length)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); // terzo punto solo sx,giu,su
-			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 		  
 			  RandomIndex3 = Math.abs(RandomIndex2+map[0].length)%(AL.size()-1);
 			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex),dim); // terzo punto solo sx,giu,su
-			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,dim,map), map);
+			  map = ControlloMatriceTerzoPattern(QuattroAdiacenza(MatrixIndexPoint,map), map);
 			  
 			  // Verifico che ci sono piu di quattro elementi ( per sicurezza ), se ci sono controllo che il valore non è all'inizio o alla fine del pool in modo da non creare problemi i ncaso di eliminazione.
 			  if (  AL.size()-1 > 4 )
@@ -216,7 +217,7 @@ public class TestingMap {
  	}
   
 	
- 	private ArrayList<int[]>  QuattroAdiacenza(int[] index,int dim, int[][] map) 
+ 	private ArrayList<int[]>  QuattroAdiacenza(int[] index, int[][] map) 
 	{	
 		ArrayList<int[]> ArrayList = new ArrayList<int[]>();
 		int[] error = { -1 , -1 };
@@ -271,7 +272,6 @@ public class TestingMap {
 					}
 				}
 			}
-			
 			// Se la posizione non è valida per qualche motivo, allora non fare nulla e ritorna solo la mappa com'era in ingresso.
 		  }  return map;
 	}

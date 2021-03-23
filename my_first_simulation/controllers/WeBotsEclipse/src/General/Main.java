@@ -41,7 +41,7 @@ public class Main
 
         printMenu();
         Scanner scanner = new Scanner(System.in);
-        int value = 2;//scanner.nextInt();
+        int value = 2 ;	//scanner.nextInt();
         scanner.close();
 
         switch (value)

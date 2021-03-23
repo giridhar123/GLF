@@ -48,21 +48,23 @@ public class SupervisorRobot extends Supervisor implements Client {
 	{
 		String SpawnBox = "";
 		float TempX, TempZ;
-		
 		for(int i=0; i < mappa.getXSize(); i++)
 		{
 			for(int j=0; j< mappa.getYSize(); j++)
 			{
 				//Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				TempX = MatrixToWorldX((float) j,mappa.getWeBotsTile());
-				TempZ = MatrixToWorldZ((float) i,mappa.getWeBotsTile());
+				TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
+				TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
 				
-				if(mappa.get(new Point(i, j)) != 0 )
+				if(mappa.get(new Point(i, j)) != 0  )
 					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-			} 
+			}
 		}
-		RootChildrenField.importMFNodeFromString(4, SpawnBox);
 		
+		RootChildrenField.importMFNodeFromString(4, SpawnBox);
+		CreateSpawns(RootChildrenField,SpawnBox,mappa);
+
+
 		Node robot_node = getFromDef("Ladro");
 		if (robot_node != null)
 		{
@@ -94,7 +96,47 @@ public class SupervisorRobot extends Supervisor implements Client {
 		}
 	}
 	
-    private static float MatrixToWorldZ(float point, double WeBotsTile)
+    private void CreateSpawns(Field rootChildrenField, String SpawnBox,Mappa mappa) {
+    	SpawnBox = "";
+    	int xDimSpawn = mappa.getxDimSpawn();
+    	xDimSpawn=-10;
+		float TempX;
+		float TempZ;
+		for(int i=xDimSpawn; i < 0; i++)
+		{
+			for(int j=0; j < mappa.getYSize(); j++)
+			{
+				if( (i < 0 && j == 0) || ( i == -10 ) || ( j == mappa.getYSize()-1) )
+				{
+					TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
+					TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
+				
+					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
+				}
+			}
+		}
+		
+    	xDimSpawn *= -1;
+
+		for(int i=mappa.getXSize(); i < mappa.getXSize()+xDimSpawn; i++)
+		{
+			for(int j=0; j < mappa.getYSize(); j++)
+			{
+				if( (i > 0 && j == 0) || ( i ==  (mappa.getXSize()+xDimSpawn)-1 ) || ( j == mappa.getYSize()-1) )
+				{
+					TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
+					TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
+				
+					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
+				}
+			}
+		}
+		rootChildrenField.importMFNodeFromString(4, SpawnBox);
+		
+		
+	}
+
+	private static float MatrixToWorldZ(float point, double WeBotsTile)
     {
     	point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
     	return point;

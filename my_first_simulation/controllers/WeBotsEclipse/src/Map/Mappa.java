@@ -12,8 +12,10 @@ public class Mappa
 	private int[][] mappa;
 	private double[] WeBotsXYMap ; // Quanto deve essere la mappa di WeBots
 	private double WeBotsTile ; // Grandezza di una singola cella di WeBots
-	
-	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap)
+	private int SpawnPort; // grandezza delle porte dello spawn
+	private int xDimSpawn;
+
+	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap,int xDimSpawn,int SpawnPort)
 	{
 		// Questo costruttore � richiamato enlla classe SERVER
 		this.Difficolta = Difficolta;
@@ -22,7 +24,10 @@ public class Mappa
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
 		this.mappa = new int[xDim][yDim];
+		this.xDimSpawn = xDimSpawn;
+		this.SpawnPort = SpawnPort;
 		this.mappa= CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
+		
 	}
 	
 	
@@ -97,14 +102,19 @@ public class Mappa
 			int max = mappa[1].length-1;
 			
 			for(int i=0; i < xDim; i++)
-				{	
+				{ 
 					for(int j=0; j < yDim; j++)
-					{
+					{		
 						if(i==min || i==max || j==min || j==max )
 						{
 							this.mappa[i][j] = 1 ;
 						}
 						else
+						{
+							this.mappa[i][j] = 0 ;
+						}
+						
+						if( (i == 0 && (j > (yDim/2)-SpawnPort && j < (yDim/2)+SpawnPort) ) || (i==max && (j > yDim/2-SpawnPort && j < yDim/2+SpawnPort) ) )
 						{
 							this.mappa[i][j] = 0 ;
 						}
@@ -174,6 +184,11 @@ public class Mappa
 			set.add(west);
 		
 		return set;
+	}
+
+
+	public int getxDimSpawn() {
+		return xDimSpawn;
 	}
 	
 }
