@@ -7,9 +7,8 @@ import General.AStarSearcher;
 
 public class MappaInterna {
 	
-	private Mappa mappa;
 	private int[][] mappaInterna;
-	private int xDimInterna, yDimInterna, dimSpawnGate, xAmpiezzaSpawn;
+	private int xDimInterna, yDimInterna, dimSpawnGate;
 	private String difficolta;
 	private Point MatrixIndexPoint; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
 	private ArrayList<Integer> AL;
@@ -19,9 +18,7 @@ public class MappaInterna {
 		this.xDimInterna = mappa.getXDimInterna();
 		this.yDimInterna = mappa.getYDimInterna();
 		this.dimSpawnGate = mappa.getDimSpawnGate();
-		this.xAmpiezzaSpawn = mappa.getxAmpiezzaSpawn();
 		this.difficolta = mappa.getDifficolta();
-		this.mappa = mappa;
 		
 		AL = new ArrayList<>();
 		
@@ -32,8 +29,11 @@ public class MappaInterna {
 	}
 	
 
-	public MappaInterna(int xDimInterna, int yDimInterna)
+	public MappaInterna(int xDimInterna, int yDimInterna, int dimSpawnGate)
 	{
+		this.dimSpawnGate = dimSpawnGate;
+		this.xDimInterna = xDimInterna;
+		this.yDimInterna = yDimInterna;
 		this.mappaInterna = new int[xDimInterna][yDimInterna];
 		initMappaInterna();
 	}

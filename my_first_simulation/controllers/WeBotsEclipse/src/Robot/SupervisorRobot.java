@@ -197,7 +197,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 	
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
-		System.out.println(mappa);
 		this.mappa = mappa;		
 	}
 

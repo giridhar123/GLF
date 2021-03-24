@@ -54,7 +54,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	public void onStcSendMapReceived(Mappa mappa)
 	{
 		//System.out.println("Guardia: Mappa ricevuta");
-		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXSize(), mappa.getYSize());
+		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
 		for (int i = 1; i < mappa.getXSize()-1; i++)
 		{

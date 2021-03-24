@@ -9,16 +9,12 @@ import Network.Packet;
 public class STC_SEND_MAP extends Packet{
 	
 	private Mappa mappa;
-	private int xAmpiezzaSpawn, xDimInterna, yDimInterna; //SIZE: 2 * 4 byte
 	private double getWeBotsXYMap[]; //SIZE: 2 * 8 byte
 	
 	public STC_SEND_MAP(Mappa mappa)
 	{
 		// SIZE PRECEDENTI + SIZEOF (1 INT (4 byte) * DIMENSIONE MATRICE DELLA MAPPA)  
-		super(16 + 8 + 4 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
-		this.xAmpiezzaSpawn = mappa.getXAmpiezzaSpawn();
-		this.xDimInterna = mappa.getXDimInterna();
-		this.yDimInterna = mappa.getYDimInterna();
+		super(16 + 8 + 4 + 4 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
 		this.getWeBotsXYMap = mappa.getWeBotsXYMap();
 		this.mappa = mappa;
 	}
@@ -33,6 +29,7 @@ public class STC_SEND_MAP extends Packet{
     	int xAmpiezzaSpawn = buf.getInt();
     	int xDimInterna = buf.getInt();
     	int yDimInterna = buf.getInt();
+    	int dimSpawnGate = buf.getInt();
     	
     	int xTot = xDimInterna + 2 * xAmpiezzaSpawn;
     	int[][] mappa = new int[xTot][yDimInterna];
@@ -40,7 +37,7 @@ public class STC_SEND_MAP extends Packet{
     		for(int j = 0; j < yDimInterna; ++j)
     			mappa[i][j] = buf.getInt();
     	
-    	this.mappa = new Mappa(mappa, xAmpiezzaSpawn, xDimInterna, yDimInterna , arrayXY); 
+    	this.mappa = new Mappa(mappa, xAmpiezzaSpawn, xDimInterna, yDimInterna, dimSpawnGate, arrayXY); 
   
     	}
 	
@@ -59,14 +56,15 @@ public class STC_SEND_MAP extends Packet{
     	
     	buf.putDouble(getWeBotsXYMap[0]);
     	buf.putDouble(getWeBotsXYMap[1]);
-    	buf.putInt(xAmpiezzaSpawn);
-    	buf.putInt(xDimInterna);
-    	buf.putInt(yDimInterna);
+    	buf.putInt(mappa.getxAmpiezzaSpawn());
+    	buf.putInt(mappa.getXDimInterna());
+    	buf.putInt(mappa.getYDimInterna());
+    	buf.putInt(mappa.getDimSpawnGate());
     	
-    	int xTot = xDimInterna + 2 * xAmpiezzaSpawn;
+    	int xTot = mappa.getXDimInterna() + 2 * mappa.getXAmpiezzaSpawn();
     	for (int i = 0; i < xTot; ++i)
     	{
-    		for(int j = 0; j < yDimInterna; ++j)
+    		for(int j = 0; j < mappa.getYDimInterna(); ++j)
     		{
     			buf.putInt(mappa.get(new Point(i, j)));
     		}

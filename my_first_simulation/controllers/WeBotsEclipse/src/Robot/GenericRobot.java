@@ -88,7 +88,7 @@ public abstract class GenericRobot extends Robot
 	    int Nvolte = (lateralSensors.getMax() / 100) + 2;
 	    //System.out.println("Correggo di " + Nvolte);
 	    
-	    int count = initialValue;
+	    int count = initialValue + 1;
 	    
 	    if (motorAdjustment == MORE)
 	    	count += Nvolte;

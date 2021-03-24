@@ -42,9 +42,6 @@ public class LadroRobot extends GenericRobot implements Client {
 		
 		Point dest;
 		Random r = new Random();
-		
-		for (int i = 0; i < possiblePoints.size(); ++i)
-			System.out.println(getName() + ": " + possiblePoints.get(i));
 			
 		int index = -1;
 		do 

@@ -53,14 +53,15 @@ public class Mappa
 
 	}
 	
-	public Mappa(int xAmpiezzaSpawn, int xDimInterna, int yDimInterna)
+	public Mappa(int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate)
 	{
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
 		this.xDimInterna = xDimInterna;
 		this.yDimInterna = yDimInterna;
+		this.dimSpawnGate = dimSpawnGate;
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
 		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
-		this.mappaInterna = new MappaInterna(xDimInterna, yDimInterna);
+		this.mappaInterna = new MappaInterna(xDimInterna, yDimInterna, dimSpawnGate);
 		
 		for (int i = 0; i < xAmpiezzaSpawn; ++i)
 			mappaSuperiore[i][0] = mappaSuperiore[i][yDimInterna - 1] = mappaInferiore[i][0] = mappaInferiore[i][yDimInterna - 1] = 1;
@@ -69,13 +70,14 @@ public class Mappa
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
 	}
 	
-	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, double[] arrayXY)
+	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate, double[] arrayXY)
 	{
 		// Questo costruttore � richiamato enlla classe STC_SEND_MAP
 		// A questo costruttore passo gi� i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
 		this.xDimInterna = xDimInterna;
-		this.yDimInterna = yDimInterna; 
+		this.yDimInterna = yDimInterna;
+		this.dimSpawnGate = dimSpawnGate;
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
 		
 		int col, row;
@@ -92,7 +94,7 @@ public class Mappa
 				mappaSuperiore[i][j] = mappa[row][col];
 		}
 		
-		mappaInterna = new MappaInterna(xDimInterna, yDimInterna);
+		mappaInterna = new MappaInterna(xDimInterna, yDimInterna, xAmpiezzaSpawn);
 		
 		for (int i = 0; i < xDimInterna; ++i, ++row)
 		{
