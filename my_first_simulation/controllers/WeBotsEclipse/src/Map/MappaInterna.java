@@ -26,10 +26,14 @@ public class MappaInterna {
 		AL = new ArrayList<>();
 		
 		this.mappaInterna = new int[xDimInterna][yDimInterna];
-		
-		
+
 		initMappaInterna();
 		fillMap(); // crea la mappa chiusa agli estremmi
+	}
+	
+	public int[][] getMappaInterna()
+	{
+		return this.mappaInterna;
 	}
 	
 	public MappaInterna(int xDimInterna, int yDimInterna)
