@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import General.AStarSearcher;
+
 public class Mappa
 {	
 	public static final int EMPTY = 0;
@@ -33,7 +35,7 @@ public class Mappa
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
 		this.dimSpawnGate = dimSpawnGate;
 		
-		this.mappaInterna = new MappaInterna(xDimInterna, yDimInterna, xAmpiezzaSpawn, dimSpawnGate, Difficolta);
+		this.mappaInterna = new MappaInterna(this);
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
 		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
 		
@@ -42,6 +44,7 @@ public class Mappa
 			
 		for (int j = 0; j < yDimInterna; ++j)
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
+		
 	}
 	
 	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, double[] arrayXY)
@@ -82,8 +85,13 @@ public class Mappa
 			for (int j = 0; j < yDimInterna; ++j, ++col)
 				mappaInferiore[i][j] = mappa[row][col];
 		}
-	}
+		
+		
 	
+
+	}
+
+
 	public Mappa(int xDim, int yDim)
 	{
 		/*
@@ -113,6 +121,7 @@ public class Mappa
 		return WeBotsXYMap;
 	}
 	
+	// Da qualche problema @indiano
 	public int get(Point punto)
 	{
 		if (punto.getX() < xAmpiezzaSpawn)
@@ -139,8 +148,6 @@ public class Mappa
 		
 		return sb.toString();
 	}
-
-	
 
 	public String getDifficolta() {
 		return Difficolta;
@@ -181,13 +188,13 @@ public class Mappa
 		return set;
 	}
 
-	public void GetSuperMap(int[][] SuperMappa)
+	public void PrintMap(int[][] mappa)
 	{
-		for(int i=0; i < SuperMappa[0].length ; i++)
+		for(int i=0; i < mappa[0].length ; i++)
 		{
-			for(int j=0; j <  SuperMappa[1].length; j++)
+			for(int j=0; j <  mappa[1].length; j++)
 			{
-					System.out.print(" "+ SuperMappa[i][j] + " ");
+					System.out.print(""+ mappa[i][j] + "");
 			}
 			System.out.println("\n");
 		}
@@ -206,5 +213,25 @@ public class Mappa
 	
 	public int getXAmpiezzaSpawn() {
 		return xAmpiezzaSpawn;
+	}
+
+	public int getDimSpawnGate() {
+		return dimSpawnGate;
+	}
+
+	public void setDimSpawnGate(int dimSpawnGate) {
+		this.dimSpawnGate = dimSpawnGate;
+	}
+
+	public int getxAmpiezzaSpawn() {
+		return xAmpiezzaSpawn;
+	}
+
+	public void setxAmpiezzaSpawn(int xAmpiezzaSpawn) {
+		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+	}
+
+	public void setDifficolta(String difficolta) {
+		Difficolta = difficolta;
 	}	
 }

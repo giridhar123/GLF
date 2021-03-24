@@ -1,6 +1,5 @@
 package Robot;
 
-import java.util.Vector;
 import com.cyberbotics.webots.controller.Field;
 import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
@@ -11,7 +10,6 @@ import Map.Mappa;
 import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
-import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ClientToServer.CTS_WORLD_READY;
 
@@ -55,14 +53,13 @@ public class SupervisorRobot extends Supervisor implements Client {
     	
     	RootChildrenField.importMFNodeFromString(4, spawnString.toString());
 		
-    	
-    	CreateSpawns(RootChildrenField,mappa);
-    	
+    	    	
     	spostaRobot("Guardia");
     	spostaRobot("Ladro");
 		
 		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
 		clientConnectionHandler.sendPacket(cts_world_ready);
+		
 		
 		worldSpawned = true;
 	}

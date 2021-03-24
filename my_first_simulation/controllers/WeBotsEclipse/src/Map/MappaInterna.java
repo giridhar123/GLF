@@ -3,27 +3,63 @@ package Map;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MappaInterna {
+import General.AStarSearcher;
 
+public class MappaInterna {
+	
+	private Mappa mappa;
 	private int[][] mappaInterna;
 	private int xDimInterna, yDimInterna, dimSpawnGate, xAmpiezzaSpawn;
 	private String difficolta;
 	private Point MatrixIndexPoint; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
 	private ArrayList<Integer> AL;
 	
-	public MappaInterna(int xDimInterna, int yDimInterna, int xAmpiezzaSpawn, int dimSpawnGate, String difficolta)
+	public MappaInterna(Mappa mappa)
 	{
-		this.xDimInterna = xDimInterna;
-		this.yDimInterna = yDimInterna;
-		this.dimSpawnGate = dimSpawnGate;
-		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
-		this.difficolta = difficolta;
+		this.xDimInterna = mappa.getXDimInterna();
+		this.yDimInterna = mappa.getXDimInterna();
+		this.dimSpawnGate = mappa.getDimSpawnGate();
+		this.xAmpiezzaSpawn = mappa.getxAmpiezzaSpawn();
+		this.difficolta = mappa.getDifficolta();
+		this.mappa = mappa;
 		
 		AL = new ArrayList<>();
 		
 		this.mappaInterna = new int[xDimInterna][yDimInterna];
+		
+		
 		initMappaInterna();
+
+		
+		while(!isValid())
+		{
+			initMappaInterna();
+			System.out.println("Ricreata");
+		}
 		fillMap(); // crea la mappa chiusa agli estremmi
+	}
+	
+	
+	private boolean isValid() 
+	{
+		Point lastPoint = new Point(((2*xAmpiezzaSpawn) + xDimInterna)-1, (yDimInterna-1) ) ;
+
+		System.out.println(" x " + (((2*xAmpiezzaSpawn) + xDimInterna)-1));
+		System.out.println(" y " +  (yDimInterna-1));
+
+		AStarSearcher aStarSearcher = new AStarSearcher(mappa);		
+		ArrayList<Point> path = aStarSearcher.getPath(new Point(0,0),new Point(0,0));
+		
+			if(	path.size() > 0 )
+				return true;
+			else
+				return false;
+	
+	}
+	
+	public int[][] getMappaInterna()
+	{
+		return this.mappaInterna;
 	}
 	
 	public MappaInterna(int xDimInterna, int yDimInterna)
