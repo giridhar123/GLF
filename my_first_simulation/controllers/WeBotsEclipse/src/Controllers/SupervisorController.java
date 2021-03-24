@@ -25,7 +25,7 @@ public class SupervisorController
     public static void main(String[] args) throws InterruptedException
     {
     	System.out.println("SupervisorController avviato...");
-    	
+
     	init(args);
     	
     	SupervisorRobot supervisor = new SupervisorRobot();

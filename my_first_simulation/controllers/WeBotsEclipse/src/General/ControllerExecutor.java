@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.Thread;
 
+import Controllers.StreamPrinter;
+
 public class ControllerExecutor extends Thread
 {
     private String controllerName;
@@ -41,30 +43,20 @@ public class ControllerExecutor extends Thread
             BufferedReader outputStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader errorStream = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             
-            String line;
-            Boolean condition = true;
-            while (condition) 
-            {
-            	if(outputStream.ready()) 
-            	{
-            		if((line = outputStream.readLine()) != null) 
-						System.out.println(line);
-            	}
-            	if(errorStream.ready()) 
-            	{
-            		if((line = errorStream.readLine()) != null)
-            		{
-						System.out.println(line);
-						condition = false;
-					}
-            	}
-            }
+            StreamPrinter outputPrinter = new StreamPrinter(outputStream);
+            StreamPrinter errorPrinter = new StreamPrinter(errorStream);
+            
+            outputPrinter.start();
+            errorPrinter.start();
 
             int exitCode = process.waitFor();
             System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
       
             outputStream.close();
             errorStream.close();
+            
+            outputPrinter.join();
+            errorPrinter.join();
             
         } catch (IOException e) {
             e.printStackTrace();

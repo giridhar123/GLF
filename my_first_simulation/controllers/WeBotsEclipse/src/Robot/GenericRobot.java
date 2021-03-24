@@ -144,7 +144,7 @@ public abstract class GenericRobot extends Robot
 		    		System.out.println("Difference is: " + difference);
 		    	*/
 		    	
-		    	double velocity = 0.65;
+		    	double velocity = 0.7;
 		    	if(difference > 0)
 		    	{
 		    		motors.setVelocity(-velocity, velocity);
