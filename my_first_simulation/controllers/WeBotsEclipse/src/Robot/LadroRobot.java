@@ -138,6 +138,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	public void onStcSendMapReceived(Mappa mappa)
 	{
 		this.mappa = mappa;
+		System.out.println(mappa);
 		possiblePoints = getPotentialsPoints();
 	}
     

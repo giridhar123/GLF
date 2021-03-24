@@ -12,7 +12,7 @@ public class TestingMap {
 		public int[][] CreateMap(Mappa mappa)
 	    {
 			// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
-			int[][] map = mappa.getMap();
+			int[][] map = new int[1][2];// = mappa.getMap();
 			String Difficolta = mappa.getDifficolta() ;
 			int DimMatrix = map[0].length*map[1].length; // Dimensione matrice
 			int dim = map[0].length ; // Dimensione della colonna ( poi devo modificare x e y )

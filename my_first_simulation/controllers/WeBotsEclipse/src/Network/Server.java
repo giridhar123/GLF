@@ -49,7 +49,7 @@ public class Server extends Thread
 		int DimMapY = 20; // Dimensione Matrice in y
 		double WeBotsTile = 1.0; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
-		int xDimSpawn = 10 ; // Dimensione dello spawn nella dimensione x. 
+		int xDimSpawn = 5; // Dimensione dello spawn nella dimensione x. 
 		int SpawnPort = 3; // grandezza della porta
 		
 		mappa = new Mappa("difficile", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);

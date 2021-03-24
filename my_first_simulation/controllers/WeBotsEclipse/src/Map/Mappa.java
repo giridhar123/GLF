@@ -1,5 +1,6 @@
 package Map;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -12,57 +13,94 @@ public class Mappa
 	public static final int LADRO = 3;
 
 	private String Difficolta ;
-	private int xDim; //Dim Matrice
-	private int yDim;
-	private double[] WeBotsXYMap ; // Quanto deve essere la mappa di WeBots
-	private double WeBotsTile ; // Grandezza di una singola cella di WeBots
-	private int SpawnPort; // grandezza delle porte dello spawn
-	private int xDimSpawn;
-	private int[][] mappa;
+	private int xDimInterna; 		//Dim Matrice
+	private int yDimInterna;
+	private double[] WeBotsXYMap ; 	// Quanto deve essere la mappa di WeBots
+	private double WeBotsTile ; 	// Grandezza di una singola cella di WeBots
+	private int dimSpawnGate; 		// grandezza delle porte dello spawn
+	private int xAmpiezzaSpawn;
+	private int[][] mappaSuperiore, mappaInferiore;
+	private MappaInterna mappaInterna;
 	
-	public Mappa(String Difficolta, int xDim, int yDim, double WeBotsTile , double[] WeBotsXYMap,int xDimSpawn,int SpawnPort)
+	public Mappa(String Difficolta, int xDimInterna, int yDimInterna, double WeBotsTile , double[] WeBotsXYMap, int xAmpiezzaSpawn, int dimSpawnGate)
 	{
 		// Questo costruttore � richiamato enlla classe SERVER
 		this.Difficolta = Difficolta;
-		this.xDim = xDim;
-		this.yDim = yDim;
+		this.xDimInterna = xDimInterna;
+		this.yDimInterna = yDimInterna;
 		this.WeBotsTile = WeBotsTile;
 		this.WeBotsXYMap = WeBotsXYMap;
-		this.xDimSpawn = xDimSpawn;
-		this.SpawnPort = SpawnPort;
+		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+		this.dimSpawnGate = dimSpawnGate;
 		
-		int[][] MappaInterna = CreateMap(CreateMapClosed()); // crea la mappa chiusa agli estremmi
-		this.mappa = new int[xDim + 2*xDimSpawn][yDim];
+		this.mappaInterna = new MappaInterna(xDimInterna, yDimInterna, xAmpiezzaSpawn, dimSpawnGate, Difficolta);
+		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
+		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
 		
-		CompleteMap(MappaInterna);
-		GetSuperMap(mappa);
+		for (int i = 0; i < xAmpiezzaSpawn; ++i)
+			mappaSuperiore[i][0] = mappaSuperiore[i][yDimInterna - 1] = mappaInferiore[i][0] = mappaInferiore[i][yDimInterna - 1] = 1;
+			
+		for (int j = 0; j < yDimInterna; ++j)
+			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
 	}
 	
-	public Mappa(int[][] mappa, int xDim, int yDim, double[] arrayXY)
+	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, double[] arrayXY)
 	{
 		// Questo costruttore � richiamato enlla classe STC_SEND_MAP
 		// A questo costruttore passo gi� i dati ed i calcoli fatti dal server.
 		this.WeBotsXYMap = arrayXY;
-		this.xDim = xDim;
-		this.yDim = yDim;
-		this.mappa = mappa;	
+		this.xDimInterna = xDimInterna;
+		this.yDimInterna = yDimInterna; 
+		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+		
+		int col, row;
+		col = row = 0;
+		
+		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
+		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
+		
+		
+		for (int i = 0; i < xAmpiezzaSpawn; ++i, ++row)
+		{
+			col = 0;
+			for (int j = 0; j < yDimInterna; ++j, ++col)
+				mappaSuperiore[i][j] = mappa[row][col];
+		}
+		
+		mappaInterna = new MappaInterna(xDimInterna, yDimInterna);
+		
+		for (int i = 0; i < xDimInterna; ++i, ++row)
+		{
+			col = 0;
+			for (int j = 0; j < yDimInterna; ++j, ++col)
+				mappaInterna.setValue(i,  j, mappa[row][col]);
+		}
+		
+		for (int i = 0; i < xAmpiezzaSpawn; ++i, ++row)
+		{
+			col = 0;
+			for (int j = 0; j < yDimInterna; ++j, ++col)
+				mappaInferiore[i][j] = mappa[row][col];
+		}
 	}
 	
 	public Mappa(int xDim, int yDim)
 	{
+		/*
 		this.xDim = xDim;
 		this.yDim = yDim;
 		this.mappa = new int[xDim][yDim];
+		*/
 	}
 	
 	public int getXSize()
 	{
-		return xDim;
+		return (xDimInterna + 2*xAmpiezzaSpawn);
 	}
 	
 	public int getYSize()
 	{
-		return yDim;
+		return yDimInterna;
 	}
 	
 	public double getWeBotsTile()
@@ -77,13 +115,12 @@ public class Mappa
 	
 	public int get(Point punto)
 	{
-		return mappa[punto.getX()][punto.getY()];
-	}
-	
-	public int[][] getMap()
-	{
-		return this.mappa;
-		
+		if (punto.getX() < xAmpiezzaSpawn)
+			return mappaSuperiore[punto.getX()][punto.getY()];
+		else if (punto.getX() >= (xDimInterna + xAmpiezzaSpawn))
+			return mappaInferiore[punto.getX() - xDimInterna - xAmpiezzaSpawn][punto.getY()];
+		else
+			return mappaInterna.get(punto.getX() - xAmpiezzaSpawn, punto.getY());
 	}
 	
 	@Override
@@ -95,7 +132,7 @@ public class Mappa
 		{
 			for(int j=0; j < getYSize(); j++)
 			{
-				sb.append(" " + mappa[i][j] + " ");
+				sb.append(" " + get(new Point(i, j)) + " ");
 			}
 			sb.append("\n");
 		}
@@ -103,68 +140,21 @@ public class Mappa
 		return sb.toString();
 	}
 
-	public int[][] CreateMapClosed()
-	{
-			int min = 0;
-			int max = yDim-1;
-			
-			for(int i=0; i < xDim; i++)
-				{ 
-					for(int j=0; j < yDim; j++)
-					{		
-						if(i==min || i==max || j==min || j==max )
-						{
-							this.mappa[i][j] = 1 ;
-						}
-						else
-						{
-							this.mappa[i][j] = 0 ;
-						}
-						
-						if( (i == 0 && (j > (yDim/2)-SpawnPort && j < (yDim/2)+SpawnPort) ) || (i==max && (j > yDim/2-SpawnPort && j < yDim/2+SpawnPort) ) )
-						{
-							this.mappa[i][j] = 0 ;
-						}
-						
-					}
-				}
-		return mappa ;
-	}
 	
-	public int[][] CreateValidMap()
-	{
-		Random rand = new Random();
-				  
-				for(int i=0; i < xDim; i++)
-				{
-					for(int j=0; j < yDim; j++)
-					{
-						if( (rand.nextInt(10)+1) <= 5)
-						{ 
-							this.mappa[i][j] = 0 ;
-						}
-						else
-						{
-							this.mappa[i][j] = 1 ;
-						}
-					}
-				}
-		return mappa ;
-	}
-	
-	public int[][] CreateMap(int[][] map)
-	{
-		TestingMap TM = new TestingMap();
-		return TM.CreateMap(this);
-	}
 
 	public String getDifficolta() {
 		return Difficolta;
 	}
 	
+	//DA RIVEDERE
 	public void setValue(Point punto, int value)
 	{
-		this.mappa[punto.getX()][punto.getY()] = value;
+		if (punto.getX() < xAmpiezzaSpawn)
+			mappaSuperiore[punto.getX()][punto.getY()] = value;
+		else if (punto.getX() > (xDimInterna + xAmpiezzaSpawn))
+			mappaInferiore[punto.getX()][punto.getY()] = value;
+		else
+			mappaInterna.setValue(punto, value);
 	}
 	
 	public Set<Point> getNeighbors(Point point)
@@ -174,10 +164,10 @@ public class Mappa
 		int x = point.getX();
 		int y = point.getY();
 		
-		Point north = x - 1 >= 0 && mappa[x - 1][y] == 0 ? new Point(x - 1, y) : null;
-		Point south = x + 1 < getXSize() && mappa[x + 1][y] == 0 ? new Point(x + 1, y) : null;
-		Point east = y + 1 < getYSize() && mappa[x][y + 1] == 0 ? new Point(x, y + 1) : null;
-		Point west = y - 1 >= 0 && mappa[x][y - 1] == 0 ? new Point(x, y - 1) : null;
+		Point north = x - 1 >= 0 && get(new Point(x - 1, y)) == 0 ? new Point(x - 1, y) : null;
+		Point south = x + 1 < getXSize() && get(new Point(x + 1, y)) == 0 ? new Point(x + 1, y) : null;
+		Point east = y + 1 < getYSize() && get(new Point(x, y + 1)) == 0 ? new Point(x, y + 1) : null;
+		Point west = y - 1 >= 0 && get(new Point(x, y - 1)) == 0 ? new Point(x, y - 1) : null;
 		
 		if (north != null)
 			set.add(north);
@@ -202,23 +192,19 @@ public class Mappa
 			System.out.println("\n");
 		}
 	}
-
 	
-	public int getxDimSpawn() {
-		return xDimSpawn;
+	public int getXDimInterna()
+	{
+		return xDimInterna;
 	}
 	
-	public void CompleteMap(int[][] MappaInterna)
-	{ 	
-		int temp = 0;
-		for(int i=xDimSpawn; i < xDim ; i++,temp++)
-		{
-			for(int j=0; j < yDim; j++)
-			{
-				mappa[i][j] = mappa[temp][j];
-			}
-		}
+	public int getYDimInterna()
+	{
+		return yDimInterna;
 	}
 
 	
+	public int getXAmpiezzaSpawn() {
+		return xAmpiezzaSpawn;
+	}	
 }

@@ -143,7 +143,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 	
     private void CreateSpawns(Field rootChildrenField,Mappa mappa) {
     	String SpawnBox = "";
-    	int xDimSpawn = mappa.getxDimSpawn();
+    	int xDimSpawn = mappa.getXAmpiezzaSpawn();
     	xDimSpawn=-10;
 		float TempX;
 		float TempZ;
@@ -200,7 +200,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 	
 	@Override
 	public void onStcSendMapReceived(Mappa mappa) {
-		this.mappa = mappa;
+		System.out.println(mappa);
+		this.mappa = mappa;		
 	}
 
 	public int step() { return step(SharedVariables.getTimeStep());	}
