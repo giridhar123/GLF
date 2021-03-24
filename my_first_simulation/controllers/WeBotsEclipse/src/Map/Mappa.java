@@ -53,6 +53,22 @@ public class Mappa
 
 	}
 	
+	public Mappa(int xAmpiezzaSpawn, int xDimInterna, int yDimInterna)
+	{
+		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+		this.xDimInterna = xDimInterna;
+		this.yDimInterna = yDimInterna;
+		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
+		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
+		this.mappaInterna = new MappaInterna(xDimInterna, yDimInterna);
+		
+		for (int i = 0; i < xAmpiezzaSpawn; ++i)
+			mappaSuperiore[i][0] = mappaSuperiore[i][yDimInterna - 1] = mappaInferiore[i][0] = mappaInferiore[i][yDimInterna - 1] = 1;
+			
+		for (int j = 0; j < yDimInterna; ++j)
+			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
+	}
+	
 	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, double[] arrayXY)
 	{
 		// Questo costruttore � richiamato enlla classe STC_SEND_MAP
@@ -105,15 +121,6 @@ public class Mappa
 		ArrayList<Point> path = aStarSearcher.getPath(new Point(1,1),lastPoint);
 		
 			return (path != null);
-	}
-
-	public Mappa(int xDim, int yDim)
-	{
-		/*
-		this.xDim = xDim;
-		this.yDim = yDim;
-		this.mappa = new int[xDim][yDim];
-		*/
 	}
 	
 	public int getXSize()
@@ -174,10 +181,10 @@ public class Mappa
 	{
 		if (punto.getX() < xAmpiezzaSpawn)
 			mappaSuperiore[punto.getX()][punto.getY()] = value;
-		else if (punto.getX() > (xDimInterna + xAmpiezzaSpawn))
-			mappaInferiore[punto.getX()][punto.getY()] = value;
+		else if (punto.getX() >= (xDimInterna + xAmpiezzaSpawn))
+			mappaInferiore[punto.getX()- xDimInterna - xAmpiezzaSpawn][punto.getY()] = value;
 		else
-			mappaInterna.setValue(punto, value);
+			mappaInterna.setValue(punto.getX() - xAmpiezzaSpawn, punto.getY(), value);
 	}
 	
 	public Set<Point> getNeighbors(Point point)

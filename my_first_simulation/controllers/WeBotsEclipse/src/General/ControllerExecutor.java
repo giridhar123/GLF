@@ -38,21 +38,33 @@ public class ControllerExecutor extends Thread
         	processBuilder.command("cmd.exe", "/c", "set WEBOTS_ROBOT_NAME=" + robotName + "&javaw.exe -Djava.library.path=" + webotsPath + "/lib/controller/java -Dfile.encoding=Cp1252 -classpath \"" + projectPath + "/my_first_simulation/controllers/WeBotsEclipse/bin;" + webotsPath + "/lib/controller/java/Controller.jar\" -XX:+ShowCodeDetailsInExceptionMessages Controllers." + controllerName + " " + webotsPath + " " + projectPath + " " + tcp_port + " " + time_step + " " + numeroGuardie + " " + numeroLadri);        
         try {
             Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
+            BufferedReader outputStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            
             String line;
-            while ((line = reader.readLine()) != null) {
-
-                if (line.equals(controllerName + " avviato..."))
-                	ready = true;
-                
-                System.out.println(line);
+            Boolean condition = true;
+            while (condition) 
+            {
+            	if(outputStream.ready()) 
+            	{
+            		if((line = outputStream.readLine()) != null) 
+						System.out.println(line);
+            	}
+            	if(errorStream.ready()) 
+            	{
+            		if((line = errorStream.readLine()) != null)
+            		{
+						System.out.println(line);
+						condition = false;
+					}
+            	}
             }
 
             int exitCode = process.waitFor();
             System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
       
-            reader.close();
+            outputStream.close();
+            errorStream.close();
             
         } catch (IOException e) {
             e.printStackTrace();
