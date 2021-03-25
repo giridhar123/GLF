@@ -223,4 +223,10 @@ public class SupervisorRobot extends Supervisor implements Client {
 		 * DO NOTHING
 		 */
 	}
+
+	@Override
+	public void onCtsGoalChangedReceived(Point old, Point New) {
+		// TODO Auto-generated method stub
+		
+	}
  }

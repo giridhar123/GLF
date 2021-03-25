@@ -10,4 +10,5 @@ public interface Client
 	public abstract void onCtsObstacleInMapReceived(Point point);
 	public abstract void onCtsGoingToReceived(Point point);
 	public abstract void onCtsNewGuardiaPosReceived(Point before, Point after);
+	public abstract void onCtsGoalChangedReceived(Point old, Point New);
 }

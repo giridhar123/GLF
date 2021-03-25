@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
@@ -160,6 +161,24 @@ public class ServerConnectionHandler extends Thread {
 				}
 			}
 			break;
+			case Packet.CTS_GOAL_CHANGED:
+			{
+				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
+				if (server.getGuardie().contains(packet.getSender()))
+				{
+					//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
+					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+					for (int i = 0; i < guardie.size(); ++i)
+					{
+						if (guardie.get(i) == packet.getSender())
+							continue;
+					
+						buffer = cts_goal_changed.encode();
+						guardie.get(i).write(buffer);
+					}
+				}
+			}
+				break;
 			default:
 				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;

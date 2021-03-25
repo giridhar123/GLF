@@ -14,6 +14,7 @@ import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
@@ -87,7 +88,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			{
 				//System.out.println(getName() + ":Non c'e un path per " + goal);
 				updateMapAndSendPacket(goal);
-				System.out.println(getName() + openSet.remove(new Point(goal)));
+				openSet.remove(new Point(goal));
 				continue;
 			}
 			
@@ -98,6 +99,34 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
 				
+				if(check8Neighbours())
+				{
+					Point temp = null;
+					do
+					{
+						do 
+						{
+							temp = openSet.get(r.nextInt(openSet.size()));
+						}
+						while(!isOpposite(temp));
+		
+						path = aStarSearcher.getPath(robotPosition, temp);
+						
+						if (path == null)
+						{
+							updateMapAndSendPacket(temp);
+							openSet.remove(new Point(temp));
+						}
+					}
+					while(path == null);
+					System.out.println(getName() + ": Guardia vicina trovata, cambio path da " + goal + " a " + temp);
+					clientConnectionHandler.sendPacket(new CTS_GOAL_CHANGED(goal, temp));
+					openSet.add(new Point(goal));
+					goal = new Point(temp);
+					correctedPath = AStarSearcher.pathToRobotDirections(path);
+					i = 0;
+				}
+				
 				int value = correctedPath.get(i);
 				
 				checkLateral();
@@ -105,7 +134,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				checkLateral();
 				
 				boolean obstaclesInFront = !goStraightOn();
-				System.out.println(getName() + openSet.remove(new Point(robotPosition)));
+				openSet.remove(new Point(robotPosition));
 				checkLateral();
 			
 				if (obstaclesInFront)
@@ -118,7 +147,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					{
 						//System.out.println(getName() + ": Non ho piu un path per " + goal);
 						updateMapAndSendPacket(goal);
-						System.out.println(getName() + openSet.remove(new Point(goal)));
+						openSet.remove(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
@@ -215,7 +244,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 	
 	private void updateMapAndSendPacket(Point punto)
-	{if (mappa.get(punto) == 1)
+	{if (mappa.get(punto) == 1 || mappa.get(punto) == Mappa.GUARDIA)
 			return;
 		
 		//System.out.println("1");
@@ -301,7 +330,53 @@ public class GuardiaRobot extends GenericRobot implements Client {
         	led2.set(255); // accendi rosso
         }        
 	}
+	
+	private boolean check8Neighbours() 
+	{
+		switch (direction) 
+		{
+		case NORD: return (mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() - 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() + 1)) == Mappa.GUARDIA);
+		
+		case EST: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() + 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() + 1)) == Mappa.GUARDIA);
+		
+		case SUD: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() + 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() - 1)) == Mappa.GUARDIA);
+		
+		case OVEST: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() - 1)) == Mappa.GUARDIA ||
+				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() - 1)) == Mappa.GUARDIA);
+		}
+		
+		return false;
+		
+	}
 
+	private boolean isOpposite(Point temp)
+	{
+		switch (direction) 
+		{
+		case NORD: return temp.getX() > robotPosition.getX();
+		case EST: return temp.getY() < robotPosition.getY();
+		case SUD: return temp.getX() < robotPosition.getX();
+		case OVEST: return temp.getY() > robotPosition.getY();
+		}
+		
+		return false;
+	}
+	
 	@Override
 	public void work () 
 	{
@@ -324,13 +399,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	public void onCtsObstacleInMapReceived(Point point) {
 		//System.out.println(getName() + " ho ricevuto ostacolo in " + point);
 		mappa.setValue(point, Mappa.FULL);
-		System.out.println(getName() + openSet.remove(point));
+		openSet.remove(point);
 	}
 
 	@Override
 	public void onCtsGoingToReceived(Point point) {
 		//System.out.println(getName() + " un'altra guardia vuole andare in " + point);
-		System.out.println(getName() + openSet.remove(point));		
+		openSet.remove(point);		
 	}
 
 	@Override
@@ -343,5 +418,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	public void onCtsNewGuardiaPosReceived(Point before, Point after) {
 		mappa.setValue(before, Mappa.EMPTY);
 		mappa.setValue(after, Mappa.GUARDIA);		
+	}
+
+	@Override
+	public void onCtsGoalChangedReceived(Point old, Point New) {
+		openSet.add(new Point(old));
+		openSet.remove(new Point(New));
 	}
 }

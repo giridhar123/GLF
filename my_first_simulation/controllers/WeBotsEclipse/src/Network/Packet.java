@@ -11,6 +11,7 @@ public class Packet
 	public static final short CTS_OBSTACLE_IN_MAP = (short) 0x0003;
 	public static final short CTS_GOING_TO = (short) 0x0004;
 	public static final short CTS_NEW_GUARDIA_POS = (short) 0x0005;
+	public static final short CTS_GOAL_CHANGED = (short) 0x0006;
 	
 	private int size;
     private short opcode;

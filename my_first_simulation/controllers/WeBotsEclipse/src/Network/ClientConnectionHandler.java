@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
@@ -111,6 +112,12 @@ public class ClientConnectionHandler extends Thread{
 			{
 				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
 				client.onCtsNewGuardiaPosReceived(cts_new_guardia_pos.getBefore(), cts_new_guardia_pos.getAfter());
+			}
+			break;
+			case Packet.CTS_GOAL_CHANGED:
+			{
+				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
+				client.onCtsGoalChangedReceived(cts_goal_changed.getOld(), cts_goal_changed.getNew());
 			}
 			break;
 			default:
