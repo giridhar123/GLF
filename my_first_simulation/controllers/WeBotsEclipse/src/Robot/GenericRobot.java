@@ -103,7 +103,7 @@ public abstract class GenericRobot extends Robot
 	    motors.setVelocityMS(1);
 	    
 	    outerLoop: for(int i = 0; i < times; ++i) 
-	    {	    	
+	    { 	
 	    	for (int j = 0; j < count; ++j)
 	    	{	    		
 	    		lateralSensors.checkObstaclesLateral();

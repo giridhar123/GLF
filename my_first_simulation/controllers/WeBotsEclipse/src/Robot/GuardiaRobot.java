@@ -25,7 +25,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	private ArrayList<Point> closedSet;
 	private boolean ladroFound;
 	private Point oldPosition;
-	
+
 	public GuardiaRobot(int direction)
 	{
 		super(direction);
@@ -35,7 +35,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		ladroFound = false;
 		
 		/*
-		FRONTAL_OBSTACLE_TRESHOLD = 75;
+		FRONTAL_OBSTACLE_TRESHOLD = 75;-
 		frontalSensors.setTreshold(FRONTAL_OBSTACLE_TRESHOLD);
 		*/
 		
@@ -106,8 +106,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
-				//CameraCheck();
-				//SirenOn();
+				
 				int value = correctedPath.get(i);
 				
 				checkLateral();
@@ -138,7 +137,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 						i = -1;
 					}
 				}
-				System.out.println(getName() + "\n" + mappa);
+				
+				ladroFound = CameraCheckTest(); // dobbiamo mettere una condizione per la quale se trova il ladro di fare qualcosa.
+				//SirenOn();
+			//	System.out.println(getName() + "\n" + mappa);
 			}
 		}
 		
@@ -232,8 +234,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		//System.out.println("3");
 	}
 
-	private void CameraCheck()
+	private boolean CameraCheckTest()
 	{
+		//Funzione di test
 		Camera camera = new Camera("camera");    
         camera.enable(150);
         camera.recognitionEnable(150);
@@ -241,13 +244,58 @@ public class GuardiaRobot extends GenericRobot implements Client {
         
         for (int i = 0; i < camera.getRecognitionNumberOfObjects(); ++i)
         {
-        	System.out.println(CCC[i].getModel());  // Wooden box oppure Ladro
-        }   
+        	if(	CCC[i].getModel().equalsIgnoreCase("ladro") )
+        	{
+        		System.out.println("Ho trovato un ladro! è distante "+ CCC[i].getPosition()[0] + CCC[i].getPosition()[1] + CCC[i].getPosition()[2]);
+        	}
+        	else
+        	{
+        		System.out.println("Ho trovato qualcos'altro ! è distante  " + CCC[i].getPosition()[0]);
+        		System.out.println( CCC[i].getPosition()[1] );
+        		System.out.println( CCC[i].getPosition()[2] );
+        		System.out.println( "\n");
+        	}
+        }  
+        
+       return false;
+	}
+	
+	private boolean CameraCheck()
+	{
+		//Questa è la funzione finale una volta capita la condizione.
+		Camera camera = new Camera("camera");    
+        camera.enable(150);
+        camera.recognitionEnable(150);
+        CameraRecognitionObject[] CRO = camera.getCameraRecognitionObjects();
+        double distance ;
+        double limiteRobot = 0.001 ;
+        double limiteCassa = 0.001 ;
+
+        for (int i = 0; i < camera.getRecognitionNumberOfObjects(); ++i)
+        {
+    		distance = CRO[i].getPosition()[0] ; 
+
+        	if(	CRO[i].getModel().equalsIgnoreCase("ladro") )
+        	{
+        			if(distance < limiteRobot )
+        				return true ;
+        	}
+        	else
+        	{
+            	if(	CRO[i].getModel().equalsIgnoreCase("wooden box") )
+            	{
+            		if(distance < limiteCassa )
+        			{
+        				// Tutte le sistemate che dovete fare
+        			}
+            	}
+        	}
+        }
+        return false;
 	}
 	
 	private void SirenOn()
 	{
-		LED led0 = getLED("led_0"); // ignoto lol
         LED led1 = getLED("led_1"); //rosso
         LED led2 = getLED("led_2"); //blu
         
