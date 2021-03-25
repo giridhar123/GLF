@@ -246,14 +246,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
         {
         	if(	CCC[i].getModel().equalsIgnoreCase("ladro") )
         	{
-        		System.out.println("Ho trovato un ladro! è distante "+ CCC[i].getPosition()[0] + CCC[i].getPosition()[1] + CCC[i].getPosition()[2]);
+        		//System.out.println("Ho trovato un ladro! è distante "+ CCC[i].getPosition()[0] + CCC[i].getPosition()[1] + CCC[i].getPosition()[2]);
         	}
         	else
         	{
-        		System.out.println("Ho trovato qualcos'altro ! è distante  " + CCC[i].getPosition()[0]);
-        		System.out.println( CCC[i].getPosition()[1] );
-        		System.out.println( CCC[i].getPosition()[2] );
-        		System.out.println( "\n");
+        		//System.out.println("Ho trovato qualcos'altro ! è distante  " + CCC[i].getPosition()[0]);
+        		//System.out.println( CCC[i].getPosition()[1] );
+        		//System.out.println( CCC[i].getPosition()[2] );
+        		//System.out.println( "\n");
         	}
         }  
         

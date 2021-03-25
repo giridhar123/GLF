@@ -12,7 +12,7 @@ public class LadroController
     	
     	init(args);
     	
-        LadroRobot robot = new LadroRobot(GenericRobot.SUD);
+        LadroRobot robot = new LadroRobot(GenericRobot.NORD);
         
         //ArrayList<Point> pts = potentialShelters(map);  pts contiene i possibili nascondigli
         //estrai un punto da pts
