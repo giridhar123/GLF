@@ -22,7 +22,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
 	private ArrayList<Point> openSet;
-	private ArrayList<Point> closedSet;
 	private boolean ladroFound;
 	private Point oldPosition;
 	
@@ -31,7 +30,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		super(direction);
 		
 		openSet = new ArrayList<>();
-		closedSet = new ArrayList<>();
 		ladroFound = false;
 		
 		/*
@@ -56,13 +54,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		//System.out.println("Guardia: Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
-		for (int i = 1; i < mappa.getXSize()-1; i++)
-		{
-			for (int j = 1; j < mappa.getYSize()-1; ++j)
-			{
+		//Aggiungo tutta la mappa nell'openset
+		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
+			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
 				openSet.add(new Point(i, j));
-			}
-		}
+		
+		System.out.println(getName() + ": size is:" + openSet.size());
 	}
 	
 	private void explore()
@@ -70,7 +67,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		if (mappa == null || ladroFound)
 			return;
 		
-		closedSet.add(new Point(robotPosition));
+		openSet.remove(new Point(robotPosition));
 		
 		Point goal = null;
 		AStarSearcher aStarSearcher = new AStarSearcher(mappa);
@@ -78,25 +75,19 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		ArrayList<Integer> correctedPath = null;
 		Random r = new Random();
 		
-		while (openSet.size() != closedSet.size())
+		while (openSet.size() > 0)
 		{	
 			//CameraCheck();
 			//SirenOn();
 			
 			goal = openSet.get(r.nextInt(openSet.size()));
-			
-			if (closedSet.contains(goal))
-			{
-				//System.out.println(getName() + ": " + goal + " gia� esaminato");
-				continue;
-			}
-			
 			path = aStarSearcher.getPath(robotPosition, goal);
+			
 			if (path == null)
 			{
 				//System.out.println(getName() + ":Non c'e un path per " + goal);
 				updateMapAndSendPacket(goal);
-				closedSet.add(new Point(goal));
+				System.out.println(getName() + openSet.remove(new Point(goal)));
 				continue;
 			}
 			
@@ -115,7 +106,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				checkLateral();
 				
 				boolean obstaclesInFront = !goStraightOn();
-				closedSet.add(new Point(robotPosition));
+				System.out.println(getName() + openSet.remove(new Point(robotPosition)));
 				checkLateral();
 			
 				if (obstaclesInFront)
@@ -128,7 +119,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					{
 						//System.out.println(getName() + ": Non ho piu un path per " + goal);
 						updateMapAndSendPacket(goal);
-						closedSet.add(new Point(goal));
+						System.out.println(getName() + openSet.remove(new Point(goal)));
 						i = correctedPath.size();
 					}			
 					else
@@ -285,13 +276,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	public void onCtsObstacleInMapReceived(Point point) {
 		//System.out.println(getName() + " ho ricevuto ostacolo in " + point);
 		mappa.setValue(point, Mappa.FULL);
-		closedSet.add(point);
+		System.out.println(getName() + openSet.remove(point));
 	}
 
 	@Override
 	public void onCtsGoingToReceived(Point point) {
 		//System.out.println(getName() + " un'altra guardia vuole andare in " + point);
-		closedSet.add(point);		
+		System.out.println(getName() + openSet.remove(point));		
 	}
 
 	@Override

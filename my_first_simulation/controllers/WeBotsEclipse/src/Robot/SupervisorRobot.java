@@ -132,7 +132,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 		for (int i = 0; i < SharedVariables.getNumeroLadri(); ++i)
 		{
 			currentName = name.concat(Integer.toString(i));
-			string.append("DEF " + currentName + " Ladro { name \"" + currentName + "\", controller \"<extern>\" } ");
+			string.append("DEF " + currentName + " Ladro { name \"" + currentName + "\", rotation 0,1,0,3.14 controller \"<extern>\" } ");
 		}
 		
 		return string.toString();
