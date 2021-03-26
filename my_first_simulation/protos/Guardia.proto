@@ -17,13 +17,11 @@ PROTO Guardia [
   field SFBool             supervisor                   FALSE                    # Is `Robot.supervisor`.
   field SFBool             synchronization              TRUE                     # Is `Robot.synchronization`.
   field SFString{"1", "2"} version                      "1"                      # Defines the e-puck version; either "1" or "2".
-  field SFFloat            camera_fieldOfView           0.84                     # Is `Camera.fieldOfView`.
-  field SFInt32            camera_width                 52                       # Is `Camera.width`.
-  field SFInt32            camera_height                39                       # Is `Camera.height`.
+  field SFFloat            camera_fieldOfView           1                  # Is `Camera.fieldOfView`.
+  field SFInt32            camera_width                 512                 # Is `Camera.width`.
+  field SFInt32            camera_height                208                    # Is `Camera.height`.
   field SFBool             camera_antiAliasing          FALSE                    # Is `Camera.antiAliasing`.
   field SFRotation         camera_rotation              1 0 0 0                  # Is `Camera.rotation`. Interesting setup: set `1 0 0 -0.47` in order to simulate the linear camera mode.
-  field SFFloat            camera_noise                 0.0                      # Is `Camera.noise`.
-  field SFFloat            camera_motionBlur            0.0                      # Is `Camera.motionBlur`.
   field SFInt32            distance_sensor_numberOfRays 1                        # Is `DistanceSensor.numberOfRays`.
   field SFInt32            emitter_channel              1                        # Is `Emitter.channel`.
   field SFInt32            receiver_channel             1                        # Is `Receiver.channel`.
@@ -834,9 +832,9 @@ Robot {
             ]
           }
         ]
-        fieldOfView 1.0472
-        width 256
-        height 128
+        fieldOfView IS camera_fieldOfView
+        width IS camera_width
+        height IS camera_height
         antiAliasing TRUE
         recognition Recognition {
           frameColor 0.929412 0.831373 0
