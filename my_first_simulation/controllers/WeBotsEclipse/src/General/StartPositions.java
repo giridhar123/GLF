@@ -5,8 +5,8 @@ import Map.Point;
 /** Elemento.java */
 public enum StartPositions
 {
-	Guardia0(new Point(1, 15)),
-	Guardia1(new Point(1, 10)),
+	Guardia0(new Point(1, 4)),
+	Guardia1(new Point(1, 7)),
 	Guardia2(new Point(1, 20)),
 	Guardia3(new Point(1, 4)),
 	Guardia4(new Point(1, 5)),
@@ -16,8 +16,8 @@ public enum StartPositions
 	Guardia8(new Point(1, 9)),
 	Guardia9(new Point(1, 10)),
 	
-	Ladro0(new Point(34, 15)),
-	Ladro1(new Point(34, 10)),
+	Ladro0(new Point(14, 4)),
+	Ladro1(new Point(14, 7)),
 	Ladro2(new Point(34, 20)),
 	Ladro3(new Point(34, 4)),
 	Ladro4(new Point(27, 5)),

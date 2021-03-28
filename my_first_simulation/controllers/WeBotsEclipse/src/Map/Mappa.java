@@ -35,7 +35,6 @@ public class Mappa
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
 		this.dimSpawnGate = dimSpawnGate;
 		
-		this.mappaInterna = new MappaInterna(this);
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
 		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
 		
@@ -45,12 +44,10 @@ public class Mappa
 		for (int j = 0; j < yDimInterna; ++j)
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
 
-		while(!isValid())
+		do
 		{
-			System.out.println("Ricreo la mappa");
 			mappaInterna = new MappaInterna(this);
-		}
-
+		} while(!isValid());
 	}
 	
 	public Mappa(int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate)
@@ -113,16 +110,12 @@ public class Mappa
 
 	private boolean isValid() 
 	{
-
-		System.out.println(" x " + (((2*xAmpiezzaSpawn) + xDimInterna)-1));
-		System.out.println(" y " +  (yDimInterna-1));
 		Point lastPoint = new Point(((2*xAmpiezzaSpawn) + xDimInterna)-2, (yDimInterna-2) ) ;
-
-
+		
 		AStarSearcher aStarSearcher = new AStarSearcher(this);		
 		ArrayList<Point> path = aStarSearcher.getPath(new Point(1,1),lastPoint);
 		
-			return (path != null);
+		return (path != null);
 	}
 	
 	public int getXSize()
@@ -211,18 +204,6 @@ public class Mappa
 			set.add(west);
 		
 		return set;
-	}
-
-	public void PrintMap(int[][] mappa)
-	{
-		for(int i=0; i < mappa[0].length ; i++)
-		{
-			for(int j=0; j <  mappa[1].length; j++)
-			{
-					System.out.print(""+ mappa[i][j] + "");
-			}
-			System.out.println("\n");
-		}
 	}
 	
 	public int getXDimInterna()

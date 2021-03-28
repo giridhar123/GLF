@@ -45,8 +45,8 @@ public class Server extends Thread
 	public void run() {
 		// Creazione dell'oggetto che mi genera la mappa
 		// Tutti questi valori sono da mettere in un file config.txt, sarebbe molto piu comodo.
-		int DimMapX = 30; // Dimensione Matrice in x
-		int DimMapY = 30; // Dimensione Matrice in y
+		int DimMapX = 10; // Dimensione Matrice in x
+		int DimMapY = 10; // Dimensione Matrice in y
 		double WeBotsTile = 1.0; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
 		int xDimSpawn = 3; // Dimensione dello spawn nella dimensione x. 
@@ -82,7 +82,6 @@ public class Server extends Thread
 
 	public void addGuardia(AsynchronousSocketChannel guardia)
 	{
-		System.out.println("aggiungo una guardia");
 		guardie.add(guardia);
 		STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
 		ByteBuffer buffer = stc_send_map.encode();
@@ -91,7 +90,6 @@ public class Server extends Thread
 
 	public void addLadro(AsynchronousSocketChannel ladro)
 	{
-		System.out.println("Aggiungo un ladro");
 		ladri.add(ladro);
 		STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
 		ByteBuffer buffer = stc_send_map.encode();

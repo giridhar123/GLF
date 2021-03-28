@@ -5,8 +5,6 @@ import java.util.Random;
 
 import com.cyberbotics.webots.controller.Camera;
 import com.cyberbotics.webots.controller.CameraRecognitionObject;
-import com.cyberbotics.webots.controller.LED;
-
 import General.AStarSearcher;
 import General.SharedVariables;
 import Map.Mappa;
@@ -16,6 +14,7 @@ import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 
@@ -23,20 +22,34 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
 	private ArrayList<Point> openSet;
-	private boolean ladroFound;
+	private int ladriFound;
 	private Point oldPosition;
+	
+	private int numeroGuardia;
+	private Camera camera;
+	
+	private Point goal;
+	private ArrayList<Integer> correctedPath;
+	
+	private SireneThread sireneThread;
 
 	public GuardiaRobot(int direction)
 	{
 		super(direction);
 		
 		openSet = new ArrayList<>();
-		ladroFound = false;
+		ladriFound = 0;
 		
-		/*
-		FRONTAL_OBSTACLE_TRESHOLD = 75;-
-		frontalSensors.setTreshold(FRONTAL_OBSTACLE_TRESHOLD);
-		*/
+		numeroGuardia = Integer.valueOf(String.valueOf(getName().charAt(getName().length() - 1)));
+		
+		camera = new Camera("camera");
+		camera.enable(SharedVariables.getTimeStep());
+		
+		goal = null;
+		correctedPath = null;
+		
+		sireneThread = new SireneThread(this);
+		sireneThread.start();
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 		
@@ -52,80 +65,49 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa)
 	{
-		//System.out.println("Guardia: Mappa ricevuta");
 		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
 		//Aggiungo tutta la mappa nell'openset
 		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
 			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
 				openSet.add(new Point(i, j));
-		
-		System.out.println(getName() + ": size is:" + openSet.size());
 	}
 	
 	private void explore()
 	{
-		if (mappa == null || ladroFound)
+		if (mappa == null || ladriFound == SharedVariables.getNumeroLadri())
 			return;
 		
 		openSet.remove(new Point(robotPosition));
 		
-		Point goal = null;
 		AStarSearcher aStarSearcher = new AStarSearcher(mappa);
 		ArrayList<Point> path = null;
-		ArrayList<Integer> correctedPath = null;
 		Random r = new Random();
 		
 		while (openSet.size() > 0)
 		{	
-			//CameraCheck();
-			//SirenOn();
-			
 			goal = openSet.get(r.nextInt(openSet.size()));
 			path = aStarSearcher.getPath(robotPosition, goal);
 			
 			if (path == null)
 			{
-				//System.out.println(getName() + ":Non c'e un path per " + goal);
 				updateMapAndSendPacket(goal);
 				openSet.remove(new Point(goal));
 				continue;
 			}
 			
-			//System.out.println(getName() + ": C'e un path per " + goal);
-			clientConnectionHandler.sendPacket(new CTS_GOING_TO(goal));
+			clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(goal)));
 			
 			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
+				/*
+				 * Se c'Ã¨ un'altra guardia nella 5-adiacenza (3 celle di fronte e le 2 laterali)
+				 * Cerco un nuovo path nella direzione opposta del robot
+				 */
 				
-				if(check8Neighbours())
-				{
-					Point temp = null;
-					do
-					{
-						do 
-						{
-							temp = openSet.get(r.nextInt(openSet.size()));
-						}
-						while(!isOpposite(temp));
-		
-						path = aStarSearcher.getPath(robotPosition, temp);
-						
-						if (path == null)
-						{
-							updateMapAndSendPacket(temp);
-							openSet.remove(new Point(temp));
-						}
-					}
-					while(path == null);
-					System.out.println(getName() + ": Guardia vicina trovata, cambio path da " + goal + " a " + temp);
-					clientConnectionHandler.sendPacket(new CTS_GOAL_CHANGED(goal, temp));
-					openSet.add(new Point(goal));
-					goal = new Point(temp);
-					correctedPath = AStarSearcher.pathToRobotDirections(path);
+				if(check5Neighbours())
 					i = 0;
-				}
 				
 				int value = correctedPath.get(i);
 				
@@ -133,8 +115,24 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				changeDirectionTo(value);
 				checkLateral();
 				
+				checkLadro(); // dobbiamo mettere una condizione per la quale se trova il ladro di fare qualcosa.
 				boolean obstaclesInFront = !goStraightOn();
+				checkLadro();
+				
+				if(check5Neighbours())
+				{
+					i = -1;
+					continue;
+				}
+				
+				if (ladriFound == SharedVariables.getNumeroLadri())
+				{
+					System.out.println(mappa);
+					return;
+				}
+				
 				openSet.remove(new Point(robotPosition));
+				clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(robotPosition)));
 				checkLateral();
 			
 				if (obstaclesInFront)
@@ -145,35 +143,24 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					path = aStarSearcher.getPath(robotPosition, goal);
 					if (path == null)
 					{
-						//System.out.println(getName() + ": Non ho piu un path per " + goal);
 						updateMapAndSendPacket(goal);
 						openSet.remove(new Point(goal));
 						i = correctedPath.size();
 					}			
 					else
 					{
-						//System.out.println(getName() + ": Aggiorno il path per " + goal);
 						correctedPath = AStarSearcher.pathToRobotDirections(path);
 						i = -1;
 					}
 				}
-				
-				ladroFound = CameraCheckTest(); // dobbiamo mettere una condizione per la quale se trova il ladro di fare qualcosa.
-				//SirenOn();
-			//	System.out.println(getName() + "\n" + mappa);
-			}
+				}
 		}
-		
-		ladroFound = true;
+
+		System.out.println(mappa);
 	}
 	
 	private void putObstaclesInFront()
-	{	
-		/*		
-		if (frontalSensors.getLeftValue() < FRONTAL_OBSTACLE_TRESHOLD && frontalSensors.getRightValue() < FRONTAL_OBSTACLE_TRESHOLD)
-			return false;
-		*/
-		
+	{
 		Point punto = null;
 		switch(direction)
 		{
@@ -190,8 +177,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	    	punto = new Point(robotPosition.getX(), robotPosition.getY() - 1);
 	    	break;
 		}
-		
-		//System.out.println("HO visto un coso davanti");
+
 		updateMapAndSendPacket(punto);
 	}
 	
@@ -244,148 +230,213 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 	
 	private void updateMapAndSendPacket(Point punto)
-	{if (mappa.get(punto) == 1 || mappa.get(punto) == Mappa.GUARDIA)
+	{
+		if (mappa.get(punto) == Mappa.FULL ||
+			mappa.get(punto) == Mappa.GUARDIA ||
+			mappa.get(punto) == Mappa.LADRO)
 			return;
 		
-		//System.out.println("1");
 		mappa.setValue(punto, 1);
-		//System.out.println("2 Guardia invio pacchetto con punto: " + punto);
-		clientConnectionHandler.sendPacket(new CTS_OBSTACLE_IN_MAP(punto));
-		//System.out.println("3");
+		clientConnectionHandler.sendPacket(new CTS_OBSTACLE_IN_MAP(new Point(new Point(punto))));
 	}
 
-	private boolean CameraCheckTest()
+	private boolean checkLadro()
 	{
-		//Funzione di test
-		Camera camera = new Camera("camera");    
-        camera.enable(150);
-        camera.recognitionEnable(150);
+        camera.recognitionEnable(SharedVariables.getTimeStep());
+        step();
         CameraRecognitionObject[] CCC = camera.getCameraRecognitionObjects();
         
-        for (int i = 0; i < camera.getRecognitionNumberOfObjects(); ++i)
-        {
-        	if(	CCC[i].getModel().equalsIgnoreCase("ladro") )
-        	{
-        		//System.out.println("Ho trovato un ladro! è distante "+ CCC[i].getPosition()[0] + CCC[i].getPosition()[1] + CCC[i].getPosition()[2]);
-        	}
-        	else
-        	{
-        		//System.out.println("Ho trovato qualcos'altro ! è distante  " + CCC[i].getPosition()[0]);
-        		//System.out.println( CCC[i].getPosition()[1] );
-        		//System.out.println( CCC[i].getPosition()[2] );
-        		//System.out.println( "\n");
-        	}
-        }  
+        boolean ladroFound = false;
+        Point punto = null;
         
-       return false;
-	}
-	
-	private boolean CameraCheck()
-	{
-		//Questa è la funzione finale una volta capita la condizione.
-		Camera camera = new Camera("camera");    
-        camera.enable(150);
-        camera.recognitionEnable(150);
-        CameraRecognitionObject[] CRO = camera.getCameraRecognitionObjects();
-        double distance ;
-        double limiteRobot = 0.001 ;
-        double limiteCassa = 0.001 ;
-
         for (int i = 0; i < camera.getRecognitionNumberOfObjects(); ++i)
         {
-    		distance = CRO[i].getPosition()[0] ; 
-
-        	if(	CRO[i].getModel().equalsIgnoreCase("ladro") )
-        	{
-        			if(distance < limiteRobot )
-        				return true ;
-        	}
-        	else
-        	{
-            	if(	CRO[i].getModel().equalsIgnoreCase("wooden box") )
-            	{
-            		if(distance < limiteCassa )
+        	if(CCC[i].getModel().equalsIgnoreCase("ladro"))
+        	{   
+        		
+    			int distanzaLaterale = (int) Math.round(CCC[i].getPosition()[0] * 10);
+    			distanzaLaterale = Math.abs(distanzaLaterale);
+        		int distanzaFrontale = (int) Math.round(CCC[i].getPosition()[2] * 10);
+        		distanzaFrontale = Math.abs(distanzaFrontale);
+        		
+        		if(CCC[i].getPosition()[0] <= -0.01)
+	    		{
+        			//Sinistra
+        			ladroFound = true;
+        			switch (direction)
         			{
-        				// Tutte le sistemate che dovete fare
+        			case NORD:
+        				punto = new Point(robotPosition.getX() - distanzaFrontale, robotPosition.getY() - distanzaLaterale);
+        				break;
+        			case SUD:
+        				punto = new Point(robotPosition.getX() + distanzaFrontale, robotPosition.getY() + distanzaLaterale);
+        				break;
+        			case EST:
+        				punto = new Point(robotPosition.getX() - distanzaLaterale, robotPosition.getY() + distanzaFrontale);
+        				break;
+        			case OVEST:
+        				punto = new Point(robotPosition.getX() + distanzaLaterale, robotPosition.getY() - distanzaFrontale);
+        				break;
         			}
-            	}
+	    		}
+	    		else if(CCC[i].getPosition()[0] >= 0.01)
+	    		{
+	    			//Destra
+	    			ladroFound = true;
+	    			switch (direction)
+        			{
+        			case NORD:
+        				punto = new Point(robotPosition.getX() - distanzaFrontale, robotPosition.getY() + distanzaLaterale);
+        				break;
+        			case SUD:
+        				punto = new Point(robotPosition.getX() + distanzaFrontale, robotPosition.getY() - distanzaLaterale);
+        				break;
+        			case EST:
+        				punto = new Point(robotPosition.getX() + distanzaLaterale, robotPosition.getY() + distanzaFrontale);
+        				break;
+        			case OVEST:
+        				punto = new Point(robotPosition.getX() - distanzaLaterale, robotPosition.getY() - distanzaFrontale);
+        				break;
+        			}
+	    		}
+	    		else 
+	    		{
+	    			//Di fronte
+	    			ladroFound = true;
+	    			switch (direction)
+        			{
+        			case NORD:
+        				punto = new Point(robotPosition.getX() - distanzaFrontale, robotPosition.getY());
+        				break;
+        			case SUD:
+        				punto = new Point(robotPosition.getX() + distanzaFrontale, robotPosition.getY());
+        				break;
+        			case EST:
+        				punto = new Point(robotPosition.getX(), robotPosition.getY() + distanzaFrontale);
+        				break;
+        			case OVEST:
+        				punto = new Point(robotPosition.getX(), robotPosition.getY() - distanzaFrontale);
+        				break;
+        			}
+	    		}
         	}
         }
-        return false;
-	}
-	
-	private void SirenOn()
-	{
-        LED led1 = getLED("led_1"); //rosso
-        LED led2 = getLED("led_2"); //blu
         
-        if(led1.get() == 0) // se rosso Ã¨ spento
-        {
-        	led1.set(255);
-        	led2.set(0); // accendi rosso
+        camera.recognitionDisable();
+        
+        if (ladroFound)
+        {        	
+        	if (mappa.get(punto) != Mappa.LADRO)
+        	{
+            	this.ladriFound += 1;
+            	mappa.setValue(punto, Mappa.LADRO);
+            	clientConnectionHandler.sendPacket(new CTS_LADRO_FOUND(new Point(punto)));
+        	}
         }
-        else
-        {
-        	led1.set(0);
-        	led2.set(255); // accendi rosso
-        }        
+        
+        return ladroFound;
 	}
 	
-	private boolean check8Neighbours() 
+	private boolean check5Neighbours() 
 	{
+		Point punti[] = new Point[5];
 		switch (direction) 
 		{
-		case NORD: return (mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() - 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() + 1)) == Mappa.GUARDIA);
-		
-		case EST: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() + 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() + 1)) == Mappa.GUARDIA);
-		
-		case SUD: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() + 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() + 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() - 1)) == Mappa.GUARDIA);
-		
-		case OVEST: return (mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY())) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX(), robotPosition.getY() - 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() - 1, robotPosition.getY() - 1)) == Mappa.GUARDIA ||
-				mappa.get(new Point(robotPosition.getX() + 1, robotPosition.getY() - 1)) == Mappa.GUARDIA);
+		case NORD:
+			punti[0] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
+			punti[1] = new Point(robotPosition.getX() - 1, robotPosition.getY());
+			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
+			punti[3] = new Point(robotPosition.getX() - 1, robotPosition.getY() - 1);
+			punti[4] = new Point(robotPosition.getX() - 1, robotPosition.getY() + 1);
+			break;		
+		case EST:
+			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
+			punti[1] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
+			punti[2] = new Point(robotPosition.getX() - 1, robotPosition.getY());
+			punti[3] = new Point(robotPosition.getX() + 1, robotPosition.getY() + 1);
+			punti[4] = new Point(robotPosition.getX() - 1, robotPosition.getY() + 1);
+			break;		
+		case SUD:
+			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
+			punti[1] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
+			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
+			punti[3] = new Point(robotPosition.getX() + 1, robotPosition.getY() + 1);
+			punti[4] = new Point(robotPosition.getX() + 1, robotPosition.getY() - 1);
+			break;		
+		case OVEST: 
+			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
+			punti[1] = new Point(robotPosition.getX() - 1, robotPosition.getY());
+			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
+			punti[3] = new Point(robotPosition.getX() - 1, robotPosition.getY() - 1);
+			punti[4] = new Point(robotPosition.getX() + 1, robotPosition.getY() - 1);
+			break;
 		}
 		
-		return false;
+		boolean guardiaFound = false;
+		for (int i = 0; i < 5; ++i)
+		{
+			if (mappa.get(punti[i]) == Mappa.GUARDIA)
+				guardiaFound = true;
+		}
 		
+		if (guardiaFound)
+		{
+			Point temp = null;
+			Random r = new Random();
+			ArrayList<Point> path = null;
+			AStarSearcher aStarSearcher = new AStarSearcher(mappa);
+			
+			do
+			{
+				do 
+				{
+					temp = openSet.get(r.nextInt(openSet.size()));
+				}
+				while(!isOpposite(temp));
+
+				step(3500 * numeroGuardia);
+				path = aStarSearcher.getPath(robotPosition, temp);
+				
+				if (path == null)
+				{
+					updateMapAndSendPacket(temp);
+					openSet.remove(new Point(temp));
+				}
+			}
+			while(path == null);
+			clientConnectionHandler.sendPacket(new CTS_GOAL_CHANGED(new Point(goal), new Point(temp)));
+			openSet.add(new Point(goal));
+			goal = new Point(temp);
+			correctedPath = AStarSearcher.pathToRobotDirections(path);
+		}
+		
+		return guardiaFound;
 	}
 
 	private boolean isOpposite(Point temp)
 	{
 		switch (direction) 
 		{
-		case NORD: return temp.getX() > robotPosition.getX();
-		case EST: return temp.getY() < robotPosition.getY();
-		case SUD: return temp.getX() < robotPosition.getX();
-		case OVEST: return temp.getY() > robotPosition.getY();
+		case NORD:
+			return temp.getX() > robotPosition.getX();
+		case EST:
+			return temp.getY() < robotPosition.getY();
+		case SUD:
+			return temp.getX() < robotPosition.getX();
+		case OVEST:
+			return temp.getY() > robotPosition.getY();
+		default:
+			return false;
 		}
-		
-		return false;
 	}
 	
 	@Override
 	public void work () 
-	{
-		String id = String.valueOf(getName().charAt(getName().length() - 1));
-		
+	{		
 		try 
 		{
 			//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 
-			step(10000 + ((SharedVariables.getNumeroLadri() + Integer.valueOf(id))* SharedVariables.getTimeStep() * 1000));
+			step(10000 + ((SharedVariables.getNumeroLadri() + numeroGuardia)* SharedVariables.getTimeStep() * 1000));
 		}
 		catch (NumberFormatException e) 
 		{
@@ -396,33 +447,46 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 
 	@Override
-	public void onCtsObstacleInMapReceived(Point point) {
-		//System.out.println(getName() + " ho ricevuto ostacolo in " + point);
+	public void onCtsObstacleInMapReceived(Point point)
+	{
 		mappa.setValue(point, Mappa.FULL);
 		openSet.remove(point);
 	}
 
 	@Override
-	public void onCtsGoingToReceived(Point point) {
-		//System.out.println(getName() + " un'altra guardia vuole andare in " + point);
+	public void onCtsGoingToReceived(Point point)
+	{
 		openSet.remove(point);		
 	}
 
 	@Override
-	public void onPosizioneIncrementata() {
-		clientConnectionHandler.sendPacket(new CTS_NEW_GUARDIA_POS(oldPosition, robotPosition));
+	public void onPosizioneIncrementata()
+	{
+		clientConnectionHandler.sendPacket(new CTS_NEW_GUARDIA_POS(new Point(oldPosition), new Point(robotPosition)));
 		oldPosition = new Point(robotPosition);
 	}
 
 	@Override
-	public void onCtsNewGuardiaPosReceived(Point before, Point after) {
+	public void onCtsNewGuardiaPosReceived(Point before, Point after)
+	{
 		mappa.setValue(before, Mappa.EMPTY);
 		mappa.setValue(after, Mappa.GUARDIA);		
 	}
 
 	@Override
-	public void onCtsGoalChangedReceived(Point old, Point New) {
+	public void onCtsGoalChangedReceived(Point old, Point New)
+	{
 		openSet.add(new Point(old));
 		openSet.remove(new Point(New));
+	}
+
+	@Override
+	public void onCtsLadroFound(Point punto)
+	{
+		if (mappa.get(punto) != Mappa.LADRO)
+		{
+			++ladriFound;
+			mappa.setValue(punto, Mappa.LADRO);
+		}
 	}
 }

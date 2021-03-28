@@ -8,7 +8,6 @@ public class LateralSensors {
 
 	private DistanceSensor leftSensor, rightSensor;
 	private int treshold;
-	private String name;
 	private boolean leftObstacle, rightObstacle;
 	private int maxValue;
 	
@@ -22,7 +21,6 @@ public class LateralSensors {
 	    rightSensor.enable(SharedVariables.getTimeStep());
 	    
 	    this.treshold = treshold;
-	    this.name = robot.getName();
 	    
 	    leftObstacle = rightObstacle = false;
 	    maxValue = 0;

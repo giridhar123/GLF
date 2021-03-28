@@ -12,6 +12,7 @@ public class Packet
 	public static final short CTS_GOING_TO = (short) 0x0004;
 	public static final short CTS_NEW_GUARDIA_POS = (short) 0x0005;
 	public static final short CTS_GOAL_CHANGED = (short) 0x0006;
+	public static final short CTS_LADRO_FOUND = (short) 0x0007;
 	
 	private int size;
     private short opcode;
@@ -20,6 +21,7 @@ public class Packet
     
     public Packet(Packet otherPacket)
     {
+    	this.sender = otherPacket.sender;
     	this.opcode = otherPacket.opcode;
     	this.size = otherPacket.size;
     }

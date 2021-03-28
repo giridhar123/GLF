@@ -11,6 +11,7 @@ import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
@@ -118,6 +119,12 @@ public class ClientConnectionHandler extends Thread{
 			{
 				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
 				client.onCtsGoalChangedReceived(cts_goal_changed.getOld(), cts_goal_changed.getNew());
+			}
+			break;
+			case Packet.CTS_LADRO_FOUND:
+			{
+				CTS_LADRO_FOUND cts_ladro_found = new CTS_LADRO_FOUND(packet, buf);
+				client.onCtsLadroFound(cts_ladro_found.getPoint());
 			}
 			break;
 			default:

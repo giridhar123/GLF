@@ -80,7 +80,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 			robotNode = getFromDef(currentName);
 			if (robotNode != null)
 			{
-				System.out.println("Sposto il " + currentName);
 				position = StartPositions.valueOf(currentName).getPosition();
 				x = position.getX();
 				y = position.getY();
@@ -93,7 +92,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 				newPosition[1] = pos[1];
 				newPosition[2] = MatrixToWorldZ((float) x, mappa.getWeBotsTile());
 				posizione.setSFVec3f(newPosition);
-				System.out.println("Ladro spostato");
 			}
 		}
 	}
@@ -137,46 +135,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 		
 		return string.toString();
 	}
-	
-    private void CreateSpawns(Field rootChildrenField,Mappa mappa) {
-    	String SpawnBox = "";
-    	int xDimSpawn = mappa.getXAmpiezzaSpawn();
-    	xDimSpawn=-10;
-		float TempX;
-		float TempZ;
-		for(int i=xDimSpawn; i < 0; i++)
-		{
-			for(int j=0; j < mappa.getYSize(); j++)
-			{
-				if( (i < 0 && j == 0) || ( i == -10 ) || ( j == mappa.getYSize()-1) )
-				{
-					TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
-					TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
-				
-					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-				}
-			}
-		}
-		
-    	xDimSpawn *= -1;
-
-		for(int i=mappa.getXSize(); i < mappa.getXSize()+xDimSpawn; i++)
-		{
-			for(int j=0; j < mappa.getYSize(); j++)
-			{
-				if( (i > 0 && j == 0) || ( i ==  (mappa.getXSize()+xDimSpawn)-1 ) || ( j == mappa.getYSize()-1) )
-				{
-					TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
-					TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
-				
-					SpawnBox += "DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE}" ;
-				}
-			}
-		}
-		rootChildrenField.importMFNodeFromString(4, SpawnBox);
-		
-		
-	}
 
 	private static float MatrixToWorldZ(float point, double WeBotsTile)
     {
@@ -188,11 +146,6 @@ public class SupervisorRobot extends Supervisor implements Client {
 	{	
 		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e'la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
 		return point;
-	}
-	
-	private static void RestartNode(Node robot_node)
-	{
-	    robot_node.restartController();
 	}
 	
 	@Override
@@ -226,7 +179,15 @@ public class SupervisorRobot extends Supervisor implements Client {
 
 	@Override
 	public void onCtsGoalChangedReceived(Point old, Point New) {
-		// TODO Auto-generated method stub
-		
+		/*
+		 * DO NOTHING
+		 */
+	}
+
+	@Override
+	public void onCtsLadroFound(Point punto) {
+		/*
+		 * DO NOTHING
+		 */		
 	}
  }

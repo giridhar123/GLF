@@ -14,7 +14,6 @@ PROTO Proto2 [
 ]
 {
 Solid {
-    recognitionColors [ 0.59 0.75 0.28 ]
   %{
     local size = fields.size.value
     local volume = size.x * size.y * size.z

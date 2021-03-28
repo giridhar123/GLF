@@ -11,6 +11,7 @@ import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
@@ -95,93 +96,74 @@ public class ServerConnectionHandler extends Thread {
 			break;
 			case Packet.CTS_OBSTACLE_IN_MAP:
 			{
-				CTS_OBSTACLE_IN_MAP cts_update_map_point = new CTS_OBSTACLE_IN_MAP(packet, buf);				
+				CTS_OBSTACLE_IN_MAP cts_obstacle_in_map = new CTS_OBSTACLE_IN_MAP(packet, buf);				
 				if(server.getGuardie().contains(packet.getSender()))
-				{
-					//System.out.println("Server: Ho ricevuto ostacolo in " + cts_update_map_point.getPoint());
-					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-					for (int i = 0; i < guardie.size(); ++i)
-					{
-						if (guardie.get(i) == packet.getSender())
-							continue;
-					
-						buffer = cts_update_map_point.encode();
-						guardie.get(i).write(buffer);
-					}
-				}
+					sendToGuardie(cts_obstacle_in_map);
 			}
 			break;
 			case Packet.CTS_GOING_TO:
 			{
 				CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-				{
-					//System.out.println("Server: La guardia vuole andare in " + cts_going_to.getPoint());
-					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-					for (int i = 0; i < guardie.size(); ++i)
-					{
-						if (guardie.get(i) == packet.getSender())
-							continue;
-					
-						buffer = cts_going_to.encode();
-						guardie.get(i).write(buffer);
-					}
-				}
-				else
-				{
-					//System.out.println("Server: Il ladro vuole andare in " + cts_going_to.getPoint());
-					ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
-					for (int i = 0; i < ladri.size(); ++i)
-					{
-						if (ladri.get(i) == packet.getSender())
-							continue;
-					
-						buffer = cts_going_to.encode();
-						ladri.get(i).write(buffer);
-					}
-				}
-				
+					sendToGuardie(cts_going_to);
+				else if (server.getLadri().contains(packet.getSender()))
+					sendToLadri(cts_going_to);
 			}
 			break;
 			case Packet.CTS_NEW_GUARDIA_POS:
 			{
 				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-				{
-					//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
-					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-					for (int i = 0; i < guardie.size(); ++i)
-					{
-						if (guardie.get(i) == packet.getSender())
-							continue;
-					
-						buffer = cts_new_guardia_pos.encode();
-						guardie.get(i).write(buffer);
-					}
-				}
+					sendToGuardie(cts_new_guardia_pos);
 			}
 			break;
 			case Packet.CTS_GOAL_CHANGED:
 			{
 				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-				{
-					//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
-					ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-					for (int i = 0; i < guardie.size(); ++i)
-					{
-						if (guardie.get(i) == packet.getSender())
-							continue;
-					
-						buffer = cts_goal_changed.encode();
-						guardie.get(i).write(buffer);
-					}
-				}
+					sendToGuardie(cts_goal_changed);
 			}
-				break;
+			break;
+			case Packet.CTS_LADRO_FOUND:
+			{
+				CTS_LADRO_FOUND cts_ladro_found = new CTS_LADRO_FOUND(packet, buf);
+				if (server.getGuardie().contains(packet.getSender()))
+					sendToGuardie(cts_ladro_found);
+			}
+			break;
 			default:
 				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
+		}
+	}
+	
+	private void sendToGuardie(Packet packet)
+	{
+		//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
+		ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
+		ByteBuffer buffer = packet.encode();
+		for (int i = 0; i < guardie.size(); ++i)
+		{
+			if (guardie.get(i) == packet.getSender())
+				continue;
+		
+			buffer = buffer.position(0);
+			guardie.get(i).write(buffer);
+		}
+	}
+	
+	private void sendToLadri(Packet packet)
+	{
+		//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
+		ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
+		ByteBuffer buffer = packet.encode();
+		for (int i = 0; i < ladri.size(); ++i)
+		{			
+			if (ladri.get(i) == packet.getSender())
+				continue;
+		
+			buffer = buffer.position(0);
+			ladri.get(i).write(buffer);
 		}
 	}
 }

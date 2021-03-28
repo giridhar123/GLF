@@ -10,7 +10,6 @@ import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
-import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
 public class LadroRobot extends GenericRobot implements Client {
@@ -47,8 +46,8 @@ public class LadroRobot extends GenericRobot implements Client {
 		do 
 		{
 			index = r.nextInt(possiblePoints.size());
-			dest = possiblePoints.get(index);
-			System.out.println(getName() + ": Provo ad andare in: " + dest);
+			dest = new Point(possiblePoints.get(index));
+			possiblePoints.remove(dest);
 		}
 		while(!goTo(dest));
 		
@@ -135,43 +134,48 @@ public class LadroRobot extends GenericRobot implements Client {
 	public void onStcSendMapReceived(Mappa mappa)
 	{
 		this.mappa = mappa;
-		System.out.println(mappa);
 		possiblePoints = getPotentialsPoints();
 	}
     
     @Override
     public void work ()
     {
-    	String id = String.valueOf(getName().charAt(getName().length() - 1));
-    	
-		try 
-		{
-			step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
-		}
-		catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-		}
-		
-    	hide();
+    	if (!hidden)
+    	{
+	    	String id = String.valueOf(getName().charAt(getName().length() - 1));
+	    	
+			try 
+			{
+				step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
+			}
+			catch (NumberFormatException e)
+			{
+				e.printStackTrace();
+			}
+			
+	    	hide();
+    	}
+    	else
+    		step(100 * 1000);
     }
 
 	@Override
-	public void onCtsObstacleInMapReceived(Point point) { 
+	public void onCtsObstacleInMapReceived(Point point)
+	{
 		/*
 		 * DO NOTHING
 		 */
-		System.out.println("uuuuubuuuuurruuuuu" + getName() + " ho ricevuto ostacolo in " + point);
 	}
 
 	@Override
-	public void onCtsGoingToReceived(Point point) {
-		System.out.println(getName() + " un altro ladro vuole andare in " + point);
+	public void onCtsGoingToReceived(Point point)
+	{
 		possiblePoints.remove(point);
 	}
 
 	@Override
-	public void onPosizioneIncrementata() {
+	public void onPosizioneIncrementata()
+	{
 		/*
 		 * DO NOTHING
 		 */		
@@ -186,8 +190,18 @@ public class LadroRobot extends GenericRobot implements Client {
 	}
 
 	@Override
-	public void onCtsGoalChangedReceived(Point old, Point New) {
-		// TODO Auto-generated method stub
-		
+	public void onCtsGoalChangedReceived(Point old, Point New)
+	{
+		/*
+		 * DO NOTHING
+		 */		
+	}
+
+	@Override
+	public void onCtsLadroFound(Point punto)
+	{
+		/*
+		 * DO NOTHING
+		 */		
 	}
 }

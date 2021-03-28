@@ -17,7 +17,7 @@ PROTO Guardia [
   field SFBool             supervisor                   FALSE                    # Is `Robot.supervisor`.
   field SFBool             synchronization              TRUE                     # Is `Robot.synchronization`.
   field SFString{"1", "2"} version                      "1"                      # Defines the e-puck version; either "1" or "2".
-  field SFFloat            camera_fieldOfView           1                  # Is `Camera.fieldOfView`.
+  field SFFloat            camera_fieldOfView           1.5                  # Is `Camera.fieldOfView`.
   field SFInt32            camera_width                 512                 # Is `Camera.width`.
   field SFInt32            camera_height                208                    # Is `Camera.height`.
   field SFBool             camera_antiAliasing          FALSE                    # Is `Camera.antiAliasing`.
