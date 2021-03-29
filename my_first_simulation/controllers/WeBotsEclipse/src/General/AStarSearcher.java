@@ -39,7 +39,7 @@ public class AStarSearcher {
 		h_score.put(new Point(start), value);
 		
 		Map<Point, Float> f_score = new HashMap<>();
-		f_score.put(new Point(start), value);						//Estimated total distance from start to goal through y.
+		f_score.put(new Point(start), value);			//Estimated total distance from start to goal through y.
 				
 		while (!openset.isEmpty())
 		{

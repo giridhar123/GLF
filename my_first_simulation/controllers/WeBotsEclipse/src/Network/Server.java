@@ -47,12 +47,12 @@ public class Server extends Thread
 	public void run() {
 		// Creazione dell'oggetto che mi genera la mappa
 		// Tutti questi valori sono da mettere in un file config.txt, sarebbe molto piu comodo.
-		int DimMapX = 10; // Dimensione Matrice in x
-		int DimMapY = 10; // Dimensione Matrice in y
+		int DimMapX = 20; // Dimensione Matrice in x
+		int DimMapY = 20; // Dimensione Matrice in y
 		double WeBotsTile = 1.0; // Dimensione della singola cella di WeBots
 		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
-		int xDimSpawn = 3; // Dimensione dello spawn nella dimensione x. 
-		int SpawnPort = 3; // grandezza della porta
+		int xDimSpawn = 4; // Dimensione dello spawn nella dimensione x. 
+		int SpawnPort = 5; // grandezza della porta
 		
 		mappa = new Mappa("meow", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);
 

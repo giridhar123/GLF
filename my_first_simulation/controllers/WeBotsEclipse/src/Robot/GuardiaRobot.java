@@ -33,6 +33,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	private ArrayList<Integer> correctedPath;
 	
 	private SireneThread sireneThread;
+	private AStarSearcher aStarSearcher;
 
 	public GuardiaRobot(int direction)
 	{
@@ -69,6 +70,8 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
+		aStarSearcher = new AStarSearcher(mappa);
+		
 		//Aggiungo tutta la mappa nell'openset
 		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
 			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
@@ -82,25 +85,16 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		openSet.remove(new Point(robotPosition));
 		
-		AStarSearcher aStarSearcher = new AStarSearcher(mappa);
-		ArrayList<Point> path = null;
 		Random r = new Random();
 		
 		while (openSet.size() > 0)
 		{	
 			goal = openSet.get(r.nextInt(openSet.size()));
-			path = aStarSearcher.getPath(robotPosition, goal);
-			
-			if (path == null)
-			{
-				updateMapAndSendPacket(goal);
-				openSet.remove(new Point(goal));
+			if (!updatePath(goal))
 				continue;
-			}
 			
 			clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(goal)));
 			
-			correctedPath = AStarSearcher.pathToRobotDirections(path);
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
 				/*
@@ -119,7 +113,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				
 				checkLadro(); // dobbiamo mettere una condizione per la quale se trova il ladro di fare qualcosa.
 				boolean obstaclesInFront = !goStraightOn();
+				openSet.remove(new Point(robotPosition));
+				clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(robotPosition)));
 				checkLadro();
+				checkLateral();
+				
 				
 				if(check5Neighbours())
 				{
@@ -132,30 +130,15 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					System.out.println(mappa);
 					return;
 				}
-				
-				openSet.remove(new Point(robotPosition));
-				clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(robotPosition)));
-				checkLateral();
 			
 				if (obstaclesInFront)
 				{		
 					putObstaclesInFront();
 					
 					//Cerco un nuovo path per lo stesso punto
-					path = aStarSearcher.getPath(robotPosition, goal);
-					if (path == null)
-					{
-						updateMapAndSendPacket(goal);
-						openSet.remove(new Point(goal));
-						i = correctedPath.size();
-					}			
-					else
-					{
-						correctedPath = AStarSearcher.pathToRobotDirections(path);
-						i = -1;
-					}
+					i = updatePath(goal) ? -1 : correctedPath.size();
 				}
-				}
+			}
 		}
 
 		System.out.println(mappa);
@@ -255,7 +238,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
         {
         	if(CCC[i].getModel().equalsIgnoreCase("ladro"))
         	{   
-        		
     			int distanzaLaterale = (int) Math.round(CCC[i].getPosition()[0] * 10);
     			distanzaLaterale = Math.abs(distanzaLaterale);
         		int distanzaFrontale = (int) Math.round(CCC[i].getPosition()[2] * 10);
@@ -339,6 +321,21 @@ public class GuardiaRobot extends GenericRobot implements Client {
         return ladroFound;
 	}
 	
+	private boolean updatePath(Point goal)
+	{
+		ArrayList<Point> path = aStarSearcher.getPath(robotPosition, goal);
+		
+		if (path == null)
+		{
+			updateMapAndSendPacket(goal);
+			openSet.remove(new Point(goal));
+			return false;
+		}
+		
+		correctedPath = AStarSearcher.pathToRobotDirections(path);
+		return true;
+	}
+	
 	private boolean check5Neighbours() 
 	{
 		Point punti[] = new Point[5];
@@ -375,12 +372,17 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		}
 		
 		boolean guardiaFound = false;
+		ArrayList<Point> path = null;
 		for (int i = 0; i < 5; ++i)
 		{
 			if (mappa.get(punti[i]) == Mappa.GUARDIA)
 			{	
-				guardiaFound = true;
-				break;
+				path = aStarSearcher.getPath(robotPosition, punti[i]);
+				if (path != null && path.size() <= 3)
+				{
+					guardiaFound = true;
+					break;
+				}
 			}
 		}
 		
@@ -388,8 +390,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		{
 			Point temp = null;
 			Random r = new Random();
-			ArrayList<Point> path = null;
-			AStarSearcher aStarSearcher = new AStarSearcher(mappa);
 			
 			do
 			{
@@ -398,9 +398,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				{
 					temp = openSet.get(r.nextInt(openSet.size()));
 					count++;
-					if(count==20)
+					if(count == (openSet.size() / 2))
 					{
-						System.out.println(getName() + ": Vabbè meglio se aspetto!");
+						System.out.println(getName() + ": Vabbe' meglio se aspetto!");
 						//Wait 7,5 secs
 						step(7500);
 						return false;
@@ -447,7 +447,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void work () 
 	{	
-		if(!ready) return;
+		if (!ready)
+		{
+			step(25 * 1000);
+			return;
+		}
+
 		try 
 		{
 			//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 

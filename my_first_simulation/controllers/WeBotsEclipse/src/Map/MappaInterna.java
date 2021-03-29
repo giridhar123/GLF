@@ -37,8 +37,6 @@ public class MappaInterna {
 		this.mappaInterna = new int[xDimInterna][yDimInterna];
 		initMappaInterna();
 	}
-	
-	
 
 	public int[][] getMappaInterna()
 	{
@@ -173,8 +171,10 @@ public class MappaInterna {
 					  {
 						  AL.remove(RandomIndex); 
 					  
+						  /*
 						  if(RandomIndex3 != AL.size()-2)
 							  AL.remove(RandomIndex);
+							  */
 					  }
 				  }
 			  }
@@ -200,9 +200,11 @@ public class MappaInterna {
 					  if(RandomIndex2 != AL.get(0) )
 					  {
 						  AL.remove(RandomIndex3);
-					  
+
+						  /*
 						  if(RandomIndex != AL.get(0))
 							  AL.remove(RandomIndex3);
+							  */
 					  }
 				  }
 			  }
@@ -223,10 +225,13 @@ public class MappaInterna {
 			  {
 				  if(RandomIndex3 < (AL.size() - 2) && RandomIndex3 != AL.get(0) )
 					  AL.remove(RandomIndex3);
+				  
 				  if(RandomIndex2 < (AL.size() - 2) && RandomIndex2 != AL.get(0) )
 					  AL.remove(RandomIndex2 );
+				  /*
 				  if(RandomIndex < (AL.size() - 2) && RandomIndex != AL.get(0) )
 					  AL.remove(RandomIndex);
+				  */
 			  }
 		  }
 		  break;
@@ -245,10 +250,13 @@ public class MappaInterna {
 			  {
 				  if( RandomIndex3 < (AL.size() - 2 ) && RandomIndex3 != AL.get(0) )
 					  AL.remove(RandomIndex3);
+				  
 				  if( RandomIndex2 < (AL.size() - 2 ) && RandomIndex2 != AL.get(0) )
 					  AL.remove(RandomIndex2 );
+				  /*
 				  if( RandomIndex < (AL.size() - 2 ) && RandomIndex != AL.get(0) )
 					  AL.remove(RandomIndex);
+				   */
 			  }
 		  }
 		  break;

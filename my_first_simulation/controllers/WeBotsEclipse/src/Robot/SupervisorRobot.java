@@ -108,7 +108,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 				TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
 				TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
 				if(mappa.get(new Point(i, j)) != 0 )
-					string.append("DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.099,0.099,0.099 mass 2 locked TRUE} ");
+					string.append("DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.0999,0.0999,0.0999 mass 2 locked TRUE} ");
 			}
 		}
 		return string.toString();

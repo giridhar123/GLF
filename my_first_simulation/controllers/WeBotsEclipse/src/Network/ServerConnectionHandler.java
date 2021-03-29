@@ -74,79 +74,87 @@ public class ServerConnectionHandler extends Thread {
 		Packet packet = new Packet(packetSize, buf, sender);
 		ByteBuffer buffer = null;
 		
-		switch (packet.getOpcode())
+		try
 		{
-			case Packet.CTS_PEER_INFO:
+			switch (packet.getOpcode())
 			{
-				CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(packet, buf);
-				
-				if (cts_peer_info.getType() == CTS_PEER_INFO.GUARDIA)
-					server.addGuardia(clientChannel);
-				else if (cts_peer_info.getType() == CTS_PEER_INFO.LADRO)
-					server.addLadro(clientChannel);
-				else if (cts_peer_info.getType() == CTS_PEER_INFO.SUPERVISOR)
+				case Packet.CTS_PEER_INFO:
 				{
-					Mappa mappa = server.getMappa();
-					STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
-					buffer = stc_send_map.encode();
-			        clientChannel.write(buffer);
+					CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(packet, buf);
+					
+					if (cts_peer_info.getType() == CTS_PEER_INFO.GUARDIA)
+						server.addGuardia(clientChannel);
+					else if (cts_peer_info.getType() == CTS_PEER_INFO.LADRO)
+						server.addLadro(clientChannel);
+					else if (cts_peer_info.getType() == CTS_PEER_INFO.SUPERVISOR)
+					{
+						Mappa mappa = server.getMappa();
+						STC_SEND_MAP stc_send_map = new STC_SEND_MAP(mappa);
+						buffer = stc_send_map.encode();
+				        clientChannel.write(buffer);
+					}
 				}
+				break;
+				case Packet.CTS_WORLD_READY:
+					server.startControllers();
+				break;
+				case Packet.CTS_OBSTACLE_IN_MAP:
+				{
+					CTS_OBSTACLE_IN_MAP cts_obstacle_in_map = new CTS_OBSTACLE_IN_MAP(packet, buf);				
+					if(server.getGuardie().contains(packet.getSender()))
+						sendToGuardie(cts_obstacle_in_map);
+				}
+				break;
+				case Packet.CTS_GOING_TO:
+				{
+					CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
+					if (server.getGuardie().contains(packet.getSender()))
+						sendToGuardie(cts_going_to);
+					else if (server.getLadri().contains(packet.getSender()))
+						sendToLadri(cts_going_to);
+				}
+				break;
+				case Packet.CTS_NEW_GUARDIA_POS:
+				{
+					CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
+					if (server.getGuardie().contains(packet.getSender()))
+						sendToGuardie(cts_new_guardia_pos);
+				}
+				break;
+				case Packet.CTS_GOAL_CHANGED:
+				{
+					CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
+					if (server.getGuardie().contains(packet.getSender()))
+						sendToGuardie(cts_goal_changed);
+				}
+				break;
+				case Packet.CTS_LADRO_FOUND:
+				{
+					CTS_LADRO_FOUND cts_ladro_found = new CTS_LADRO_FOUND(packet, buf);
+					if (server.getGuardie().contains(packet.getSender()))
+						sendToGuardie(cts_ladro_found);
+				}
+				break;
+				case Packet.CTS_LADRO_HIDDEN:
+				{
+					server.incrementLadriHiddenReceived();
+					if(server.getLadriHidden() == SharedVariables.getNumeroLadri())
+						sendToGuardie(new STC_START_GUARDIE());
+					
+				}
+				break;
+				default:
+					System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
+				break;
 			}
-			break;
-			case Packet.CTS_WORLD_READY:
-				server.startControllers();
-			break;
-			case Packet.CTS_OBSTACLE_IN_MAP:
-			{
-				CTS_OBSTACLE_IN_MAP cts_obstacle_in_map = new CTS_OBSTACLE_IN_MAP(packet, buf);				
-				if(server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_obstacle_in_map);
-			}
-			break;
-			case Packet.CTS_GOING_TO:
-			{
-				CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
-				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_going_to);
-				else if (server.getLadri().contains(packet.getSender()))
-					sendToLadri(cts_going_to);
-			}
-			break;
-			case Packet.CTS_NEW_GUARDIA_POS:
-			{
-				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
-				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_new_guardia_pos);
-			}
-			break;
-			case Packet.CTS_GOAL_CHANGED:
-			{
-				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
-				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_goal_changed);
-			}
-			break;
-			case Packet.CTS_LADRO_FOUND:
-			{
-				CTS_LADRO_FOUND cts_ladro_found = new CTS_LADRO_FOUND(packet, buf);
-				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_ladro_found);
-			}
-			break;
-			case Packet.CTS_LADRO_HIDDEN:
-			{
-				server.incrementLadriHiddenReceived();
-				if(server.getLadriHidden() == SharedVariables.getNumeroLadri())
-					sendToGuardie(new STC_START_GUARDIE());
-				
-			}
-			default:
-				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
-			break;
+		}
+		catch (InterruptedException | ExecutionException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	
-	private void sendToGuardie(Packet packet)
+	private void sendToGuardie(Packet packet) throws InterruptedException, ExecutionException
 	{
 		//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
 		ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
@@ -157,11 +165,12 @@ public class ServerConnectionHandler extends Thread {
 				continue;
 		
 			buffer = buffer.position(0);
-			guardie.get(i).write(buffer);
+			Future<Integer> pendingWrite = guardie.get(i).write(buffer);
+			pendingWrite.get();
 		}
 	}
 	
-	private void sendToLadri(Packet packet)
+	private void sendToLadri(Packet packet) throws InterruptedException, ExecutionException
 	{
 		//System.out.println("Server: una guardia si è mossa da " + cts_new_guardia_pos.getBefore() + " in " + cts_new_guardia_pos.getAfter());
 		ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
@@ -172,7 +181,8 @@ public class ServerConnectionHandler extends Thread {
 				continue;
 		
 			buffer = buffer.position(0);
-			ladri.get(i).write(buffer);
+			Future<Integer> pendingWrite = ladri.get(i).write(buffer);
+			pendingWrite.get();
 		}
 	}
 }

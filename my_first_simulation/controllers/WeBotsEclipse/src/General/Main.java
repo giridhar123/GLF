@@ -35,39 +35,19 @@ public class Main
         
         Server server = new Server();
         server.start();
-
-        printMenu();
-        Scanner scanner = new Scanner(System.in);
-        int value = 2 ;	//scanner.nextInt();
-        scanner.close();
-
-        switch (value)
-        {
-            case 1:
-                compilaTutto();
-                break;
-            case 2:
-                eseguiTutto();
-                break;
-        }
-    }
-
-    public static void printMenu()
-    {
-        System.out.println("Digita 1 per compilare i controller");
+        avviaSupervisorController();
         
-        System.out.println("Digita 2 per avviare tutti i controller");
+        try
+        {
+			server.join();
+		} catch (InterruptedException e)
+        {
+			e.printStackTrace();
+		}
     }
 
-    public static void compilaTutto()
+    public static void avviaSupervisorController()
     {
-        System.out.println("HEY");
-    }
-
-    public static void eseguiTutto()
-    {
-    	//Cleaner cleaner = new Cleaner();
-
         supervisorController = new ControllerExecutor("SupervisorController", "supervisor");
         try
         {
@@ -79,18 +59,5 @@ public class Main
             e.printStackTrace();
         }
     }
-
-    public static void RestartAll()
-    {
-    	/*
-    	 * L'idea � quella di utilizzare questa funzione per resettare il mondo, per� deve essere effettuata ogniqualvolta venga riavviato il main.
-    	 * Purtroppo il codice va avanti prima che webots si "stabilizzi" per riagganciare i controllori.
-    	 * Ho provato ad usare syncronized ma non � andato, c'� da capire come fare.
-    	 * 
-    	 * com.cyberbotics.webots.controller.Node; // restartController
-    	 * com.cyberbotics.webots.controller.Supervisor; // worldReset
-    	 */
-    }
-
 }
 

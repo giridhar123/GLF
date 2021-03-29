@@ -131,6 +131,7 @@ public class ClientConnectionHandler extends Thread{
 			{
 				client.onStcStartGuardie();
 			}
+			break;
 			default:
 				System.out.println("Client: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
