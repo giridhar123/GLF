@@ -13,6 +13,8 @@ public class Packet
 	public static final short CTS_NEW_GUARDIA_POS = (short) 0x0005;
 	public static final short CTS_GOAL_CHANGED = (short) 0x0006;
 	public static final short CTS_LADRO_FOUND = (short) 0x0007;
+	public static final short CTS_LADRO_HIDDEN = (short) 0x0008;
+	public static final short STC_START_GUARDIE = (short) 0x0009;
 	
 	private int size;
     private short opcode;

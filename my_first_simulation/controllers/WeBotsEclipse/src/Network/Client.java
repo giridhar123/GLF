@@ -12,4 +12,5 @@ public interface Client
 	public abstract void onCtsNewGuardiaPosReceived(Point before, Point after);
 	public abstract void onCtsGoalChangedReceived(Point old, Point New);
 	public abstract void onCtsLadroFound(Point punto);
+	public abstract void onStcStartGuardie();
 }

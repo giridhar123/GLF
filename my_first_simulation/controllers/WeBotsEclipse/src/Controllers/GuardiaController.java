@@ -20,10 +20,10 @@ public class GuardiaController
         speaker.setLanguage("it-IT");
        
         robot.connectToServer();
-                
+      
         while (robot.step() != -1)
         {
-        	Speaker.playSound(speaker , speaker, "sounds/lupin.wav", 50.0, 1, 0, true);
+        	Speaker.playSound(speaker , speaker, "sounds/lupin.wav", 1, 1, 0, true);
         	robot.work();
         }
     }

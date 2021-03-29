@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import General.SharedVariables;
 import Map.Mappa;
 import Network.Packet;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
@@ -15,6 +16,7 @@ import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
+import Network.Packets.ServerToClient.STC_START_GUARDIE;
 
 public class ServerConnectionHandler extends Thread {
 	
@@ -131,6 +133,13 @@ public class ServerConnectionHandler extends Thread {
 					sendToGuardie(cts_ladro_found);
 			}
 			break;
+			case Packet.CTS_LADRO_HIDDEN:
+			{
+				server.incrementLadriHiddenReceived();
+				if(server.getLadriHidden() == SharedVariables.getNumeroLadri())
+					sendToGuardie(new STC_START_GUARDIE());
+				
+			}
 			default:
 				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;

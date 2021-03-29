@@ -23,6 +23,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	private ClientConnectionHandler clientConnectionHandler;
 	private ArrayList<Point> openSet;
 	private int ladriFound;
+	private boolean ready;
 	private Point oldPosition;
 	
 	private int numeroGuardia;
@@ -39,6 +40,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		openSet = new ArrayList<>();
 		ladriFound = 0;
+		ready = false;
 		
 		numeroGuardia = Integer.valueOf(String.valueOf(getName().charAt(getName().length() - 1)));
 		
@@ -376,7 +378,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		for (int i = 0; i < 5; ++i)
 		{
 			if (mappa.get(punti[i]) == Mappa.GUARDIA)
+			{	
 				guardiaFound = true;
+				break;
+			}
 		}
 		
 		if (guardiaFound)
@@ -388,12 +393,21 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			
 			do
 			{
+				int count = 0;
 				do 
 				{
 					temp = openSet.get(r.nextInt(openSet.size()));
+					count++;
+					if(count==20)
+					{
+						System.out.println(getName() + ": Vabbè meglio se aspetto!");
+						//Wait 7,5 secs
+						step(7500);
+						return false;
+					}
 				}
 				while(!isOpposite(temp));
-
+				
 				step(3500 * numeroGuardia);
 				path = aStarSearcher.getPath(robotPosition, temp);
 				
@@ -432,11 +446,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	@Override
 	public void work () 
-	{		
+	{	
+		if(!ready) return;
 		try 
 		{
 			//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 
-			step(10000 + ((SharedVariables.getNumeroLadri() + numeroGuardia)* SharedVariables.getTimeStep() * 1000));
+			step(numeroGuardia * SharedVariables.getTimeStep() * 1000);
 		}
 		catch (NumberFormatException e) 
 		{
@@ -488,5 +503,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			++ladriFound;
 			mappa.setValue(punto, Mappa.LADRO);
 		}
+	}
+
+	@Override
+	public void onStcStartGuardie() 
+	{
+		ready = true;
 	}
 }

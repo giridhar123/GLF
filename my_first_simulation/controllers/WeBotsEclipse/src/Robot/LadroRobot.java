@@ -10,6 +10,7 @@ import Map.Point;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
+import Network.Packets.ClientToServer.CTS_LADRO_HIDDEN;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
 public class LadroRobot extends GenericRobot implements Client {
@@ -52,6 +53,7 @@ public class LadroRobot extends GenericRobot implements Client {
 		while(!goTo(dest));
 		
 		hidden = true;
+		clientConnectionHandler.sendPacket(new CTS_LADRO_HIDDEN());
 	}
 	
 	private boolean goTo(Point goal)
@@ -203,5 +205,13 @@ public class LadroRobot extends GenericRobot implements Client {
 		/*
 		 * DO NOTHING
 		 */		
+	}
+
+	@Override
+	public void onStcStartGuardie() 
+	{
+		/*
+		 * DO NOTHING
+		 */	
 	}
 }

@@ -156,14 +156,16 @@ public class SupervisorRobot extends Supervisor implements Client {
 	public int step() { return step(SharedVariables.getTimeStep());	}
 
 	@Override
-	public void onCtsObstacleInMapReceived(Point point) {
+	public void onCtsObstacleInMapReceived(Point point) 
+	{
 		/*
 		 * DO NOTHING
 		 */
 	}
 
 	@Override
-	public void onCtsGoingToReceived(Point point) {
+	public void onCtsGoingToReceived(Point point) 
+	{
 		/*
 		 * DO NOTHING
 		 */
@@ -178,16 +180,26 @@ public class SupervisorRobot extends Supervisor implements Client {
 	}
 
 	@Override
-	public void onCtsGoalChangedReceived(Point old, Point New) {
+	public void onCtsGoalChangedReceived(Point old, Point New) 
+	{
 		/*
 		 * DO NOTHING
 		 */
 	}
 
 	@Override
-	public void onCtsLadroFound(Point punto) {
+	public void onCtsLadroFound(Point punto) 
+	{
 		/*
 		 * DO NOTHING
 		 */		
+	}
+
+	@Override
+	public void onStcStartGuardie() 
+	{
+		/*
+		 * DO NOTHING
+		 */	
 	}
  }

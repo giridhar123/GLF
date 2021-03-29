@@ -20,6 +20,7 @@ public class Server extends Thread
 	private Mappa mappa;
 	AsynchronousServerSocketChannel server;
 
+	private int ladriHidden;
 	ArrayList<AsynchronousSocketChannel> guardie;
 	ArrayList<AsynchronousSocketChannel> ladri;
 	
@@ -29,6 +30,7 @@ public class Server extends Thread
 		guardie = new ArrayList<>();
 		ladri = new ArrayList<>();
 		
+		ladriHidden = 0;
 		controllers = new ArrayList<>();
 		
 		try
@@ -116,6 +118,16 @@ public class Server extends Thread
 		}
 	}
 
+	public void incrementLadriHiddenReceived()
+	{
+		ladriHidden += 1;
+	}
+	
+	public int getLadriHidden()
+	{
+		return ladriHidden;
+	}
+	
 	public Mappa getMappa() { return mappa; }
 	public ArrayList<AsynchronousSocketChannel> getLadri() { return ladri; }
 	public ArrayList<AsynchronousSocketChannel> getGuardie() { return guardie; }

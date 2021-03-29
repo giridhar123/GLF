@@ -127,6 +127,10 @@ public class ClientConnectionHandler extends Thread{
 				client.onCtsLadroFound(cts_ladro_found.getPoint());
 			}
 			break;
+			case Packet.STC_START_GUARDIE:
+			{
+				client.onStcStartGuardie();
+			}
 			default:
 				System.out.println("Client: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
