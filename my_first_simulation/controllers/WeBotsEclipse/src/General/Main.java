@@ -29,9 +29,16 @@ public class Main
         int timeStep = Integer.parseInt(properties.getProperty("time_step"));
         int numeroGuardie = Integer.parseInt(properties.getProperty("guardie"));
         int numeroLadri = Integer.parseInt(properties.getProperty("ladri"));
-        
+        int DimMapX  = Integer.parseInt(properties.getProperty("DimMapX"));
+		int DimMapY = Integer.parseInt(properties.getProperty("DimMapY"));
+		int xDimSpawn = Integer.parseInt(properties.getProperty("xDimSpawn"));
+		int SpawnPort = Integer.parseInt(properties.getProperty("SpawnPort"));
+		double WeBotsXYMap = Double.parseDouble(properties.getProperty("WeBotsXYMap"));
+		double WeBotsTile = Double.parseDouble(properties.getProperty("WeBotsTile"));
+		String difficolta = properties.getProperty("difficolta");
+
         //Inizializzo variabili globali
-        SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri);
+        SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri,DimMapX, DimMapY, xDimSpawn, SpawnPort, WeBotsXYMap,WeBotsTile,difficolta);
         
         Server server = new Server();
         server.start();
