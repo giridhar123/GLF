@@ -97,6 +97,7 @@ public class MappaInterna {
 		// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
 		int NumeroCubi = 0; // Da aggiornare con i dati sperimentali in base alla dimensione della mappa
 		
+		System.out.println(difficolta);
 		switch (difficolta)
 		{
 			case "facile" :

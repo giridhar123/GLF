@@ -8,7 +8,42 @@ public class SharedVariables {
 	private String webotsPath;
 	private int numeroGuardie, numeroLadri;
 	
+	// mappa
+	private int DimMapX, DimMapY, xDimSpawn, SpawnPort;
+	private double WeBotsXYMap,WeBotsTile;
+	
+	private String difficolta;
+	
 	private static SharedVariables instance = null;
+	
+	private SharedVariables(String projectPath,
+			String webotsPath, 
+			int TIME_STEP,
+			int SERVER_TCP_PORT,
+			int numeroGuardie,
+			int numeroLadri,
+			int DimMapX,
+			int DimMapY,
+			int xDimSpawn,
+			int SpawnPort,
+			double WeBotsXYMap,
+			double WeBotsTile,
+			String difficolta)
+	{
+		this.projectPath = projectPath;
+		this.webotsPath = webotsPath;
+		this.TIME_STEP = TIME_STEP;
+		this.SERVER_TCP_PORT = SERVER_TCP_PORT;
+		this.numeroGuardie = numeroGuardie;
+		this.numeroLadri = numeroLadri;
+		this.DimMapX = DimMapX;
+		this.DimMapY = DimMapY;
+		this.xDimSpawn = xDimSpawn;
+		this.SpawnPort = SpawnPort;
+		this.WeBotsXYMap = WeBotsXYMap;
+		this.WeBotsTile = WeBotsTile;
+		this.difficolta = difficolta;
+	}
 	
 	private SharedVariables(String projectPath,
 			String webotsPath, 
@@ -25,6 +60,24 @@ public class SharedVariables {
 		this.numeroLadri = numeroLadri;
 	}
 	
+	public static void init(String projectPath,
+			String webotsPath,
+			int TIME_STEP,
+			int SERVER_TCP_PORT,
+			int numeroGuardie,
+			int numeroLadri,
+			int DimMapX,
+			int DimMapY,
+			int xDimSpawn,
+			int SpawnPort,
+			double WeBotsXYMap,
+			double WeBotsTile,
+			String difficolta)
+	{
+		if (instance == null)
+			instance = new SharedVariables(projectPath, webotsPath, TIME_STEP, SERVER_TCP_PORT, numeroGuardie, numeroLadri, DimMapX, DimMapY, xDimSpawn, SpawnPort,WeBotsXYMap,WeBotsTile,difficolta);
+	}
+
 	public static void init(String projectPath,
 			String webotsPath,
 			int TIME_STEP,
@@ -65,4 +118,33 @@ public class SharedVariables {
 	{
 		return instance.numeroLadri;
 	}
+
+	public static int getDimMapX() {
+		return instance.DimMapX;
+	}
+
+	public static int getDimMapY() {
+		return instance.DimMapY;
+	}
+
+	public static int getxDimSpawn() {
+		return instance.xDimSpawn;
+	}
+
+	public static int getSpawnPort() {
+		return instance.SpawnPort;
+	}
+
+	public static double getWeBotsXYMap() {
+		return instance.WeBotsXYMap;
+	}
+
+	public static double getWeBotsTile() {
+		return instance.WeBotsTile;
+	}
+
+	public static String getDifficolta() {
+		return instance.difficolta;
+	}
+
 }

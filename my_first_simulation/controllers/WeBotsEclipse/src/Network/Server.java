@@ -44,17 +44,20 @@ public class Server extends Thread
 		}
 	}
 
-	public void run() {
+	public void run()
+	{
 		// Creazione dell'oggetto che mi genera la mappa
 		// Tutti questi valori sono da mettere in un file config.txt, sarebbe molto piu comodo.
-		int DimMapX = 20; // Dimensione Matrice in x
-		int DimMapY = 20; // Dimensione Matrice in y
-		double WeBotsTile = 1.0; // Dimensione della singola cella di WeBots
-		double[] WeBotsXYMap = { 8.0, 8.0 }; // Dimensione della mappa(il campo) WebBots
-		int xDimSpawn = 4; // Dimensione dello spawn nella dimensione x. 
-		int SpawnPort = 5; // grandezza della porta
-		
-		mappa = new Mappa("meow", DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);
+
+        int DimMapX = SharedVariables.getDimMapX();
+        int DimMapY = SharedVariables.getDimMapY();
+        double[] WeBotsXYMap = {SharedVariables.getWeBotsXYMap(),SharedVariables.getWeBotsXYMap()};
+        double WeBotsTile = SharedVariables.getWeBotsTile();
+        int xDimSpawn = SharedVariables.getxDimSpawn();
+        int SpawnPort = SharedVariables.getSpawnPort();
+        String difficolta = SharedVariables.getDifficolta();
+        
+		mappa = new Mappa(difficolta, DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);
 
 		while (true)
 		{
