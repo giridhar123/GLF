@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.Set;
 
 import General.AStarSearcher;
+import General.SharedVariables;
+import General.StartPosition;
 
 public class Mappa
 {	
@@ -43,7 +45,7 @@ public class Mappa
 			
 		for (int j = 0; j < yDimInterna; ++j)
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
-
+		
 		do
 		{
 			mappaInterna = new MappaInterna(this);

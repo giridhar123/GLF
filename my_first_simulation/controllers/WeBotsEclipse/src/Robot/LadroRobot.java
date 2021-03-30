@@ -5,6 +5,7 @@ import java.util.Random;
 
 import General.AStarSearcher;
 import General.SharedVariables;
+import General.StartPosition;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
@@ -44,6 +45,9 @@ public class LadroRobot extends GenericRobot implements Client {
 		Random r = new Random();
 			
 		int index = -1;
+		
+		goStraightOn();
+		
 		do 
 		{
 			index = r.nextInt(possiblePoints.size());
@@ -136,6 +140,9 @@ public class LadroRobot extends GenericRobot implements Client {
 	public void onStcSendMapReceived(Mappa mappa)
 	{
 		this.mappa = mappa;
+		
+		this.robotPosition = new StartPosition(this);
+		
 		possiblePoints = getPotentialsPoints();
 	}
     
@@ -148,7 +155,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	    	
 			try 
 			{
-				step(SharedVariables.getTimeStep()*Integer.valueOf(id)*1000);
+				step((5 + SharedVariables.getTimeStep())*Integer.valueOf(id)*1000);
 			}
 			catch (NumberFormatException e)
 			{
