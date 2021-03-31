@@ -5,10 +5,8 @@ import java.util.Random;
 import com.cyberbotics.webots.controller.Robot;
 
 import General.SharedVariables;
-import Mappa.StartPosition;
 import Map.Mappa;
 import Map.Point;
-import Map.StartPositions;
 import Robot.Sensors.FrontalSensors;
 import Robot.Sensors.LateralSensors;
 

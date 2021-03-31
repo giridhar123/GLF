@@ -1,7 +1,5 @@
-package General;
+package Map;
 
-import Map.Mappa;
-import Map.Point;
 import Robot.GenericRobot;
 
 /** Elemento.java */

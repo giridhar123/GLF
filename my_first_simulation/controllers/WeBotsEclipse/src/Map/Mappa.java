@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import General.AStarSearcher;
-import General.SharedVariables;
-import General.StartPosition;
 
 public class Mappa
 {	

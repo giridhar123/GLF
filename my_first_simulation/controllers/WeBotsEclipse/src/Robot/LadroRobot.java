@@ -5,9 +5,9 @@ import java.util.Random;
 
 import General.AStarSearcher;
 import General.SharedVariables;
-import General.StartPosition;
 import Map.Mappa;
 import Map.Point;
+import Map.StartPosition;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
