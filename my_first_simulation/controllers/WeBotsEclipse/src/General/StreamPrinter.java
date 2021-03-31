@@ -18,6 +18,7 @@ public class StreamPrinter extends Thread{
 		try {
 			while ((line = reader.readLine()) != null)
 			{
+				if(!line.contains("device"))
 				System.out.println(line);
 			}
 		} catch (IOException e) {
