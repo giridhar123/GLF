@@ -1,8 +1,9 @@
-package Robot;
+package Robot.Sensors;
 
 import com.cyberbotics.webots.controller.DistanceSensor;
 
 import General.SharedVariables;
+import Robot.GenericRobot;
 
 public class LateralSensors {
 

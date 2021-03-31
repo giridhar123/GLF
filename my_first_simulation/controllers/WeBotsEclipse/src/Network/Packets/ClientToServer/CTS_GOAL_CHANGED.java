@@ -3,7 +3,7 @@ package Network.Packets.ClientToServer;
 import java.nio.ByteBuffer;
 
 import Map.Point;
-import Network.Packet;
+import Network.Packets.Packet;
 
 public class CTS_GOAL_CHANGED extends Packet
 {

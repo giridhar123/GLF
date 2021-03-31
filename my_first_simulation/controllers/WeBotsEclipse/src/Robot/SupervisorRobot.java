@@ -5,9 +5,9 @@ import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 
 import General.SharedVariables;
-import General.StartPositions;
 import Map.Mappa;
 import Map.Point;
+import Map.StartPositions;
 import Network.Client;
 import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;

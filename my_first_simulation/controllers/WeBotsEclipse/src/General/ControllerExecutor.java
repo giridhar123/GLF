@@ -6,8 +6,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.Thread;
 
-import Controllers.StreamPrinter;
-
 public class ControllerExecutor extends Thread
 {
     private String controllerName;

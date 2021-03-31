@@ -3,8 +3,6 @@ package Map;
 import java.util.ArrayList;
 import java.util.Random;
 
-import General.AStarSearcher;
-
 public class MappaInterna {
 	
 	private int[][] mappaInterna;

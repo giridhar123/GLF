@@ -1,6 +1,4 @@
-package General;
-
-import Map.Point;
+package Map;
 
 /** Elemento.java */
 public enum StartPositions

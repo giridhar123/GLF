@@ -3,7 +3,7 @@ package Network.Packets.ClientToServer;
 import java.nio.ByteBuffer;
 
 import Map.Point;
-import Network.Packet;
+import Network.Packets.Packet;
 
 public class CTS_NEW_GUARDIA_POS extends Packet
 {

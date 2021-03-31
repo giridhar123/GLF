@@ -2,7 +2,7 @@ package Network.Packets.ServerToClient;
 
 import java.nio.ByteBuffer;
 
-import Network.Packet;
+import Network.Packets.Packet;
 
 public class STC_START_GUARDIE extends Packet
 {

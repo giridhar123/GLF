@@ -6,10 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.io.File;
-import java.util.Scanner;
 import Network.Server;
-
-import java.lang.Thread;
 
 public class Main
 {
@@ -17,7 +14,7 @@ public class Main
 
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
-        FileInputStream fileInputStream = new FileInputStream(new File("path.txt"));
+        FileInputStream fileInputStream = new FileInputStream(new File("Config.txt"));
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
 
         Properties properties = new Properties();

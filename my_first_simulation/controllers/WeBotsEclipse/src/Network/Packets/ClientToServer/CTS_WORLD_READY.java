@@ -2,7 +2,7 @@ package Network.Packets.ClientToServer;
 
 import java.nio.ByteBuffer;
 
-import Network.Packet;
+import Network.Packets.Packet;
 
 public class CTS_WORLD_READY extends Packet
 {

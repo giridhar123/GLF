@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import Map.Mappa;
 import Map.Point;
-import Network.Packet;
+import Network.Packets.Packet;
 
 public class STC_SEND_MAP extends Packet{
 	

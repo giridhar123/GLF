@@ -26,7 +26,8 @@ public class Server extends Thread
 	
 	private ArrayList<ControllerExecutor> controllers;
 
-	public Server() {
+	public Server()
+	{
 		guardie = new ArrayList<>();
 		ladri = new ArrayList<>();
 		

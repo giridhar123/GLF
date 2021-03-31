@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import General.SharedVariables;
 import Map.Mappa;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
+import Network.Packets.Packet;
 import Network.Packets.ClientToServer.CTS_GOAL_CHANGED;
 import Network.Packets.ClientToServer.CTS_GOING_TO;
 import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
