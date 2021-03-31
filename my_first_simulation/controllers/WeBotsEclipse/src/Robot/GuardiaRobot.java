@@ -7,6 +7,7 @@ import com.cyberbotics.webots.controller.Camera;
 import com.cyberbotics.webots.controller.CameraRecognitionObject;
 import General.AStarSearcher;
 import General.SharedVariables;
+import General.StartPosition;
 import Map.Mappa;
 import Map.Point;
 import Network.Client;
@@ -56,7 +57,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 		
-		oldPosition = new Point(robotPosition);
 	}
 	
 	@Override
@@ -70,6 +70,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
+		this.robotPosition = new StartPosition(this);
+		
+		oldPosition = new Point(robotPosition);
 		aStarSearcher = new AStarSearcher(mappa);
 		
 		//Aggiungo tutta la mappa nell'openset

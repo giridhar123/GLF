@@ -5,6 +5,7 @@ import com.cyberbotics.webots.controller.Node;
 import com.cyberbotics.webots.controller.Supervisor;
 
 import General.SharedVariables;
+import Mappa.StartPosition;
 import Map.Mappa;
 import Map.Point;
 import Map.StartPositions;
@@ -80,7 +81,7 @@ public class SupervisorRobot extends Supervisor implements Client {
 			robotNode = getFromDef(currentName);
 			if (robotNode != null)
 			{
-				position = StartPositions.valueOf(currentName).getPosition();
+				position = new StartPosition(currentName, mappa);
 				x = position.getX();
 				y = position.getY();
 				
