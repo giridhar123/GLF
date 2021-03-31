@@ -41,14 +41,13 @@ public class Server extends Thread
 		}
 		catch (IOException exc)
 		{
-			exc.printStackTrace();
+			System.out.println("Server: binding error");
 		}
 	}
 
 	public void run()
 	{
-		// Creazione dell'oggetto che mi genera la mappa
-		// Tutti questi valori sono da mettere in un file config.txt, sarebbe molto piu comodo.
+		// Creazione dell'oggetto che genera la mappa
 
         int DimMapX = SharedVariables.getDimMapX();
         int DimMapY = SharedVariables.getDimMapY();
@@ -70,20 +69,9 @@ public class Server extends Thread
 			}
 			catch (InterruptedException | ExecutionException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Server: Errore durante la connessione con un client");
 			}
 		}
-		
-		/*
-		for (int i = 0; i < executors.length; ++i)
-		{
-			if (executors[i] == null)
-				continue;
-			
-			executors[i].join();
-		}
-		*/
 	}
 
 	public void addGuardia(AsynchronousSocketChannel guardia)

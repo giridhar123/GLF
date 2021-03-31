@@ -23,17 +23,6 @@ public class Point {
 		this.y = otherPoint.y;
 	}
 	
-	@Override
-	public boolean equals(Object o)
-	{		
-		if (o == null)
-			return false;
-		
-		Point otherPoint = (Point) o;
-		
-		return (this.x == otherPoint.x && this.y == otherPoint.y);
-	}
-	
 	public int getX()
 	{
 		return x;
@@ -55,6 +44,17 @@ public class Point {
 	}
 	
 	@Override
+	public boolean equals(Object o)
+	{		
+		if (o == null)
+			return false;
+		
+		Point otherPoint = (Point) o;
+		
+		return (this.x == otherPoint.x && this.y == otherPoint.y);
+	}
+	
+	@Override
 	public String toString()
 	{		
 		return new String(this.x + " " + this.y);
@@ -65,10 +65,5 @@ public class Point {
 	    StringBuilder hash = new StringBuilder();
 	    hash.append(x).append(y);
 	    return Integer.valueOf(hash.toString());
-	}
-	
-	public void print() 
-	{
-		System.out.println("x = "+ x +"; y = "+ y);
 	}
 }

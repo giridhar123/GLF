@@ -94,6 +94,9 @@ public class LadroRobot extends GenericRobot implements Client {
 		return true;
 	}
 	
+	/*
+	 * Metodo per inizializzare la lista dei punti buoni in cui nascondersi
+	 */
 	private ArrayList<Point> getPotentialsPoints()
 	{
 		if (mappa == null)
@@ -118,6 +121,10 @@ public class LadroRobot extends GenericRobot implements Client {
 		return possiblePoints;
 	}
     
+	/*
+	 * Restituisce true se "punto" ha 3 ostacoli nella 4 adiacenza
+	 */
+	
     private boolean checkPoint(Point punto) 
 	{
     	if (mappa == null)
@@ -155,11 +162,11 @@ public class LadroRobot extends GenericRobot implements Client {
 	    	
 			try 
 			{
-				step((5 + SharedVariables.getTimeStep())*Integer.valueOf(id)*1000);
+				step((5 + SharedVariables.getTimeStep()) * Integer.valueOf(id) * 1000);
 			}
 			catch (NumberFormatException e)
 			{
-				e.printStackTrace();
+				System.out.println(getName() + ": Errore, il nome deve terminare con un numero!");
 			}
 			
 	    	hide();

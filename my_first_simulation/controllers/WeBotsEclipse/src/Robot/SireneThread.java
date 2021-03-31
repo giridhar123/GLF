@@ -4,12 +4,14 @@ import com.cyberbotics.webots.controller.LED;
 
 public class SireneThread extends Thread{
 	
-	LED led1, led2;
+	private LED led1, led2;
+	private String robotName;
 	
 	public SireneThread(GuardiaRobot guardiaRobot)
 	{
 		led1 = guardiaRobot.getLED("led_1"); //rosso
 		led2 = guardiaRobot.getLED("led_2"); //blu
+		robotName = guardiaRobot.getName();
 	}
 	
 	public void run()
@@ -32,7 +34,7 @@ public class SireneThread extends Thread{
 				sleep(500);
 			} catch (InterruptedException e)
 	        {
-				e.printStackTrace();
+				System.out.println(robotName + ": Si è verificato un errore nel thread che gestisce le sirene della guardia.");
 			}
 		}
 	}

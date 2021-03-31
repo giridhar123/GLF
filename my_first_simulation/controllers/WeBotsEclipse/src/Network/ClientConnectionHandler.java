@@ -34,25 +34,32 @@ public class ClientConnectionHandler extends Thread{
 			channel = AsynchronousSocketChannel.open();
 			hostAddress = new InetSocketAddress("localhost", SharedVariables.getTcpServerPort());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Client: Errore durante l'apertura del canale di comunicazione con il server");
 		}        
 	}
 	
 	public void run()
 	{
+		Future<Void> future;
 		try
 		{
-			Future<Void> future = channel.connect(hostAddress);
+			future = channel.connect(hostAddress);
 			future.get();
+		}
+		catch (InterruptedException | ExecutionException e)
+		{
+			System.out.println("Client: errore durante la connessione con il server");
+			return;
+		}
+		
 			
-			CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(clientType);
-			sendPacket(cts_peer_info);
+		CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(clientType);
+		sendPacket(cts_peer_info);
 			
-			ByteBuffer buffer;
-			
-			while (true)
-			{
+		ByteBuffer buffer;
+		while (true)
+		{
+			try {
 				future.get();
 				
 				buffer = ByteBuffer.allocate(4);
@@ -78,10 +85,11 @@ public class ClientConnectionHandler extends Thread{
                
                 parse(packetSize, buffer, channel);
 			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			catch (InterruptedException | ExecutionException e)
+			{
+				System.out.println("Client terminato: Errore durante la lettura del buffer");
+				return;
+			}
 		}
 	}
 	
@@ -149,8 +157,7 @@ public class ClientConnectionHandler extends Thread{
 		}
 		catch (InterruptedException | ExecutionException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Client - Errore durante l'invio del pacchetto: " + packet.getOpcode());
 		}
 	}
 }

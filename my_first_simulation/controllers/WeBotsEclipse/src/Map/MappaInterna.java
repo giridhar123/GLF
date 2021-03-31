@@ -22,8 +22,8 @@ public class MappaInterna {
 		
 		this.mappaInterna = new int[xDimInterna][yDimInterna];
 
-		initMappaInterna();
-		fillMap(); // crea la mappa chiusa agli estremmi
+		initMappaInterna(); // crea la mappa chiusa agli estremmi
+		fillMap();
 	}
 	
 
@@ -40,7 +40,6 @@ public class MappaInterna {
 	{
 		return this.mappaInterna;
 	}
-	
 
 	public int get(Point punto)
 	{
@@ -64,30 +63,25 @@ public class MappaInterna {
 	
 	private void initMappaInterna()
 	{
-			int min = 0;
-			int max = yDimInterna-1;
-			
-			for(int i=0; i < xDimInterna; i++)
-				{ 
-					for(int j=0; j < yDimInterna; j++)
-					{		
-						if(i==min || i==max || j==min || j==max )
-						{
-							mappaInterna[i][j] = 1 ;
-						}
-						else
-						{
-							mappaInterna[i][j] = 0 ;
-						}
-						
-						if( (i == 0 && (j > (yDimInterna/2)-dimSpawnGate && j < (yDimInterna/2)+dimSpawnGate) ) ||
-								(i==max && (j > yDimInterna/2-dimSpawnGate && j < yDimInterna/2+dimSpawnGate) ) )
-						{
-							mappaInterna[i][j] = 0 ;
-						}
-						
-					}
-				}
+		int min = 0;
+		int max = yDimInterna-1;
+		
+		for(int i = 0; i < xDimInterna; i++)
+		{ 
+			for(int j = 0; j < yDimInterna; j++)
+			{		
+				if(i == min || i == max || j == min || j == max )
+					mappaInterna[i][j] = 1;
+				else
+					mappaInterna[i][j] = 0;
+				
+				if((i == 0 && (j > (yDimInterna/2)-dimSpawnGate && j < (yDimInterna/2)+dimSpawnGate)) ||
+					(i == max && (j > yDimInterna/2-dimSpawnGate && j < yDimInterna/2+dimSpawnGate)))
+				{
+					mappaInterna[i][j] = 0 ;
+				}				
+			}
+		}
 	}
 
 	public void fillMap()
@@ -95,7 +89,6 @@ public class MappaInterna {
 		// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
 		int NumeroCubi = 0; // Da aggiornare con i dati sperimentali in base alla dimensione della mappa
 		
-		System.out.println(difficolta);
 		switch (difficolta)
 		{
 			case "facile" :
@@ -125,8 +118,16 @@ public class MappaInterna {
 		Random r = new Random();
 		for( int i = 0 ; i < NumeroCubi ; i++ )
 		{
-			// Prendo un valore random 
-	    	RandomIndex = r.nextInt(AL.size() - 1); // Valore random preso tra 0 e AL.size-1 || 0 _ 1599 alla prima iterata , 0_1598 alla seconda etc..
+			// Prendo un valore random
+			try
+			{
+				RandomIndex = r.nextInt(AL.size() - 1); // Valore random preso tra 0 e AL.size-1 || 0 _ 1599 alla prima iterata , 0_1598 alla seconda etc..
+			}
+			catch (IllegalArgumentException e)
+			{
+				//Se (AL.size() - 1) < 0...
+				break;
+			}
 	    	updatePattern(RandomIndex);
 		}		
     }
@@ -144,123 +145,97 @@ public class MappaInterna {
 
 		switch(random) 
 		{
-		  case 1: // 3dx 
-		  { 
-			  //L'elemento a destra è quello a RandomIndex attuale in quanto la lista 
-			  RandomIndex2 = (RandomIndex+1)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex2)); //secondo punto solo dx,giu,su
-			  ControlloMatricePrimoPattern(QuattroAdiacenza());
+			case 1: // 3dx 
+			{ 
+				//L'elemento a destra è quello a RandomIndex attuale in quanto la lista 
+				RandomIndex2 = (RandomIndex+1)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex2)); //secondo punto solo dx,giu,su
+				ControlloMatricePrimoPattern(QuattroAdiacenza());
 			  
-			  RandomIndex3 = (RandomIndex+2)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex3)); // terzo punto solo dx,giu,su
-			  ControlloMatricePrimoPattern(QuattroAdiacenza());
+				RandomIndex3 = (RandomIndex+2)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex3)); // terzo punto solo dx,giu,su
+				ControlloMatricePrimoPattern(QuattroAdiacenza());
 
-			  // Il ragionamento ed il problema sta nella cancellazione dell'elemento.
-			  // Se io cancello l'elemento 90, il prossimo elemento alla posizione 90 sarà 91.
-			  // Questo significa che una volta evalutato l'elemento alla posizione 91 dovrò eliminare quello alla posizione precedente del 91, ovvero 90 per cancellare l'elemento 91.
-			  // Ho dei problemi quando ho meno di 3 elementi all'interno dell'array, pertanto ho preferito mettere penultimo elemento ed una condizione aggiuntiva che sarebbe quella che AL deve avere + di tre elementi.
+				// Devo rimuovere due elementi, quelli alla posizione x e x+1
+				for (int i = 0; i < 2; ++i)
+				{
+					try {
+						AL.remove(RandomIndex);
+					} catch (IndexOutOfBoundsException e)
+					{
+						break;
+					}
+				}
+			}
+			break;
+			case 2: // 3sx
+			{
+				RandomIndex2 = Math.abs((RandomIndex-1)%(AL.size()-1));
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); //secondo punto solo sx,giu,su
+				ControlloMatriceSecondoPattern(QuattroAdiacenza());
 			  
-			  // Devo levare tre elementi, quelli alla posizione x,x+1,x+2
-			  if (AL.size() - 1 > 3)
-			  {
-				  if(RandomIndex != AL.size()-2)
-				  {
-					  AL.remove(RandomIndex);
-					  if(RandomIndex2 != AL.size()-2)
-					  {
-						  AL.remove(RandomIndex); 
-					  
-						  /*
-						  if(RandomIndex3 != AL.size()-2)
-							  AL.remove(RandomIndex);
-							  */
-					  }
-				  }
-			  }
-		  }
-		  break;
-		  case 2: // 3sx
-		  {
-			  RandomIndex2 = Math.abs((RandomIndex-1)%(AL.size()-1));
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); //secondo punto solo sx,giu,su
-			  ControlloMatriceSecondoPattern(QuattroAdiacenza());
+				RandomIndex3 = Math.abs(RandomIndex-2)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
+				ControlloMatriceSecondoPattern(QuattroAdiacenza());
 			  
-			  RandomIndex3 = Math.abs(RandomIndex-2)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
-			  ControlloMatriceSecondoPattern(QuattroAdiacenza());
-			  
-			  // Devo levare 3 elementi, quelli alla posizione x, x-1 , x-2 
-			  if (AL.size() - 1 > 4)
-			  {
-				  if(RandomIndex3 != AL.get(0))
-				  {
-					  AL.remove(RandomIndex3);
-					  
-					  if(RandomIndex2 != AL.get(0) )
-					  {
-						  AL.remove(RandomIndex3);
-
-						  /*
-						  if(RandomIndex != AL.get(0))
-							  AL.remove(RandomIndex3);
-							  */
-					  }
-				  }
-			  }
-		  }
-		  break;
-		  case 3: // 3dw
-		  { 
-			  RandomIndex2 = (RandomIndex+xDimInterna)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
-			  ControlloMatriceTerzoPattern(QuattroAdiacenza());
+				// Devo rimuovere due elementi, quelli alla posizione x e x+1
+				for (int i = 0; i < 2; ++i)
+				{
+					try {
+						AL.remove(RandomIndex);
+					} catch (IndexOutOfBoundsException e)
+					{
+						break;
+					}
+				}
+			}
+			break;
+			case 3: // 3dw
+			{ 
+				RandomIndex2 = (RandomIndex+xDimInterna)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
+				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 		  
-			  RandomIndex3 = (RandomIndex2+xDimInterna)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
-			  ControlloMatriceTerzoPattern(QuattroAdiacenza());
+				RandomIndex3 = (RandomIndex2+xDimInterna)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
+				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 			  
-			  // Verifico che ci sono piu di quattro elementi ( per sicurezza ), se ci sono controllo che il valore non è all'inizio o alla fine del pool in modo da non creare problemi i ncaso di eliminazione.
-			  if (AL.size() - 1 > 4)
-			  {
-				  if(RandomIndex3 < (AL.size() - 2) && RandomIndex3 != AL.get(0) )
-					  AL.remove(RandomIndex3);
-				  
-				  if(RandomIndex2 < (AL.size() - 2) && RandomIndex2 != AL.get(0) )
-					  AL.remove(RandomIndex2 );
-				  /*
-				  if(RandomIndex < (AL.size() - 2) && RandomIndex != AL.get(0) )
-					  AL.remove(RandomIndex);
-				  */
-			  }
-		  }
-		  break;
-		  case 4: // 3up
-		  { 
-			  RandomIndex2 = Math.abs(RandomIndex+xDimInterna)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
-			  ControlloMatriceTerzoPattern(QuattroAdiacenza());
+				// Devo rimuovere due elementi, quelli alla posizione x e x+1
+				for (int i = 0; i < 2; ++i)
+				{
+					try {
+						AL.remove(RandomIndex);
+					} catch (IndexOutOfBoundsException e)
+					{
+						break;
+					}
+				}
+			}
+			break;
+			case 4: // 3up
+			{ 
+				RandomIndex2 = Math.abs(RandomIndex+xDimInterna)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
+				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 		  
-			  RandomIndex3 = Math.abs(RandomIndex2+xDimInterna)%(AL.size()-1);
-			  MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
-			  ControlloMatriceTerzoPattern(QuattroAdiacenza());
+				RandomIndex3 = Math.abs(RandomIndex2+xDimInterna)%(AL.size()-1);
+				MatrixIndexPoint = PointToIndex(AL.get(RandomIndex)); // terzo punto solo sx,giu,su
+				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 			  
-			  // Verifico che ci sono piu di quattro elementi ( per sicurezza ), se ci sono controllo che il valore non è all'inizio o alla fine del pool in modo da non creare problemi i ncaso di eliminazione.
-			  if (AL.size()-1 > 4)
-			  {
-				  if( RandomIndex3 < (AL.size() - 2 ) && RandomIndex3 != AL.get(0) )
-					  AL.remove(RandomIndex3);
-				  
-				  if( RandomIndex2 < (AL.size() - 2 ) && RandomIndex2 != AL.get(0) )
-					  AL.remove(RandomIndex2 );
-				  /*
-				  if( RandomIndex < (AL.size() - 2 ) && RandomIndex != AL.get(0) )
-					  AL.remove(RandomIndex);
-				   */
-			  }
-		  }
-		  break;
-		  default:
-		break;
+				// Devo rimuovere due elementi, quelli alla posizione x e x+1
+				for (int i = 0; i < 2; ++i)
+				{
+					try {
+						AL.remove(RandomIndex);
+					} catch (IndexOutOfBoundsException e)
+					{
+						break;
+					}
+				}
+			}
+			break;
+			default:
+			break;
 		}
 	}
 	

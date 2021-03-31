@@ -32,6 +32,9 @@ public class SupervisorRobot extends Supervisor implements Client {
 		clientConnectionHandler.start();
 	}
 		
+	/*
+	 * Metodo che spawna le casse e i robot
+	 */
 	public void spawnWorld()
 	{
 		if (mappa == null || worldSpawned)
@@ -52,14 +55,11 @@ public class SupervisorRobot extends Supervisor implements Client {
         spawnString.append(createRobotsString());
     	
     	RootChildrenField.importMFNodeFromString(4, spawnString.toString());
-		
     	    	
     	spostaRobot("Guardia");
     	spostaRobot("Ladro");
 		
-		CTS_WORLD_READY cts_world_ready = new CTS_WORLD_READY();
-		clientConnectionHandler.sendPacket(cts_world_ready);
-		
+		clientConnectionHandler.sendPacket(new CTS_WORLD_READY());
 		
 		worldSpawned = true;
 	}
@@ -88,9 +88,9 @@ public class SupervisorRobot extends Supervisor implements Client {
 				double pos[] = posizione.getSFVec3f();
 				
 				double newPosition[] = new double[3];
-				newPosition[0] = MatrixToWorldX((float) y, mappa.getWeBotsTile());
+				newPosition[0] = matrixToWorldX((float) y, mappa.getWeBotsTile());
 				newPosition[1] = pos[1];
-				newPosition[2] = MatrixToWorldZ((float) x, mappa.getWeBotsTile());
+				newPosition[2] = matrixToWorldZ((float) x, mappa.getWeBotsTile());
 				posizione.setSFVec3f(newPosition);
 			}
 		}
@@ -105,8 +105,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 			for(int j=0; j< mappa.getYSize(); j++)
 			{
 				//Sto scorrendo l'array, se all'interno di questo valore c'ï¿½ 1 allora faccio lo spawn su quel punto di posizione x,y
-				TempX = MatrixToWorldX(j,mappa.getWeBotsTile());
-				TempZ = MatrixToWorldZ(i,mappa.getWeBotsTile());
+				TempX = matrixToWorldX(j,mappa.getWeBotsTile());
+				TempZ = matrixToWorldZ(i,mappa.getWeBotsTile());
 				if(mappa.get(new Point(i, j)) != 0 )
 					string.append("DEF Box Proto2 {translation " + TempX + ",0.05," + TempZ + " size 0.0999,0.0999,0.0999 mass 2 locked TRUE} ");
 			}
@@ -136,24 +136,23 @@ public class SupervisorRobot extends Supervisor implements Client {
 		return string.toString();
 	}
 
-	private static float MatrixToWorldZ(float point, double WeBotsTile)
+	private float matrixToWorldZ(float point, double WeBotsTile)
     {
-    	point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e' la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
-    	return point;
+    	return ((float) (WeBotsTile - ( 0.10 * point)));
     }
 
-	private static float MatrixToWorldX(float point, double WeBotsTile)
+	private float matrixToWorldX(float point, double WeBotsTile)
 	{	
-		point = (float) (WeBotsTile - ( 0.10 * point)); //4,95 e'la posizione 0 vedendola ad occhio, posso modificarla liberamente per un'implementazione futura in modo da rendere la mappa come schifo la voglio io
-		return point;
+		return ((float) (WeBotsTile - ( 0.10 * point)));
 	}
 	
+	public int step() { return step(SharedVariables.getTimeStep());	}
+	
 	@Override
-	public void onStcSendMapReceived(Mappa mappa) {
+	public void onStcSendMapReceived(Mappa mappa)
+	{
 		this.mappa = mappa;		
 	}
-
-	public int step() { return step(SharedVariables.getTimeStep());	}
 
 	@Override
 	public void onCtsObstacleInMapReceived(Point point) 

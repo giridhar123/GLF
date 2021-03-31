@@ -65,22 +65,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		clientConnectionHandler.start();
 	}
 	
-	@Override
-	public void onStcSendMapReceived(Mappa mappa)
-	{
-		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
-		
-		this.robotPosition = new StartPosition(this);
-		
-		oldPosition = new Point(robotPosition);
-		aStarSearcher = new AStarSearcher(mappa);
-		
-		//Aggiungo tutta la mappa nell'openset
-		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
-			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
-				openSet.add(new Point(i, j));
-	}
-	
 	private void explore()
 	{
 		if (mappa == null || ladriFound == SharedVariables.getNumeroLadri())
@@ -101,7 +85,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			for (int i = 0; i < correctedPath.size(); ++i)
 			{
 				/*
-				 * Se c'è un'altra guardia nella 5-adiacenza (3 celle di fronte e le 2 laterali)
+				 * Se c'è un'altra guardia nella "5-adiacenza" (3 celle di fronte e le 2 laterali)
 				 * Cerco un nuovo path nella direzione opposta del robot
 				 */
 				
@@ -217,17 +201,22 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		}
 	}
 	
+	/*
+	 * Aggiunge un ostacolo nella mappa e invia un pacchetto per segnalarlo alle altre guardie
+	 */
+	
 	private void updateMapAndSendPacket(Point punto)
 	{
-		if (mappa.get(punto) == Mappa.FULL ||
-			mappa.get(punto) == Mappa.GUARDIA ||
-			mappa.get(punto) == Mappa.LADRO)
+		if (mappa.get(punto) != Mappa.EMPTY)
 			return;
 		
 		mappa.setValue(punto, 1);
 		clientConnectionHandler.sendPacket(new CTS_OBSTACLE_IN_MAP(new Point(new Point(punto))));
 	}
 
+	/*
+	 * Tramite la telecamera, verifica se è inquadrato un ladro
+	 */
 	private boolean checkLadro()
 	{
         camera.recognitionEnable(SharedVariables.getTimeStep());
@@ -323,6 +312,11 @@ public class GuardiaRobot extends GenericRobot implements Client {
         
         return ladroFound;
 	}
+	
+	/* 
+	 * Trasforma un path di punti in un path di direzioni,
+	 * se non c'è un path segnala il goal come irragiungibile
+	 */
 	
 	private boolean updatePath(Point goal)
 	{
@@ -456,17 +450,26 @@ public class GuardiaRobot extends GenericRobot implements Client {
 			return;
 		}
 
-		try 
-		{
-			//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 
-			step(numeroGuardia * SharedVariables.getTimeStep() * 1000);
-		}
-		catch (NumberFormatException e) 
-		{
-			e.printStackTrace();
-		}
+		//La prima guardia parte 10 secondi dopo che parte l'ultimo ladro 
+		step(numeroGuardia * SharedVariables.getTimeStep() * 1000);
 		
 		explore();
+	}
+	
+	@Override
+	public void onStcSendMapReceived(Mappa mappa)
+	{
+		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
+		
+		this.robotPosition = new StartPosition(this);
+		
+		oldPosition = new Point(robotPosition);
+		aStarSearcher = new AStarSearcher(mappa);
+		
+		//Aggiungo tutta la mappa nell'openset
+		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
+			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
+				openSet.add(new Point(i, j));
 	}
 
 	@Override

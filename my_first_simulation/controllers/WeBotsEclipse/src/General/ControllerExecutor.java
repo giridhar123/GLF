@@ -23,7 +23,6 @@ public class ControllerExecutor extends Thread
     {
         ProcessBuilder processBuilder = new ProcessBuilder();
 
-        //in windows
         String webotsPath = SharedVariables.getWebotsPath();
         String projectPath = SharedVariables.getProjectPath();
         int tcp_port = SharedVariables.getTcpServerPort();
@@ -48,19 +47,14 @@ public class ControllerExecutor extends Thread
             errorPrinter.start();
 
             int exitCode = process.waitFor();
-            System.out.println("\n" + controllerName + ": Exited with error code : " + exitCode);
-      
-            outputStream.close();
-            errorStream.close();
+            System.out.println("\n" + controllerName + ": terminato con codice: " + exitCode);
             
             outputPrinter.join();
             errorPrinter.join();
-            
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
     }
 }

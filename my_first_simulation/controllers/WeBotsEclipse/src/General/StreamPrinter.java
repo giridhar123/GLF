@@ -21,8 +21,12 @@ public class StreamPrinter extends Thread{
 				System.out.println(line);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Errore durante la lettura dallo stream");
+		}
+		
+		try {
+			reader.close();
+		} catch (IOException e) {
 		}
 	}
 }

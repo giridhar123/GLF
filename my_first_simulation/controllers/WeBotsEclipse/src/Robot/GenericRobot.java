@@ -47,11 +47,8 @@ public abstract class GenericRobot extends Robot
 	public static final int NORD = 0;
 	public static final int OVEST = 1;
 	public static final int SUD = 2;
-	public static final int EST = 3;	
-	
-	//Flag per la gestione tra thread
-	//private boolean stepFlag;
-	
+	public static final int EST = 3;
+
 	public GenericRobot(int direction)
 	{
 		super();
@@ -79,12 +76,11 @@ public abstract class GenericRobot extends Robot
 	
 	public boolean goStraightOn(int times)
 	{		    
-		if (times == 0)
+		if (times <= 0)
 			return true;
 		
 	    int initialValue = 50;	   
 	    int Nvolte = (lateralSensors.getMax() / 100) + 2;
-	    //System.out.println("Correggo di " + Nvolte);
 	    
 	    int count = initialValue + 1;
 	    
@@ -136,31 +132,12 @@ public abstract class GenericRobot extends Robot
 	    {
 		    
 		    while (Math.abs(difference) >= 8)
-	    	{
-		    	/*
-		    	if (this instanceof GuardiaRobot)
-		    		System.out.println("Difference is: " + difference);
-		    	*/
-		    	
+	    	{		    	
 		    	double velocity = 0.7;
 		    	if(difference > 0)
-		    	{
 		    		motors.setVelocity(-velocity, velocity);
-		    		
-		    		/*
-		    		if (this instanceof GuardiaRobot)
-		    			System.out.println("Correggo a SX");
-		    			*/
-		    	}
-		    	else 
-		    	{
+		    	else
 		    		motors.setVelocity(velocity, -velocity);
-		    		
-		    		/*
-		    		if (this instanceof GuardiaRobot)
-		    			System.out.println("Correggo a DX");
-		    			*/
-		    	}
 		    	
 		    	step();
 		    	difference = frontalSensors.getLeftValue() - frontalSensors.getRightValue();
@@ -191,11 +168,6 @@ public abstract class GenericRobot extends Robot
 	    step();
 	    motors.resetEncoders();
 	    double goalTheta = (pose + PI/2.00) % PI2;
-
-	    /*
-	    if (this instanceof GuardiaRobot)
-	    	System.out.println("GoalTheta is: " + goalTheta);
-	    */
 	    
 	    motors.setVelocity(-0.5, 0.5);
         
@@ -253,32 +225,34 @@ public abstract class GenericRobot extends Robot
 	
 	private void updatePose(int direction)
 	{
-	    // compute current encoder positions
+	    // Calcola la posizione corrente dell'encoder
 	    double del_enLeftW = motors.getLeftEncoderValue();
 	    double del_enRightW = motors.getRightEncoderValue();
 	    
-	    // compute wheel displacements
+	    // Cancola di quanto si sono mosse le ruote
 	    double values[] = getWheelDisplacements(del_enLeftW, del_enRightW);
 
-	    // Update in orientation
+	    // Aggiorna l'orientamento
 	    if (direction == EST)
-	    	pose += (values[0] - values[1])/AXLE_LENGTH; // orientation
+	    	pose += (values[0] - values[1])/AXLE_LENGTH;
 	    else if (direction == OVEST)
-	    	pose += (values[1] - values[0])/AXLE_LENGTH; // orientation
+	    	pose += (values[1] - values[0])/AXLE_LENGTH;
 	    
 	    pose = pose % PI2;
-	    /*
-	    if (this instanceof GuardiaRobot)
-	    	System.out.println(pose[2] * 360 / PI2);
-	    	*/
 	}
+	
+	/*
+	 * Restituisce un array
+	 * Posizione 0: spiazzamento ruota sinistra
+	 * Posizione 1: spiazzamento ruota destra
+	 */
 	
 	private double[] getWheelDisplacements(double del_enLeftW, double del_enRightW)
 	{
 		double values[] = new double[2];
-		// compute displacement of left wheel in meters
+		// Cancola di quanto si è mossa la ruota sinistra
 		values[0] = del_enLeftW / STEPS_ROT * 2 * PI * WHEEL_RADIUS; 
-		// compute displacement of right wheel in meters
+		// Cancola di quanto si è mossa la ruota destra
 		values[1] = del_enRightW / STEPS_ROT * 2 * PI * WHEEL_RADIUS;
 		  
 		return values;
@@ -362,26 +336,5 @@ public abstract class GenericRobot extends Robot
 		}
 	}
 	
-	public abstract void work();
-	/*
-	public synchronized int myStep(int time, Thread caller)
-	{
-		if (caller == null)
-		{
-			while(stepFlag) 
-			{
-				try 
-				{
-					wait();
-				} 
-				catch (InterruptedException e) 
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return step(time);
-	}
-	*/	
+	public abstract void work();	
 }

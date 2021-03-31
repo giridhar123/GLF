@@ -25,7 +25,7 @@ public class Mappa
 	
 	public Mappa(String Difficolta, int xDimInterna, int yDimInterna, double WeBotsTile , double[] WeBotsXYMap, int xAmpiezzaSpawn, int dimSpawnGate)
 	{
-		// Questo costruttore � richiamato enlla classe SERVER
+		// Questo costruttore � richiamato nella classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDimInterna = xDimInterna;
 		this.yDimInterna = yDimInterna;
@@ -137,7 +137,6 @@ public class Mappa
 		return WeBotsXYMap;
 	}
 	
-	// Da qualche problema @indiano
 	public int get(Point punto)
 	{
 		if (punto.getX() < xAmpiezzaSpawn)
@@ -146,7 +145,6 @@ public class Mappa
 			return mappaInferiore[punto.getX() - xDimInterna - xAmpiezzaSpawn][punto.getY()];
 		else
 			return mappaInterna.get(punto.getX() - xAmpiezzaSpawn, punto.getY());
-		
 	}
 	
 	@Override
@@ -170,13 +168,12 @@ public class Mappa
 		return Difficolta;
 	}
 	
-	//DA RIVEDERE
 	public void setValue(Point punto, int value)
 	{
 		if (punto.getX() < xAmpiezzaSpawn)
 			mappaSuperiore[punto.getX()][punto.getY()] = value;
 		else if (punto.getX() >= (xDimInterna + xAmpiezzaSpawn))
-			mappaInferiore[punto.getX()- xDimInterna - xAmpiezzaSpawn][punto.getY()] = value;
+			mappaInferiore[punto.getX() - xDimInterna - xAmpiezzaSpawn][punto.getY()] = value;
 		else
 			mappaInterna.setValue(punto.getX() - xAmpiezzaSpawn, punto.getY(), value);
 	}
@@ -216,19 +213,23 @@ public class Mappa
 	}
 
 	
-	public int getXAmpiezzaSpawn() {
+	public int getXAmpiezzaSpawn()
+	{
 		return xAmpiezzaSpawn;
 	}
 
-	public int getDimSpawnGate() {
+	public int getDimSpawnGate()
+	{
 		return dimSpawnGate;
 	}
 
-	public void setDimSpawnGate(int dimSpawnGate) {
+	public void setDimSpawnGate(int dimSpawnGate)
+	{
 		this.dimSpawnGate = dimSpawnGate;
 	}
 
-	public int getxAmpiezzaSpawn() {
+	public int getxAmpiezzaSpawn()
+	{
 		return xAmpiezzaSpawn;
 	}
 
