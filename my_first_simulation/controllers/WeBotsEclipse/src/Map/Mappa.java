@@ -185,10 +185,10 @@ public class Mappa
 		int x = point.getX();
 		int y = point.getY();
 		
-		Point north = x - 1 >= 0 && get(new Point(x - 1, y)) != FULL ? new Point(x - 1, y) : null;
-		Point south = x + 1 < getXSize() && get(new Point(x + 1, y)) != FULL ? new Point(x + 1, y) : null;
-		Point east = y + 1 < getYSize() && get(new Point(x, y + 1)) != FULL ? new Point(x, y + 1) : null;
-		Point west = y - 1 >= 0 && get(new Point(x, y - 1)) != FULL? new Point(x, y - 1) : null;
+		Point north = x - 1 >= 0 && get(new Point(x - 1, y)) != FULL && get(new Point(x - 1, y)) != LADRO ? new Point(x - 1, y) : null;
+		Point south = x + 1 < getXSize() && get(new Point(x + 1, y)) != FULL && get(new Point(x + 1, y)) != LADRO ? new Point(x + 1, y) : null;
+		Point east = y + 1 < getYSize() && get(new Point(x, y + 1)) != FULL && get(new Point(x, y + 1)) != LADRO ? new Point(x, y + 1) : null;
+		Point west = y - 1 >= 0 && get(new Point(x, y - 1)) != FULL && get(new Point(x, y - 1)) != LADRO ? new Point(x, y - 1) : null;
 		
 		if (north != null)
 			set.add(north);

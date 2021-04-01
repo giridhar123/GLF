@@ -37,6 +37,9 @@ public class Main
         //Inizializzo variabili globali
         SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri,DimMapX, DimMapY, xDimSpawn, SpawnPort, WeBotsXYMap,WeBotsTile,difficolta);
         
+        if (!SharedVariables.isInitialized())
+        	return;
+        
         Server server = new Server();
         server.start();
         avviaSupervisorController();

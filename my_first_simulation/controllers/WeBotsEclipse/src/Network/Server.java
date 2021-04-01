@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import General.ControllerExecutor;
 import General.SharedVariables;
 import Map.Mappa;
+import Network.Packets.Packet;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
 public class Server extends Thread
@@ -123,4 +124,42 @@ public class Server extends Thread
 	public Mappa getMappa() { return mappa; }
 	public ArrayList<AsynchronousSocketChannel> getLadri() { return ladri; }
 	public ArrayList<AsynchronousSocketChannel> getGuardie() { return guardie; }
+	
+	public synchronized void sendToGuardie(Packet packet)
+	{
+		ByteBuffer buffer = packet.encode();
+		for (int i = 0; i < guardie.size(); ++i)
+		{
+			if (guardie.get(i) == packet.getSender())
+				continue;
+		
+			buffer = buffer.position(0);
+			Future<Integer> pendingWrite = guardie.get(i).write(buffer);
+			
+			try {
+				pendingWrite.get();
+			} catch (InterruptedException | ExecutionException e) {
+				System.out.println(packet.getOpcode() + ": errore durante la trasmissione del pacchetto " + packet.getOpcode());
+			}
+		}
+	}
+	
+	public synchronized void sendToLadri(Packet packet) 
+	{
+		ByteBuffer buffer = packet.encode();
+		for (int i = 0; i < ladri.size(); ++i)
+		{			
+			if (ladri.get(i) == packet.getSender())
+				continue;
+		
+			buffer = buffer.position(0);
+			Future<Integer> pendingWrite = ladri.get(i).write(buffer);
+			
+			try {
+				pendingWrite.get();
+			} catch (InterruptedException | ExecutionException e) {
+				System.out.println(packet.getOpcode() + ": errore durante la trasmissione del pacchetto " + packet.getOpcode());
+			}
+		}
+	}
 }

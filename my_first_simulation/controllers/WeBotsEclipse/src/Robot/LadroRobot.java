@@ -160,14 +160,7 @@ public class LadroRobot extends GenericRobot implements Client {
     	{
 	    	String id = String.valueOf(getName().charAt(getName().length() - 1));
 	    	
-			try 
-			{
-				step((5 + SharedVariables.getTimeStep()) * Integer.valueOf(id) * 1000);
-			}
-			catch (NumberFormatException e)
-			{
-				System.out.println(getName() + ": Errore, il nome deve terminare con un numero!");
-			}
+			step(40 * Integer.valueOf(id) * 1000);
 			
 	    	hide();
     	}

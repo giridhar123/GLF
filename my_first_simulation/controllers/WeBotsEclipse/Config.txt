@@ -1,11 +1,11 @@
-webotspath=/Applications/Webots.app
-projectpath=/Users/davide/Desktop/Università/Robotica/Progetto/Locale
+webotspath=D:/Webots
+projectpath=C:/Users/darkd/OneDrive/Desktop/GLF-main/
 tcp_port=6868
 time_step=16
-guardie=3
-ladri=2
-DimMapX=20
-DimMapY=20
+guardie=4
+ladri=4
+DimMapX=15
+DimMapY=15
 xDimSpawn=5
 SpawnPort=5
 WeBotsXYMap=20

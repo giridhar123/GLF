@@ -91,90 +91,49 @@ public class ServerConnectionHandler extends Thread {
 			{
 				CTS_OBSTACLE_IN_MAP cts_obstacle_in_map = new CTS_OBSTACLE_IN_MAP(packet, buf);				
 				if(server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_obstacle_in_map);
+					server.sendToGuardie(cts_obstacle_in_map);
 			}
 			break;
 			case Packet.CTS_GOING_TO:
 			{
 				CTS_GOING_TO cts_going_to = new CTS_GOING_TO(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_going_to);
+					server.sendToGuardie(cts_going_to);
 				else if (server.getLadri().contains(packet.getSender()))
-					sendToLadri(cts_going_to);
+					server.sendToLadri(cts_going_to);
 			}
 			break;
 			case Packet.CTS_NEW_GUARDIA_POS:
 			{
 				CTS_NEW_GUARDIA_POS cts_new_guardia_pos = new CTS_NEW_GUARDIA_POS(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_new_guardia_pos);
+					server.sendToGuardie(cts_new_guardia_pos);
 			}
 			break;
 			case Packet.CTS_GOAL_CHANGED:
 			{
 				CTS_GOAL_CHANGED cts_goal_changed = new CTS_GOAL_CHANGED(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_goal_changed);
+					server.sendToGuardie(cts_goal_changed);
 			}
 			break;
 			case Packet.CTS_LADRO_FOUND:
 			{
 				CTS_LADRO_FOUND cts_ladro_found = new CTS_LADRO_FOUND(packet, buf);
 				if (server.getGuardie().contains(packet.getSender()))
-					sendToGuardie(cts_ladro_found);
+					server.sendToGuardie(cts_ladro_found);
 			}
 			break;
 			case Packet.CTS_LADRO_HIDDEN:
 			{
 				server.incrementLadriHiddenReceived();
 				if(server.getLadriHidden() == SharedVariables.getNumeroLadri())
-					sendToGuardie(new STC_START_GUARDIE());
-				
+					server.sendToGuardie(new STC_START_GUARDIE());
 			}
 			break;
 			default:
 				System.out.println("Server: Pacchetto sconosciuto ricevuto " + packet.getOpcode());
 			break;
-		}
-	}
-	
-	private void sendToGuardie(Packet packet)
-	{
-		ArrayList<AsynchronousSocketChannel> guardie = server.getGuardie();
-		ByteBuffer buffer = packet.encode();
-		for (int i = 0; i < guardie.size(); ++i)
-		{
-			if (guardie.get(i) == packet.getSender())
-				continue;
-		
-			buffer = buffer.position(0);
-			Future<Integer> pendingWrite = guardie.get(i).write(buffer);
-			
-			try {
-				pendingWrite.get();
-			} catch (InterruptedException | ExecutionException e) {
-				System.out.println(packet.getOpcode() + ": errore durante la trasmissione del pacchetto " + packet.getOpcode());
-			}
-		}
-	}
-	
-	private void sendToLadri(Packet packet) 
-	{
-		ArrayList<AsynchronousSocketChannel> ladri = server.getLadri();
-		ByteBuffer buffer = packet.encode();
-		for (int i = 0; i < ladri.size(); ++i)
-		{			
-			if (ladri.get(i) == packet.getSender())
-				continue;
-		
-			buffer = buffer.position(0);
-			Future<Integer> pendingWrite = ladri.get(i).write(buffer);
-			
-			try {
-				pendingWrite.get();
-			} catch (InterruptedException | ExecutionException e) {
-				System.out.println(packet.getOpcode() + ": errore durante la trasmissione del pacchetto " + packet.getOpcode());
-			}
 		}
 	}
 }
