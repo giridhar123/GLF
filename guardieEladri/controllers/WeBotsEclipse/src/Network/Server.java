@@ -44,13 +44,8 @@ public class Server extends Thread
 		{
 			System.out.println("Server: binding error");
 		}
-	}
-
-	public void run()
-	{
-		// Creazione dell'oggetto che genera la mappa
-
-        int DimMapX = SharedVariables.getDimMapX();
+		
+		int DimMapX = SharedVariables.getDimMapX();
         int DimMapY = SharedVariables.getDimMapY();
         double[] WeBotsXYMap = {SharedVariables.getWeBotsXYMap(),SharedVariables.getWeBotsXYMap()};
         double WeBotsTile = SharedVariables.getWeBotsTile();
@@ -59,7 +54,10 @@ public class Server extends Thread
         String difficolta = SharedVariables.getDifficolta();
         
 		mappa = new Mappa(difficolta, DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);
+	}
 
+	public void run()
+	{
 		while (true)
 		{
 			try

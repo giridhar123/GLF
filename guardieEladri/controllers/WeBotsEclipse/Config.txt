@@ -1,5 +1,5 @@
-webotspath=D:/Webots
-projectpath=C:/Users/darkd/OneDrive/Desktop/GLF-main/
+webotspath=/Applications/Webots.app
+projectpath=/Users/davide/Desktop/Università/Robotica/Progetto/Locale
 tcp_port=6868
 time_step=16
 guardie=4
