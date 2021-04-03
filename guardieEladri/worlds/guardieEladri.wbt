@@ -12,7 +12,7 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 DEF World RectangleArena {
-  floorSize 4 5
+  floorSize 2 3
   floorTileSize 0.2 0.2
   floorAppearance Parquetry {
     type "chequered"

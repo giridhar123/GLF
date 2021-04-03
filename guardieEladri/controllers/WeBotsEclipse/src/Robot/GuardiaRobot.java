@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.cyberbotics.webots.controller.Camera;
 import com.cyberbotics.webots.controller.CameraRecognitionObject;
+import com.cyberbotics.webots.controller.Speaker;
+
 import General.AStarSearcher;
 import General.SharedVariables;
 import Map.Mappa;
@@ -35,6 +37,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private SireneThread sireneThread;
 	private AStarSearcher aStarSearcher;
+	
+	private Speaker speaker;
+	private final String SONG_ENCOUNTER_PATH = "sounds/encounter.mp3";
+	private final String SONG_LUPIN_PATH = "sounds/lupin.wav";
 
 	public GuardiaRobot(int direction)
 	{
@@ -56,6 +62,13 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		sireneThread = new SireneThread(this);
 		sireneThread.start();
 		
+		speaker = getSpeaker("speaker");
+	    speaker.setEngine("pico");
+	    speaker.setLanguage("it-IT");
+	    
+	    if (numeroGuardia == 0)
+	    	Speaker.playSound(speaker , speaker, SONG_ENCOUNTER_PATH, 1, 1, 0, true);
+		
 		clientConnectionHandler = new ClientConnectionHandler(CTS_PEER_INFO.GUARDIA, this);
 	}
 	
@@ -69,6 +82,12 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	{
 		if (mappa == null || ladriFound == SharedVariables.getNumeroLadri())
 			return;
+		
+		if (numeroGuardia == 0)
+		{
+			speaker.stop(SONG_ENCOUNTER_PATH);
+	    	Speaker.playSound(speaker , speaker, SONG_LUPIN_PATH, 1, 1, 0, true);
+		}
 		
 		goStraightOn();
 		

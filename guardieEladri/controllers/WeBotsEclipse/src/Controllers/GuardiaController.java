@@ -15,15 +15,11 @@ public class GuardiaController
     	
     	init(args);
     	GuardiaRobot robot = new GuardiaRobot(GenericRobot.SUD);
-        Speaker speaker = robot.getSpeaker("speaker");
-        speaker.setEngine("pico");
-        speaker.setLanguage("it-IT");
        
         robot.connectToServer();
       
         while (robot.step() != -1)
         {
-        	Speaker.playSound(speaker , speaker, "sounds/lupin.wav", 1, 1, 0, true);
         	robot.work();
         }
     }

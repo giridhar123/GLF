@@ -140,9 +140,9 @@ public abstract class GenericRobot extends Robot
 	    
 	    if (leftValue > 65 && rightValue > 65)
 	    {
+	    	double velocity = 0.7;
 		    while (Math.abs(difference) >= 8)
-	    	{		    	
-		    	double velocity = 0.7;
+	    	{	
 		    	if(difference > 0)
 		    		motors.setVelocity(-velocity, velocity);
 		    	else
@@ -175,8 +175,11 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(-0.5, 0.5);
         
-	    while(Math.pow(pose - goalTheta, 2) > 0.001)
-	    {	    	
+	    double error;
+	    
+	    while((error = Math.pow(pose - goalTheta, 2)) > 0.0001)
+	    {	    
+	    	System.out.println(error);
 	    	step();
 	        updatePose(OVEST);
 	    }
@@ -204,18 +207,17 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
-	    while(Math.pow(pose - goalTheta, 2) > 0.001)
-	    {	    	
+	    double error;
+	    while((error = Math.pow(pose - goalTheta, 2)) > 0.0001)
+	    {	   
+	    	System.out.println(error);
 	        step();
 	        updatePose(EST);
 	    }
 	    
-	    if(direction == 0)
-	    	direction = 3;
-	    else
-	    	--direction;
-	    
 	    stop();
+	    
+	    direction = direction == 0 ? 3 : direction - 1;
 	    
 	    if (lateralSensors.isObstacleOnLeft())
 	    	motorAdjustment = MORE;
