@@ -107,7 +107,6 @@ public abstract class GenericRobot extends Robot
 	    		{
 	    			stop();
 	    			obstacle = true;
-	    			//System.out.println(j);
 	    			
 	    			if (j > 35)
 	    				incrementaPosizione();
@@ -123,7 +122,17 @@ public abstract class GenericRobot extends Robot
 	    }
 	    
 	    stop();
-	    step();
+	    doAngleCorrection();
+
+	    if (obstacle)
+			goBack(4);
+	    
+	    return !obstacle;
+	}
+	
+	protected void doAngleCorrection()
+	{
+		step();
 	    
 	    double leftValue = frontalSensors.getLeftValue();
 	    double rightValue = frontalSensors.getRightValue();
@@ -131,7 +140,6 @@ public abstract class GenericRobot extends Robot
 	    
 	    if (leftValue > 65 && rightValue > 65)
 	    {
-		    
 		    while (Math.abs(difference) >= 8)
 	    	{		    	
 		    	double velocity = 0.7;
@@ -146,11 +154,6 @@ public abstract class GenericRobot extends Robot
 		    }
 		    stop();
 	    }
-
-	    if (obstacle)
-			goBack(4);
-	    
-	    return !obstacle;
 	}
 	
 	public void goBack(int times)

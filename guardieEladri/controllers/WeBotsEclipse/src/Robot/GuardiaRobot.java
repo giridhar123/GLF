@@ -124,6 +124,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				}
 				
 				boolean obstaclesInFront = !goStraightOn();
+				doAngleCorrection();
 				checkLateral();	
 				
 				if (obstaclesInFront)
@@ -244,9 +245,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
         		int distanzaFrontale = (int) Math.round(CCC[i].getPosition()[2] * 10);
         		distanzaFrontale = Math.abs(distanzaFrontale);
         		
-        		System.out.println(getName() + " distanzaFrontale: " + distanzaFrontale);
-        		System.out.println(getName() + " distanzaLaterale: " + distanzaLaterale);
-        		
         		if(CCC[i].getPosition()[0] <= -0.01)
 	    		{
         			//Sinistra
@@ -310,7 +308,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
         		
         		if (mappa.get(punto) != Mappa.LADRO)
                 {
-        			System.out.println(getName() + ": ladro trovato in " + punto);
             		openSet.remove(punto);
                 	this.ladriFound += 1;
                 	mappa.setValue(punto, Mappa.LADRO);
@@ -476,7 +473,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		oldPosition = new Point(robotPosition);
 		aStarSearcher = new AStarSearcher(this.mappa);
 		
-		//Aggiungo tutta la mappa nell'openset
+		//Aggiungo tutta la mappa innterna nell'openSet
 		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
 			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
 				openSet.add(new Point(i, j));
