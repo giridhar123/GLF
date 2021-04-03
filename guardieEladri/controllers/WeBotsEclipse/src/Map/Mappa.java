@@ -16,22 +16,28 @@ public class Mappa
 	private String Difficolta ;
 	private int xDimInterna; 		//Dim Matrice
 	private int yDimInterna;
-	private double[] WeBotsXYMap ; 	// Quanto deve essere la mappa di WeBots
-	private double WeBotsTile ; 	// Grandezza di una singola cella di WeBots
+	private double[] floorSize; 	// Quanto deve essere la mappa di WeBots
+	private double spiazzamentoX, spiazzamentoY; 	// Grandezza di una singola cella di WeBots
 	private int dimSpawnGate; 		// grandezza delle porte dello spawn
 	private int xAmpiezzaSpawn;
 	private int[][] mappaSuperiore, mappaInferiore;
 	private MappaInterna mappaInterna;
 	
-	public Mappa(String Difficolta, int xDimInterna, int yDimInterna, double WeBotsTile , double[] WeBotsXYMap, int xAmpiezzaSpawn, int dimSpawnGate)
+	public Mappa(String Difficolta, int xDimInterna, int yDimInterna, int xAmpiezzaSpawn, int dimSpawnGate)
 	{
 		// Questo costruttore � richiamato nella classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDimInterna = xDimInterna;
 		this.yDimInterna = yDimInterna;
-		this.WeBotsTile = WeBotsTile;
-		this.WeBotsXYMap = WeBotsXYMap;
-		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+		this.xAmpiezzaSpawn = xAmpiezzaSpawn; 
+        
+        this.floorSize = new double[2];
+        this.floorSize[0] = (2 + getYSize()) / 8;
+        this.floorSize[1] = getXSize() / 8;
+        
+		this.spiazzamentoX = 0.10 * ((float)getYSize() - 1) / 2; //Legge da scrivere
+		this.spiazzamentoY = 0.10 * ((float)getXSize() - 1) / 2; //Legge da scrivere; //Legge da scrivere
+		
 		this.dimSpawnGate = dimSpawnGate;
 		
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
@@ -66,15 +72,17 @@ public class Mappa
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
 	}
 	
-	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate, double[] arrayXY)
+	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate, double[] floorSize, double spiazzamentoX, double spiazzamentoY)
 	{
 		// Questo costruttore � richiamato enlla classe STC_SEND_MAP
 		// A questo costruttore passo gi� i dati ed i calcoli fatti dal server.
-		this.WeBotsXYMap = arrayXY;
+		this.floorSize = floorSize;
 		this.xDimInterna = xDimInterna;
 		this.yDimInterna = yDimInterna;
 		this.dimSpawnGate = dimSpawnGate;
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
+		this.spiazzamentoX = spiazzamentoX;
+		this.spiazzamentoY = spiazzamentoY;
 		
 		int col, row;
 		col = row = 0;
@@ -127,14 +135,19 @@ public class Mappa
 		return yDimInterna;
 	}
 	
-	public double getWeBotsTile()
+	public double getSpiazzamentoX()
 	{
-		return WeBotsTile;
+		return spiazzamentoX;
 	}
 	
-	public double[] getWeBotsXYMap()
+	public double getSpiazzamentoY()
 	{
-		return WeBotsXYMap;
+		return spiazzamentoY;
+	}
+	
+	public double[] getFloorSize()
+	{
+		return floorSize;
 	}
 	
 	public int get(Point punto)

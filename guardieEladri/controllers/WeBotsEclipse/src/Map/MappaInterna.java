@@ -182,7 +182,7 @@ public class MappaInterna {
 				for (int i = 0; i < 2; ++i)
 				{
 					try {
-						AL.remove(RandomIndex);
+						AL.remove(RandomIndex3);
 					} catch (IndexOutOfBoundsException e)
 					{
 						break;
@@ -201,14 +201,12 @@ public class MappaInterna {
 				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 			  
 				// Devo rimuovere due elementi, quelli alla posizione x e x+1
-				for (int i = 0; i < 2; ++i)
+				
+				try {
+					AL.remove(RandomIndex2);
+					AL.remove(RandomIndex);
+				} catch (IndexOutOfBoundsException e)
 				{
-					try {
-						AL.remove(RandomIndex);
-					} catch (IndexOutOfBoundsException e)
-					{
-						break;
-					}
 				}
 			}
 			break;
@@ -223,14 +221,11 @@ public class MappaInterna {
 				ControlloMatriceTerzoPattern(QuattroAdiacenza());
 			  
 				// Devo rimuovere due elementi, quelli alla posizione x e x+1
-				for (int i = 0; i < 2; ++i)
+				try {
+					AL.remove(RandomIndex2);
+					AL.remove(RandomIndex);
+				} catch (IndexOutOfBoundsException e)
 				{
-					try {
-						AL.remove(RandomIndex);
-					} catch (IndexOutOfBoundsException e)
-					{
-						break;
-					}
 				}
 			}
 			break;

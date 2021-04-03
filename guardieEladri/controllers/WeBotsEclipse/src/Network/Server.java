@@ -45,15 +45,13 @@ public class Server extends Thread
 			System.out.println("Server: binding error");
 		}
 		
-		int DimMapX = SharedVariables.getDimMapX();
-        int DimMapY = SharedVariables.getDimMapY();
-        double[] WeBotsXYMap = {SharedVariables.getWeBotsXYMap(),SharedVariables.getWeBotsXYMap()};
-        double WeBotsTile = SharedVariables.getWeBotsTile();
-        int xDimSpawn = SharedVariables.getxDimSpawn();
-        int SpawnPort = SharedVariables.getSpawnPort();
+		int dimMappaInternaX = SharedVariables.getDimMappaInternaX();
+        int dimMappaInternaY = SharedVariables.getDimMappaInternaY();        		
+        int dimSpawnX = SharedVariables.getDimSpawnX();
+        int dimSpawnGate = SharedVariables.getDimSpawnGate();
         String difficolta = SharedVariables.getDifficolta();
         
-		mappa = new Mappa(difficolta, DimMapX, DimMapY, WeBotsTile, WeBotsXYMap,xDimSpawn,SpawnPort);
+		mappa = new Mappa(difficolta, dimMappaInternaX, dimMappaInternaY, dimSpawnX, dimSpawnGate);
 	}
 
 	public void run()

@@ -20,13 +20,13 @@ public class SireneThread extends Thread{
 		{
 	        if(led1.get() == 0) // se rosso è spento
 	        {
-	        	led1.set(255);
-	        	led2.set(0); // accendi rosso
+	        	led1.set(255); // accendi rosso
+	        	led2.set(0); // spegni blu
 	        }
 	        else
 	        {
-	        	led1.set(0);
-	        	led2.set(255); // accendi rosso
+	        	led1.set(0); // spegni rosso
+	        	led2.set(255); // accendi blu
 	        }  
 	        
 	        try

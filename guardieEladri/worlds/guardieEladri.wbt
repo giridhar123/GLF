@@ -4,16 +4,15 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 DEF viewpoint Viewpoint {
-  orientation 0.0031750109925861992 0.7361536265180272 0.6768070311909841 3.1395013039730117
-  position -0.09470365003156177 6.863893806898525 -0.9631704956677477
+  orientation -0.0003949463930054423 0.7089334262751534 0.7052752945673897 3.1321635792426092
+  position 0.17591534359250915 7.375716440754539 -0.10120880854744249
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 DEF World RectangleArena {
-  translation 0.15 0 0.15
-  floorSize 8 8
+  floorSize 4 5
   floorTileSize 0.2 0.2
   floorAppearance Parquetry {
     type "chequered"
@@ -22,6 +21,7 @@ DEF World RectangleArena {
   wallHeight 0.05
 }
 DEF supervisor E-puck {
+  translation -10 -10 -10
   name "supervisor"
   controller "<extern>"
   supervisor TRUE

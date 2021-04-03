@@ -9,13 +9,11 @@ import Network.Packets.Packet;
 public class STC_SEND_MAP extends Packet{
 	
 	private Mappa mappa;
-	private double getWeBotsXYMap[]; //SIZE: 2 * 8 byte
 	
 	public STC_SEND_MAP(Mappa mappa)
 	{
 		// SIZE PRECEDENTI + SIZEOF (1 INT (4 byte) * DIMENSIONE MATRICE DELLA MAPPA)  
-		super(16 + 8 + 4 + 4 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
-		this.getWeBotsXYMap = mappa.getWeBotsXYMap();
+		super(16 + 8 + 4 + 4 + 8 + 8 + 4 * (mappa.getXSize() * mappa.getYSize()), Packet.STC_SEND_MAP);
 		this.mappa = mappa;
 	}
 	
@@ -30,6 +28,8 @@ public class STC_SEND_MAP extends Packet{
     	int xDimInterna = buf.getInt();
     	int yDimInterna = buf.getInt();
     	int dimSpawnGate = buf.getInt();
+    	double spiazzamentoX = buf.getDouble();
+    	double spiazzamentoY = buf.getDouble();
     	
     	int xTot = xDimInterna + 2 * xAmpiezzaSpawn;
     	int[][] mappa = new int[xTot][yDimInterna];
@@ -37,10 +37,9 @@ public class STC_SEND_MAP extends Packet{
     		for(int j = 0; j < yDimInterna; ++j)
     			mappa[i][j] = buf.getInt();
     	
-    	this.mappa = new Mappa(mappa, xAmpiezzaSpawn, xDimInterna, yDimInterna, dimSpawnGate, arrayXY); 
+    	this.mappa = new Mappa(mappa, xAmpiezzaSpawn, xDimInterna, yDimInterna, dimSpawnGate, arrayXY, spiazzamentoX, spiazzamentoY); 
   
-    	}
-	
+    }
 	
 	public Mappa getMappa()
 	{
@@ -54,12 +53,14 @@ public class STC_SEND_MAP extends Packet{
     	buf.putInt(getSize());
     	buf.putShort(this.getOpcode());
     	
-    	buf.putDouble(getWeBotsXYMap[0]);
-    	buf.putDouble(getWeBotsXYMap[1]);
+    	buf.putDouble(mappa.getFloorSize()[0]);
+    	buf.putDouble(mappa.getFloorSize()[1]);
     	buf.putInt(mappa.getxAmpiezzaSpawn());
     	buf.putInt(mappa.getXDimInterna());
     	buf.putInt(mappa.getYDimInterna());
     	buf.putInt(mappa.getDimSpawnGate());
+    	buf.putDouble(mappa.getSpiazzamentoX());
+    	buf.putDouble(mappa.getSpiazzamentoY());
     	
     	int xTot = mappa.getXDimInterna() + 2 * mappa.getXAmpiezzaSpawn();
     	for (int i = 0; i < xTot; ++i)

@@ -2,65 +2,55 @@ package General;
 
 public class SharedVariables {
 	
-	private int TIME_STEP;
-	private int SERVER_TCP_PORT;
+	private int timeStep;
+	private int serverTcpPort;
 	private String projectPath;
 	private String webotsPath;
 	private int numeroGuardie, numeroLadri;
 	
-	boolean initialized;
-	
 	// mappa
-	private int DimMapX, DimMapY, xDimSpawn, SpawnPort;
-	private double WeBotsXYMap,WeBotsTile;	
+	private int dimMappaInternaX, dimMappaInternaY, dimSpawnX, dimSpawnGate;	
 	private String difficolta;
 	
 	private static SharedVariables instance = null;
 	
 	private SharedVariables(String projectPath,
 			String webotsPath, 
-			int TIME_STEP,
-			int SERVER_TCP_PORT,
+			int timeStep,
+			int serverTcpPort,
 			int numeroGuardie,
 			int numeroLadri,
-			int DimMapX,
-			int DimMapY,
-			int xDimSpawn,
-			int SpawnPort,
-			double WeBotsXYMap,
-			double WeBotsTile,
+			int dimMappaInternaX,
+			int dimMappaInternaY,
+			int dimSpawnX,
+			int dimSpawnGate,
 			String difficolta)
 	{
-		initialized = true;
 		
 		this.projectPath = projectPath;
 		this.webotsPath = webotsPath;
-		this.TIME_STEP = TIME_STEP;
-		this.SERVER_TCP_PORT = SERVER_TCP_PORT;
+		this.timeStep = timeStep;
+		this.serverTcpPort = serverTcpPort;
 		setNumeroGuardie(numeroGuardie);
 		setNumeroLadri(numeroLadri);
-		setDimMapX(DimMapX);
-		setDimMapY(DimMapY);
-		setXDimSpawn(xDimSpawn);
-		setSpawnPort(SpawnPort);
-		setWeBotsXYMap(WeBotsXYMap);
-		setWeBotsTile(WeBotsTile);
+		setDimMappaInternaX(dimMappaInternaX);
+		setDimMappaInternaY(dimMappaInternaY);
+		setXDimSpawn(dimSpawnX);
+		setDimSpawnGate(dimSpawnGate);
 		setDifficolta(difficolta);
 	}
 	
 	private SharedVariables(String projectPath,
 			String webotsPath, 
-			int TIME_STEP,
-			int SERVER_TCP_PORT,
+			int timeStep,
+			int serverTcpPort,
 			int numeroGuardie,
 			int numeroLadri)
-	{
-		initialized = true;
-		
+	{		
 		this.projectPath = projectPath;
 		this.webotsPath = webotsPath;
-		this.TIME_STEP = TIME_STEP;
-		this.SERVER_TCP_PORT = SERVER_TCP_PORT;		
+		this.timeStep = timeStep;
+		this.serverTcpPort = serverTcpPort;		
 		setNumeroGuardie(numeroGuardie);
 		setNumeroLadri(numeroLadri);
 	}
@@ -75,12 +65,10 @@ public class SharedVariables {
 			int DimMapY,
 			int xDimSpawn,
 			int SpawnPort,
-			double WeBotsXYMap,
-			double WeBotsTile,
 			String difficolta)
 	{
 		if (instance == null)
-			instance = new SharedVariables(projectPath, webotsPath, TIME_STEP, SERVER_TCP_PORT, numeroGuardie, numeroLadri, DimMapX, DimMapY, xDimSpawn, SpawnPort,WeBotsXYMap,WeBotsTile,difficolta);
+			instance = new SharedVariables(projectPath, webotsPath, TIME_STEP, SERVER_TCP_PORT, numeroGuardie, numeroLadri, DimMapX, DimMapY, xDimSpawn, SpawnPort, difficolta);
 	}
 
 	public static void init(String projectPath,
@@ -96,12 +84,12 @@ public class SharedVariables {
 	
 	public static int getTimeStep()
 	{
-		return instance.TIME_STEP;
+		return instance.timeStep;
 	}
 	
 	public static int getTcpServerPort()
 	{
-		return instance.SERVER_TCP_PORT;
+		return instance.serverTcpPort;
 	}
 	
 	public static String getWebotsPath()
@@ -124,77 +112,72 @@ public class SharedVariables {
 		return instance.numeroLadri;
 	}
 
-	public static int getDimMapX() {
-		return instance.DimMapX;
+	public static int getDimMappaInternaX() {
+		return instance.dimMappaInternaX;
 	}
 
-	public static int getDimMapY() {
-		return instance.DimMapY;
+	public static int getDimMappaInternaY() {
+		return instance.dimMappaInternaY;
 	}
 
-	public static int getxDimSpawn() {
-		return instance.xDimSpawn;
+	public static int getDimSpawnX() {
+		return instance.dimSpawnX;
 	}
 
-	public static int getSpawnPort() {
-		return instance.SpawnPort;
-	}
-
-	public static double getWeBotsXYMap() {
-		return instance.WeBotsXYMap;
-	}
-
-	public static double getWeBotsTile() {
-		return instance.WeBotsTile;
+	public static int getDimSpawnGate() {
+		return instance.dimSpawnGate;
 	}
 
 	public static String getDifficolta() {
 		return instance.difficolta;
 	}
 
-	public static boolean isInitialized()
-	{
-		return instance.initialized;
-	}
-
 	private void setNumeroGuardie(int numeroGuardie)
 	{
-		this.numeroGuardie = numeroGuardie;
+		this.numeroGuardie = numeroGuardie > 5 ? 5 : numeroGuardie;
 	}
 	
 	private void setNumeroLadri(int numeroLadri)
 	{
-		this.numeroLadri = numeroLadri;
+		this.numeroLadri = numeroLadri > 5 ? 5 : numeroLadri;
 	}
 
-	private void setDimMapX(int DimMapX)
+	private void setDimMappaInternaX(int dimMappaInternaX)
 	{
-		this.DimMapX = DimMapX;
+		if (dimMappaInternaX < 10)
+			dimMappaInternaX = 10;
+		if (dimMappaInternaX > 30)
+			dimMappaInternaX = 30;
+		
+		this.dimMappaInternaX = dimMappaInternaX;
 	}
 	
-	private void setDimMapY(int DimMapY)
+	private void setDimMappaInternaY(int dimMappaInternaY)
 	{
-		this.DimMapY = DimMapY;
+		if (dimMappaInternaY < 10)
+			dimMappaInternaY = 10;
+		if (dimMappaInternaY > 30)
+			dimMappaInternaY = 30;
+		
+		this.dimMappaInternaY = dimMappaInternaY;
 	}
 	
 	private void setXDimSpawn(int xDimSpawn)
 	{
-		this.xDimSpawn = xDimSpawn;
+		if (xDimSpawn < 3)
+			xDimSpawn = 3;
+		if (xDimSpawn > 5)
+			xDimSpawn = 5;
+		
+		this.dimSpawnX = xDimSpawn;
 	}
 	
-	private void setSpawnPort(int spawnPort)
+	private void setDimSpawnGate(int dimSpawnGate)
 	{
-		this.SpawnPort = spawnPort;
-	}
-	
-	private void setWeBotsXYMap(double WeBotsXYMap)
-	{
-		this.WeBotsXYMap = WeBotsXYMap;
-	}
-	
-	private void setWeBotsTile(double WeBotsTile)
-	{
-		this.WeBotsTile = WeBotsTile;
+		if (dimSpawnGate < 3)
+			dimSpawnGate = 3;
+		
+		this.dimSpawnGate = dimSpawnGate;
 	}
 	
 	private void setDifficolta(String difficolta)

@@ -162,6 +162,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	    	
 			step(40 * Integer.valueOf(id) * 1000);
 			
+			step(1000);
 	    	hide();
     	}
     	else

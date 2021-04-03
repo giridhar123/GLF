@@ -95,10 +95,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				 * Se c'è un'altra guardia nella "5-adiacenza" (3 celle di fronte e le 2 laterali)
 				 * Cerco un nuovo path nella direzione opposta del robot
 				 */
-				/*
-				if(check5Neighbours())
-					i = 0;
-				*/
 				
 				int value = correctedPath.get(i);
 				
@@ -108,12 +104,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 				
 				if (checkLadro())
 				{
-					System.out.println(getName() + " ho trovato un ladro, aggiorno il path...");
 					if (!updatePath(goal))
 						break;
 					else
 					{
-						System.out.println(getName() + " path cambiato...");
 						i = 0;
 						value = correctedPath.get(i);
 						
@@ -123,7 +117,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					}
 				}
 				
-				if(check5Neighbours())
+				if(check4Neighbours())
 				{
 					i = -1;
 					continue;
@@ -140,12 +134,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					i = updatePath(goal) ? -1 : correctedPath.size();
 				}
 				if (checkLadro())
-				{
-					System.out.println(getName() + " ho trovato un ladro, aggiorno il path...");
 					i = updatePath(goal) ? -1 : correctedPath.size();
-					if (i == -1)
-						System.out.println(getName() + " path cambiato...");
-				}
 			}
 		}
 
@@ -255,6 +244,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
         		int distanzaFrontale = (int) Math.round(CCC[i].getPosition()[2] * 10);
         		distanzaFrontale = Math.abs(distanzaFrontale);
         		
+        		System.out.println(getName() + " distanzaFrontale: " + distanzaFrontale);
+        		System.out.println(getName() + " distanzaLaterale: " + distanzaLaterale);
+        		
         		if(CCC[i].getPosition()[0] <= -0.01)
 	    		{
         			//Sinistra
@@ -318,6 +310,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
         		
         		if (mappa.get(punto) != Mappa.LADRO)
                 {
+        			System.out.println(getName() + ": ladro trovato in " + punto);
             		openSet.remove(punto);
                 	this.ladriFound += 1;
                 	mappa.setValue(punto, Mappa.LADRO);
@@ -349,43 +342,14 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		return true;
 	}
 	
-	private boolean check5Neighbours() 
-	{
-		/*
-		Point punti[] = new Point[5];
-		switch (direction) 
-		{
-		case NORD:
-			punti[0] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
-			punti[1] = new Point(robotPosition.getX() - 1, robotPosition.getY());
-			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
-			punti[3] = new Point(robotPosition.getX() - 1, robotPosition.getY() - 1);
-			punti[4] = new Point(robotPosition.getX() - 1, robotPosition.getY() + 1);
-			break;		
-		case EST:
-			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
-			punti[1] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
-			punti[2] = new Point(robotPosition.getX() - 1, robotPosition.getY());
-			punti[3] = new Point(robotPosition.getX() + 1, robotPosition.getY() + 1);
-			punti[4] = new Point(robotPosition.getX() - 1, robotPosition.getY() + 1);
-			break;		
-		case SUD:
-			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
-			punti[1] = new Point(robotPosition.getX(), robotPosition.getY() + 1);
-			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
-			punti[3] = new Point(robotPosition.getX() + 1, robotPosition.getY() + 1);
-			punti[4] = new Point(robotPosition.getX() + 1, robotPosition.getY() - 1);
-			break;		
-		case OVEST: 
-			punti[0] = new Point(robotPosition.getX() + 1, robotPosition.getY());
-			punti[1] = new Point(robotPosition.getX() - 1, robotPosition.getY());
-			punti[2] = new Point(robotPosition.getX(), robotPosition.getY() - 1);
-			punti[3] = new Point(robotPosition.getX() - 1, robotPosition.getY() - 1);
-			punti[4] = new Point(robotPosition.getX() + 1, robotPosition.getY() - 1);
-			break;
-		}
-		*/
-		
+	/*
+	 * Supponendo che il robot sia in posizione 5 - 5 e che sia rivolto verso nord,
+	 * il metodo verifica se ci sono altre guardie in 4 - 4, 4 - 5, 4 - 6, 3 - 5
+	 * se questo evento è verificato viene cercato un nuovo punto nella
+	 * direzione opposta del robot e viene creato un nuovo path verso quel punto
+	 */
+	private boolean check4Neighbours() 
+	{		
 		Point punti[] = new Point[4];
 		switch (direction) 
 		{
@@ -455,8 +419,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 					count++;
 				}
 				while(!isOpposite(temp));
-				
-				//step(3500 * numeroGuardia);
+
 				path = aStarSearcher.getPath(robotPosition, temp);
 				
 				if (path == null)
@@ -511,7 +474,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		this.robotPosition = new StartPosition(this);
 		
 		oldPosition = new Point(robotPosition);
-		aStarSearcher = new AStarSearcher(mappa);
+		aStarSearcher = new AStarSearcher(this.mappa);
 		
 		//Aggiungo tutta la mappa nell'openset
 		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
@@ -538,9 +501,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	public void onPosizioneIncrementata()
 	{		
 		openSet.remove(new Point(robotPosition));
-		//Le altre guardien non andranno nella posizione in cui si trova la guardia corrente
+		//In questo modo le altre guardie non andranno nella posizione in cui si trova la guardia corrente
 		clientConnectionHandler.sendPacket(new CTS_GOING_TO(new Point(robotPosition)));
-		//Le altre guardie aggiornano le posizioni di questa guardia
+		//In questo modo le altre guardie aggiornano le posizioni di questa guardia
 		clientConnectionHandler.sendPacket(new CTS_NEW_GUARDIA_POS(new Point(oldPosition), new Point(robotPosition)));
 		oldPosition = new Point(robotPosition);
 	}

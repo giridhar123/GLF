@@ -52,9 +52,7 @@ public abstract class GenericRobot extends Robot
 	public GenericRobot(int direction)
 	{
 		super();
-		this.direction = direction;		
-		
-		//this.stepFlag = false;
+		this.direction = direction;
 		this.mappa = null;
 		pose = 0;
 		
@@ -71,7 +69,10 @@ public abstract class GenericRobot extends Robot
 								    		"ps0",
 								    		FRONTAL_OBSTACLE_TRESHOLD);
 	    
-	    lateralSensors = new LateralSensors(this, "ps5", "ps2", LATERAL_OBSTACLE_TRESHOLD);
+	    lateralSensors = new LateralSensors(this,
+	    									"ps5",
+	    									"ps2",
+	    									LATERAL_OBSTACLE_TRESHOLD);
 	}	
 	
 	public boolean goStraightOn(int times)
