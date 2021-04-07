@@ -1,10 +1,8 @@
 #VRML_SIM R2020b utf8
-# license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
-# license url: https://cyberbotics.com/webots_assets_license
+# license: GLF
 # tags: static
-# documentation url: https://www.cyberbotics.com/doc/guide/epuck
-# EPFL educational and research mini mobile robot.
-# The e-puck is powered by a dsPIC processor and features a very large number of sensors in its basic configuration.
+# GLF Guardia Proto
+# Modifica del file e-puck proto per ottimizzare il file
 # More info here: http://www.e-puck.org.
 
 PROTO Guardia [

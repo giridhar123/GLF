@@ -32,11 +32,11 @@ public class Mappa
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn; 
         
         this.floorSize = new double[2];
-        this.floorSize[0] = (2 + getYSize()) / 8;
-        this.floorSize[1] = getXSize() / 8;
+        this.floorSize[0] = (3 + getYSize()) / 8;
+        this.floorSize[1] = (1 + getXSize()) / 8;
         
-		this.spiazzamentoX = 0.10 * ((float)getYSize() - 1) / 2; //Legge da scrivere
-		this.spiazzamentoY = 0.10 * ((float)getXSize() - 1) / 2; //Legge da scrivere; //Legge da scrivere
+		this.spiazzamentoX = 0.10 * ((float)getYSize() - 1) / 2;
+		this.spiazzamentoY = 0.10 * ((float)getXSize() - 1) / 2;
 		
 		this.dimSpawnGate = dimSpawnGate;
 		

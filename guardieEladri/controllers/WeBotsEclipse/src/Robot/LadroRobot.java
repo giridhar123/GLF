@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import General.AStarSearcher;
-import General.SharedVariables;
 import Map.Mappa;
 import Map.Point;
 import Map.StartPosition;

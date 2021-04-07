@@ -175,11 +175,8 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(-0.5, 0.5);
         
-	    double error;
-	    
-	    while((error = Math.pow(pose - goalTheta, 2)) > 0.0001)
-	    {	    
-	    	System.out.println(error);
+	    while(Math.pow(pose - goalTheta, 2) > 0.0001)
+	    {
 	    	step();
 	        updatePose(OVEST);
 	    }
@@ -207,10 +204,8 @@ public abstract class GenericRobot extends Robot
 	    
 	    motors.setVelocity(0.5, -0.5);
 	    
-	    double error;
-	    while((error = Math.pow(pose - goalTheta, 2)) > 0.0001)
-	    {	   
-	    	System.out.println(error);
+	    while(Math.pow(pose - goalTheta, 2) > 0.0001)
+	    {
 	        step();
 	        updatePose(EST);
 	    }
