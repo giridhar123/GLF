@@ -3,6 +3,10 @@ package Network;
 import Map.Mappa;
 import Map.Point;
 
+/*
+ * Interfaccia client per implementare il comportamento di un client
+ */
+
 public interface Client
 {
 	public abstract void connectToServer();

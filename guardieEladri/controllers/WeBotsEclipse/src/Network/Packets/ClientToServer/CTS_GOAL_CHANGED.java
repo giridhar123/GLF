@@ -5,13 +5,16 @@ import java.nio.ByteBuffer;
 import Map.Point;
 import Network.Packets.Packet;
 
+/*
+ * Pacchetto inviato da una guardia quando cambia il goal di destinazione in caso di collision avoidance
+ */
+
 public class CTS_GOAL_CHANGED extends Packet
 {
 	private Point oldG, newG;
 	
     public CTS_GOAL_CHANGED(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	//System.out.println("ZZZ: " + getSize());
     	int x1 = buf.getInt();
     	int y1 = buf.getInt();
     	int x2 = buf.getInt();

@@ -13,6 +13,10 @@ import Network.Packets.ClientToServer.CTS_GOING_TO;
 import Network.Packets.ClientToServer.CTS_LADRO_HIDDEN;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 
+/*
+ * Classe che implementa il comportamento di un robot di tipo Ladro
+ */
+
 public class LadroRobot extends GenericRobot implements Client {
 
 	private ClientConnectionHandler clientConnectionHandler;
@@ -95,6 +99,7 @@ public class LadroRobot extends GenericRobot implements Client {
 	
 	/*
 	 * Metodo per inizializzare la lista dei punti buoni in cui nascondersi
+	 * 3 ostacoli nella 4-adiacenza
 	 */
 	private ArrayList<Point> getPotentialsPoints()
 	{
@@ -123,7 +128,6 @@ public class LadroRobot extends GenericRobot implements Client {
 	/*
 	 * Restituisce true se "punto" ha 3 ostacoli nella 4 adiacenza
 	 */
-	
     private boolean checkPoint(Point punto) 
 	{
     	if (mappa == null)

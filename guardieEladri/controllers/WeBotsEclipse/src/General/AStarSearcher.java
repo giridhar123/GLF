@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import Map.Mappa;
 import Map.Point;
 import Robot.GenericRobot;
+
+/*
+ * Classe che implementa l'algoritmo A*
+ */
 
 public class AStarSearcher {
 	

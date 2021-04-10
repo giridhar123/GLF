@@ -5,13 +5,16 @@ import java.nio.ByteBuffer;
 import Map.Point;
 import Network.Packets.Packet;
 
+/*
+ * Pacchetto inviato da una guardia quando trova un nuovo ostacolo
+ */
+
 public class CTS_OBSTACLE_IN_MAP extends Packet
 {    
 	private Point point;
 	
     public CTS_OBSTACLE_IN_MAP(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	//System.out.println("ZZZ: " + getSize());
     	int x = buf.getInt();
     	int y = buf.getInt();
     	

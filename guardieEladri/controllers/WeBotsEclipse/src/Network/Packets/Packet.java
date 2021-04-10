@@ -3,6 +3,10 @@ package Network.Packets;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
+/*
+ * Classe Packet generica
+ */
+
 public class Packet
 {
 	public static final short CTS_PEER_INFO = (short) 0x0000;

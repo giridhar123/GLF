@@ -3,6 +3,11 @@ import java.nio.ByteBuffer;
 
 import Network.Packets.Packet;
 
+/*
+ * Pacchetto inviato da un client quando si connette con il server
+ * in modo che quest'ultimo possa identificare il tipo di client che si è appena connesso
+ */
+
 public class CTS_PEER_INFO extends Packet 
 {	
     private byte type;

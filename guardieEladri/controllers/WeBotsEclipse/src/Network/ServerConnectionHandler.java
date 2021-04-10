@@ -17,6 +17,12 @@ import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 import Network.Packets.ServerToClient.STC_START_GUARDIE;
 
+/*
+ * Classe che gestisce la connessione server-to-client in un thread separato
+ * si occupa della ricezione dei pacchetti e della chiamata ai metodi
+ * del server che inoltrano il pacchetto alle (agli) altre (altri) guardie (ladri)
+ */
+
 public class ServerConnectionHandler extends Thread {
 	
 	private AsynchronousSocketChannel clientChannel;

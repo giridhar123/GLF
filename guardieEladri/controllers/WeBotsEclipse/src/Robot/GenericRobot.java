@@ -10,6 +10,14 @@ import Map.Point;
 import Robot.Sensors.FrontalSensors;
 import Robot.Sensors.LateralSensors;
 
+/*
+ * Classe che implementa i metodi generici di un robot
+ * goStraightOn: va avanti di una casella
+ * turnLeft: ruota a sinistra di 90°
+ * turnRight: ruota a destra di 90°
+ * goBack: va indietro di una casella
+ */
+
 public abstract class GenericRobot extends Robot 
 {
 	//Valori di supporto
@@ -224,6 +232,10 @@ public abstract class GenericRobot extends Robot
 	    lateralSensors.resetObstacles();
 	}
 	
+	/*
+	 * --ODOMETRIA--
+	 * Aggiornamento dell'orientamento del robot affinchè possa girare di 90°
+	 */
 	private void updatePose(int direction)
 	{
 	    // Calcola la posizione corrente dell'encoder
@@ -247,7 +259,6 @@ public abstract class GenericRobot extends Robot
 	 * Posizione 0: spiazzamento ruota sinistra
 	 * Posizione 1: spiazzamento ruota destra
 	 */
-	
 	private double[] getWheelDisplacements(double del_enLeftW, double del_enRightW)
 	{
 		double values[] = new double[2];
@@ -271,6 +282,9 @@ public abstract class GenericRobot extends Robot
 	public int step() { return step(SharedVariables.getTimeStep()); }
 	public Mappa getMappa() { return mappa; }
 	
+	/*
+	 * Metodo richiamato da goStraightOn per aggiornare la posizione del robot
+	 */
 	private void incrementaPosizione()
 	{
 		switch(direction)
@@ -294,6 +308,9 @@ public abstract class GenericRobot extends Robot
 	
 	public abstract void onPosizioneIncrementata();
 	
+	/*
+	 * Metodo per far ruotare il robot alla direzione desiderata
+	 */
 	public void changeDirectionTo(int direction)
 	{
 		int sig = this.direction - direction;

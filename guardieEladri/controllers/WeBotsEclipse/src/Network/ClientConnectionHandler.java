@@ -17,6 +17,12 @@ import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
+/*
+ * Classe che gestisce la connessione client-to-server in un thread separato
+ * si occupa della ricezione dei pacchetti e della chiamata ai metodi
+ * dell'interfaccia che ne implementa il comportamento alla ricezione di un determinato pacchetto
+ */
+
 public class ClientConnectionHandler extends Thread{
 	
 	private AsynchronousSocketChannel channel;
@@ -53,6 +59,11 @@ public class ClientConnectionHandler extends Thread{
 		}
 		
 			
+		/*
+		 * Primo pacchetto da inviare al server
+		 * per identificare il client che si sta connettendo
+		 */
+		
 		CTS_PEER_INFO cts_peer_info = new CTS_PEER_INFO(clientType);
 		sendPacket(cts_peer_info);
 			
@@ -92,6 +103,10 @@ public class ClientConnectionHandler extends Thread{
 			}
 		}
 	}
+	
+	/*
+	 * Metodo per identificare il tipo di pacchetto che è stato appena ricevuto
+	 */
 	
 	private void parse(int packetSize, ByteBuffer buf, AsynchronousSocketChannel sender)
 	{
@@ -147,6 +162,9 @@ public class ClientConnectionHandler extends Thread{
 		}
 	}
 	
+	/*
+	 * Metodo per inviare un pacchetto al server
+	 */
 	public void sendPacket(Packet packet)
 	{
 		ByteBuffer buf = packet.encode();

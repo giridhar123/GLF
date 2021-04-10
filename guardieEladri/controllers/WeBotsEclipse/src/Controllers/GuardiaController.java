@@ -1,11 +1,12 @@
 package Controllers;
 
-import com.cyberbotics.webots.controller.Speaker;
-
 import General.SharedVariables;
 import Robot.GenericRobot;
 import Robot.GuardiaRobot;
 
+/*
+ * Controller relativo al robot di tipo guardia
+ */
 
 public class GuardiaController
 {  

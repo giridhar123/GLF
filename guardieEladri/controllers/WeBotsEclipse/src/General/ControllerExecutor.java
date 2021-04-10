@@ -1,5 +1,8 @@
 package General;
 
+/*
+ * Classe utilizzata per avviare un controllore in un Thread separato
+ */
 
 import java.io.IOException;
 import java.io.BufferedReader;

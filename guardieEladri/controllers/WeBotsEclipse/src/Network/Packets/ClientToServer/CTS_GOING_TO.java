@@ -1,9 +1,14 @@
 package Network.Packets.ClientToServer;
 
 import java.nio.ByteBuffer;
-
 import Map.Point;
 import Network.Packets.Packet;
+
+/*
+ * Pacchetto inviato da un ladro per evitare che più ladri si nascondando nello stesso punto.
+ * Viee inviato anche dalle guardie per migliorare l'esplorazione
+ * in modo che più guardie non vanno ad esplorare lo stesso punto. 
+ */
 
 public class CTS_GOING_TO extends Packet
 {    
@@ -11,7 +16,6 @@ public class CTS_GOING_TO extends Packet
 	
     public CTS_GOING_TO(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	//System.out.println("ZZZ: " + getSize());
     	int x = buf.getInt();
     	int y = buf.getInt();
     	

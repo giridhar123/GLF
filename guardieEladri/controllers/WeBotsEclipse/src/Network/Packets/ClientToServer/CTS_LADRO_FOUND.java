@@ -1,9 +1,12 @@
 package Network.Packets.ClientToServer;
 
 import java.nio.ByteBuffer;
-
 import Map.Point;
 import Network.Packets.Packet;
+
+/*
+ * Pacchetto inviato da una guardia quando trova un nuovo ladro
+ */
 
 public class CTS_LADRO_FOUND extends Packet
 {    
@@ -11,7 +14,6 @@ public class CTS_LADRO_FOUND extends Packet
 	
     public CTS_LADRO_FOUND(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	//System.out.println("ZZZ: " + getSize());
     	int x = buf.getInt();
     	int y = buf.getInt();
     	

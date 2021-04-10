@@ -16,6 +16,10 @@ import Map.Mappa;
 import Network.Packets.Packet;
 import Network.Packets.ServerToClient.STC_SEND_MAP;
 
+/*
+ * Classe che implementa il comportamento lato server in un thread separato
+ */
+
 public class Server extends Thread
 {
 	private Mappa mappa;
@@ -121,6 +125,10 @@ public class Server extends Thread
 	public ArrayList<AsynchronousSocketChannel> getLadri() { return ladri; }
 	public ArrayList<AsynchronousSocketChannel> getGuardie() { return guardie; }
 	
+	/*
+	 * Metodo per inviare un pacchetto ricevuto a tutte le guardie
+	 * trane a quella che ha inviato il pacchetto
+	 */
 	public synchronized void sendToGuardie(Packet packet)
 	{
 		ByteBuffer buffer = packet.encode();
@@ -140,6 +148,10 @@ public class Server extends Thread
 		}
 	}
 	
+	/*
+	 * Metodo per inviare un pacchetto ricevuto a tutte i ladri
+	 * trane a quello che ha inviato il pacchetto
+	 */
 	public synchronized void sendToLadri(Packet packet) 
 	{
 		ByteBuffer buffer = packet.encode();

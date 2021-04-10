@@ -5,6 +5,10 @@ import com.cyberbotics.webots.controller.DistanceSensor;
 import General.SharedVariables;
 import Robot.GenericRobot;
 
+/*
+ * Classe che "implementa" i due sensori frontali dei robot
+ */
+
 public class FrontalSensors {
 	
 	private DistanceSensor leftSensor, rightSensor;

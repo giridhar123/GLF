@@ -5,13 +5,16 @@ import java.nio.ByteBuffer;
 import Map.Point;
 import Network.Packets.Packet;
 
+/*
+ * Pacchetto inviato da una guardia quando aggiorna la propria posizione
+ */
+
 public class CTS_NEW_GUARDIA_POS extends Packet
 {
 	private Point before, after;
 	
     public CTS_NEW_GUARDIA_POS(Packet packet, ByteBuffer buf) {
     	super(packet);
-    	//System.out.println("ZZZ: " + getSize());
     	int x1 = buf.getInt();
     	int y1 = buf.getInt();
     	int x2 = buf.getInt();

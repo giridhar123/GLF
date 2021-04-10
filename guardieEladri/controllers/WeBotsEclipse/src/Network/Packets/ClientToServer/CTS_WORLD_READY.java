@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 import Network.Packets.Packet;
 
+/*
+ * Pacchetto inviato dal supervisor dopo la fase di spawn
+ * in modo che il server può avviare il resto dei controllori in modo che la simulazione possa proseguire
+ */
+
 public class CTS_WORLD_READY extends Packet
 {
 	public CTS_WORLD_READY(Packet packet, ByteBuffer buf) {

@@ -2,6 +2,10 @@ package Network.Packets.ServerToClient;
 
 import java.nio.ByteBuffer;
 
+/*
+ * Pacchetto che utilizza il server per inviare la mappa ai client
+ */
+
 import Map.Mappa;
 import Map.Point;
 import Network.Packets.Packet;

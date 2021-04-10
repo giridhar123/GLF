@@ -2,6 +2,11 @@ package Network.Packets.ServerToClient;
 
 import java.nio.ByteBuffer;
 
+/*
+ * Pacchetto inviato dal server alle guardie quando i ladri sono tutti nascosti
+ * in modo che le guardie poi possano partire
+ */
+
 import Network.Packets.Packet;
 
 public class STC_START_GUARDIE extends Packet

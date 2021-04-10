@@ -14,6 +14,7 @@ public class Main
 
     public static void main(String args[]) throws IOException, FileNotFoundException
     {
+    	//Lettura dal file di configurazione "Config.txt"
         FileInputStream fileInputStream = new FileInputStream(new File("Config.txt"));
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
 
@@ -32,7 +33,7 @@ public class Main
 		int dimSpawnGate = Integer.parseInt(properties.getProperty("dimSpawnGate"));
 		String difficolta = properties.getProperty("difficolta");
 
-        //Inizializzo variabili globali
+        //Inizializzazione delle variabili globali
         SharedVariables.init(projectPath, webotsPath, timeStep, serverTcpPort, numeroGuardie, numeroLadri, dimMappaInternaX, dimMappaInternaY, dimSpawnX, dimSpawnGate, difficolta);
         
         Server server = new Server();

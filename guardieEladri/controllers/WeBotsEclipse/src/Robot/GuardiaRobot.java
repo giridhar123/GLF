@@ -21,6 +21,10 @@ import Network.Packets.ClientToServer.CTS_LADRO_FOUND;
 import Network.Packets.ClientToServer.CTS_NEW_GUARDIA_POS;
 import Network.Packets.ClientToServer.CTS_OBSTACLE_IN_MAP;
 
+/*
+ * Classe che implementa il comportamento di un robot di tipo guardai
+ */
+
 public class GuardiaRobot extends GenericRobot implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
@@ -161,6 +165,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		System.out.println(mappa);
 	}
 	
+	/*
+	 * Metodo che aggiorna la mappa inserendo un ostacolo di fronte alla posizione attuale del robot
+	 * inoltre, invia il pacchetto CTS_OBSTACLE_IN_MAP al server
+	 */
 	private void putObstaclesInFront()
 	{
 		Point punto = null;
@@ -183,6 +191,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		updateMapAndSendPacket(punto);
 	}
 	
+	/*
+	 * Metodo che controlla se lateralmente ci sono degli ostacolo
+	 * inoltre, invia il pacchetto CTS_OBSTACLE_IN_MAP al server
+	 */
 	private void checkLateral()
 	{
 		int x = robotPosition.getX();
@@ -232,9 +244,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 	
 	/*
-	 * Aggiunge un ostacolo nella mappa e invia un pacchetto per segnalarlo alle altre guardie
+	 * Aggiunge un ostacolo nella mappa nel punto specificato 
+	 * e invia un pacchetto per segnalarlo alle altre guardie
 	 */
-	
 	private void updateMapAndSendPacket(Point punto)
 	{
 		if (mappa.get(punto) != Mappa.EMPTY)
@@ -245,7 +257,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	}
 
 	/*
-	 * Tramite la telecamera, verifica se è inquadrato un ladro
+	 * Tramite la telecamera, verifica se vi è un ladro nel campo visivo
 	 */
 	private boolean checkLadro()
 	{
@@ -342,7 +354,6 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	 * Trasforma un path di punti in un path di direzioni,
 	 * se non c'è un path segnala il goal come irragiungibile
 	 */
-	
 	private boolean updatePath(Point goal)
 	{
 		ArrayList<Point> path = aStarSearcher.getPath(robotPosition, goal);
@@ -454,6 +465,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		return guardiaFound;
 	}
 
+	/*
+	 * Restituisce "true" se il punto fornito come parametro è opposto alla posizione attuale del robot
+	 */
 	private boolean isOpposite(Point temp)
 	{
 		switch (direction) 
@@ -485,6 +499,10 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void onStcSendMapReceived(Mappa mappa)
 	{
+		/*
+		 * Di tutta la mappa ricevuta, crea un nuovo oggetto Mappa contenente solamente
+		 * la dimensione e la posizione degli ostacoli nei bordi della mappa ricevuta 
+		 */
 		this.mappa = new Mappa(mappa.getxAmpiezzaSpawn(), mappa.getXDimInterna(), mappa.getYDimInterna(), mappa.getDimSpawnGate());
 		
 		this.robotPosition = new StartPosition(this);
@@ -492,7 +510,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		oldPosition = new Point(robotPosition);
 		aStarSearcher = new AStarSearcher(this.mappa);
 		
-		//Aggiungo tutta la mappa innterna nell'openSet
+		//Aggiungo tutta la mappa interna nell'openSet
 		for (int i = this.mappa.getxAmpiezzaSpawn(); i < this.mappa.getxAmpiezzaSpawn() + this.mappa.getXDimInterna() - 1; i++)
 			for (int j = 0; j < this.mappa.getYSize() - 1; ++j)
 				openSet.add(new Point(i, j));
@@ -503,6 +521,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	@Override
 	public void onCtsObstacleInMapReceived(Point point)
 	{
+		//Rimuove il punto dall'openSet e inserisce l'ostacolo nella propria mappa
 		mappa.setValue(point, Mappa.FULL);
 		openSet.remove(point);
 	}
@@ -513,6 +532,9 @@ public class GuardiaRobot extends GenericRobot implements Client {
 		openSet.remove(point);		
 	}
 
+	/*
+	 * Metodo richiamato dalla classe "GenericRobot" quando viene aggiornata la posizione del robot
+	 */
 	@Override
 	public void onPosizioneIncrementata()
 	{		
@@ -526,7 +548,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 
 	@Override
 	public void onCtsNewGuardiaPosReceived(Point before, Point after)
-	{
+	{ 
 		mappa.setValue(before, Mappa.EMPTY);
 		mappa.setValue(after, Mappa.GUARDIA);		
 	}

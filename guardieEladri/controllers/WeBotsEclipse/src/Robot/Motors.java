@@ -2,17 +2,20 @@ package Robot;
 
 import com.cyberbotics.webots.controller.Motor;
 import com.cyberbotics.webots.controller.PositionSensor;
-
 import General.SharedVariables;
+
+/*
+ * Classe che "implementa" i due motori dei robot insieme ai relativi sensori odometrici
+ */
 
 public class Motors {
 	
-	//Velocità massima delrobot
+	//Velocità massima dei motori del robot
 	private final double MAX_SPEED = 6.28;
 	private Motor leftMotor;
 	private Motor rightMotor;
 	
-	//Encoders
+	//Sensori Encoders
 	private PositionSensor leftEncoder, rightEncoder;
 	private double encodersValue[];
 

@@ -4,6 +4,10 @@ import General.SharedVariables;
 import Robot.GenericRobot;
 import Robot.LadroRobot;
 
+/*
+ * Controller relativo al robot di tipo ladro
+ */
+
 public class LadroController
 {
     public static void main(String[] args) throws Exception
@@ -13,9 +17,6 @@ public class LadroController
     	init(args);
     	
         LadroRobot robot = new LadroRobot(GenericRobot.NORD);
-        
-        //ArrayList<Point> pts = potentialShelters(map);  pts contiene i possibili nascondigli
-        //estrai un punto da pts
                 
         robot.connectToServer();
 
