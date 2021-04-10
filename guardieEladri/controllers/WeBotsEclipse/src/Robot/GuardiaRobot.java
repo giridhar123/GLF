@@ -43,7 +43,7 @@ public class GuardiaRobot extends GenericRobot implements Client {
 	private AStarSearcher aStarSearcher;
 	
 	private Speaker speaker;
-	private final String SONG_ENCOUNTER_PATH = "sounds/encounter.mp3";
+	private final String SONG_ENCOUNTER_PATH = "sounds/encounter.wav";
 	private final String SONG_LUPIN_PATH = "sounds/lupin.wav";
 
 	public GuardiaRobot(int direction)
