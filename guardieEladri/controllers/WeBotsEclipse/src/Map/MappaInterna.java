@@ -5,12 +5,13 @@ import java.util.Random;
 
 public class MappaInterna {
 	
-	private int[][] mappaInterna;
-	private int xDimInterna, yDimInterna, dimSpawnGate;
-	private String difficolta;
+	private int[][] mappaInterna; // Mappa di gioco
+	private int xDimInterna, yDimInterna, dimSpawnGate; 
+	private String difficolta;	
 	private Point MatrixIndexPoint; // Equivalente della posizione {x,y} in map[RandomIndex] Indice Della Matrice
 	private ArrayList<Integer> AL;
 	
+	// Inizializzazione della mappa di gioco.
 	public MappaInterna(Mappa mappa)
 	{
 		this.xDimInterna = mappa.getXDimInterna();
@@ -26,7 +27,7 @@ public class MappaInterna {
 		fillMap();
 	}
 	
-
+	// In caso di fallimento della creazione della mappa di gioco, rieffettuo solo il riempimento della mappa interna
 	public MappaInterna(int xDimInterna, int yDimInterna, int dimSpawnGate)
 	{
 		this.dimSpawnGate = dimSpawnGate;
@@ -41,9 +42,15 @@ public class MappaInterna {
 		return this.mappaInterna;
 	}
 
+	
 	public int get(Point punto)
 	{
 		return mappaInterna[punto.getX()][punto.getY()];
+	}
+	
+	public int get(int i, int j)
+	{
+		return mappaInterna[i][j];
 	}
 	
 	public void setValue(Point punto, int value)
@@ -56,11 +63,7 @@ public class MappaInterna {
 		mappaInterna[i][j] = value;
 	}
 	
-	public int get(int i, int j)
-	{
-		return mappaInterna[i][j];
-	}
-	
+	// Creazione dei bordi
 	private void initMappaInterna()
 	{
 		int min = 0;
@@ -84,9 +87,9 @@ public class MappaInterna {
 		}
 	}
 
+	// Riempimento della mappa utilizzando l'algoritmo pseudcasuale-
 	public void fillMap()
     {
-		// 1 sopra 2 sotto 3 sinistra 4 destra  come codici usati dopo.
 		int NumeroCubi = 0; // Da aggiornare con i dati sperimentali in base alla dimensione della mappa
 		
 		switch (difficolta)
@@ -125,7 +128,6 @@ public class MappaInterna {
 			}
 			catch (IllegalArgumentException e)
 			{
-				//Se (AL.size() - 1) < 0...
 				break;
 			}
 	    	updatePattern(RandomIndex);
@@ -266,7 +268,7 @@ public class MappaInterna {
 		return ArrayList;
 	}
 
-	private void ControlloMatrice (ArrayList<Point> arrayList)
+	private void ControlloMatrice(ArrayList<Point> arrayList)
 	{
 		if (arrayList.size() != 5)
 			return;
@@ -281,6 +283,10 @@ public class MappaInterna {
 		}
 	}
 	
+	// In base al pattern utilizzato si effettuano delle codnizioni di quattro-adiacenza diverse. 
+	// Il punto da controllare è quello successivo. Al termine della funzione vengono eliminati i parametri non utilizzati.
+	// In seguito le varie caratteristiche.
+
 	private void ControlloMatricePrimoPattern(ArrayList<Point> arrayList)
 	{
 		if (arrayList.size() != 5)

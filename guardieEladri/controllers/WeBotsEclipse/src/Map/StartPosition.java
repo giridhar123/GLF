@@ -2,6 +2,9 @@ package Map;
 
 import Robot.GenericRobot;
 
+/*
+ * Algoritmo di generazione di spawn dei robot.
+ */
 public class StartPosition extends Point
 {
 	public StartPosition(String robotName, Mappa mappa)

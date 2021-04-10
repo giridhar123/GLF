@@ -1,5 +1,8 @@
 package Map;
 
+/*
+ *  Classe per l'identificazione e la manipolazione dei vari punti all'interno della mappa.
+ */
 public class Point {
 
 	private int x;

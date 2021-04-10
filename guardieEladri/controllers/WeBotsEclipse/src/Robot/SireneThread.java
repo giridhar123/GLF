@@ -1,7 +1,9 @@
 package Robot;
 
 import com.cyberbotics.webots.controller.LED;
-
+/*
+ * Classe per avviare le sirene in modo autonomo.
+ */
 public class SireneThread extends Thread{
 	
 	private LED led1, led2;
