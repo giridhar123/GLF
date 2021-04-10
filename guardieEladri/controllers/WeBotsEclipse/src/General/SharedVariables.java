@@ -146,8 +146,8 @@ public class SharedVariables {
 	{
 		if (dimMappaInternaX < 10)
 			dimMappaInternaX = 10;
-		if (dimMappaInternaX > 30)
-			dimMappaInternaX = 30;
+		if (dimMappaInternaX > 20)
+			dimMappaInternaX = 20;
 		
 		this.dimMappaInternaX = dimMappaInternaX;
 	}
@@ -156,8 +156,8 @@ public class SharedVariables {
 	{
 		if (dimMappaInternaY < 10)
 			dimMappaInternaY = 10;
-		if (dimMappaInternaY > 30)
-			dimMappaInternaY = 30;
+		if (dimMappaInternaY > 20)
+			dimMappaInternaY = 20;
 		
 		this.dimMappaInternaY = dimMappaInternaY;
 	}
