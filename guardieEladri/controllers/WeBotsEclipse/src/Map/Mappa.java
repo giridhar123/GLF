@@ -6,6 +6,9 @@ import java.util.Set;
 
 import General.AStarSearcher;
 
+/*
+ * Classe utilizzata per la creazione di una mappa, è richiamata dal Server.
+ */
 public class Mappa
 {	
 	public static final int EMPTY = 0;
@@ -14,32 +17,29 @@ public class Mappa
 	public static final int LADRO = 3;
 
 	private String Difficolta ;
-	private int xDimInterna; 		//Dim Matrice
-	private int yDimInterna;
+	private int xDimInterna; 		//Dim Matrice x
+	private int yDimInterna;		//Dim Matrice y
 	private double[] floorSize; 	// Quanto deve essere la mappa di WeBots
 	private double spiazzamentoX, spiazzamentoY; 	// Grandezza di una singola cella di WeBots
-	private int dimSpawnGate; 		// grandezza delle porte dello spawn
-	private int xAmpiezzaSpawn;
-	private int[][] mappaSuperiore, mappaInferiore;
-	private MappaInterna mappaInterna;
+	private int dimSpawnGate; 		// Grandezza delle porte dello spawn
+	private int xAmpiezzaSpawn;		// Ampiezza nell'asse X dello spawn.
+	private int[][] mappaSuperiore, mappaInferiore;	// La parte superiore ( spawn guardia ) e la parte inferiore ( spawn ladri )
+	private MappaInterna mappaInterna; 	// La parte centrale che rappresenta il campo di gioco
 	
+	
+	// Utilizzato del Server
 	public Mappa(String Difficolta, int xDimInterna, int yDimInterna, int xAmpiezzaSpawn, int dimSpawnGate)
 	{
-		// Questo costruttore ï¿½ richiamato nella classe SERVER
 		this.Difficolta = Difficolta;
 		this.xDimInterna = xDimInterna;
 		this.yDimInterna = yDimInterna;
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn; 
-        
         this.floorSize = new double[2];
         this.floorSize[0] = (3 + getYSize()) / 8;
         this.floorSize[1] = (1 + getXSize()) / 8;
-        
 		this.spiazzamentoX = 0.10 * ((float)getYSize() - 1) / 2;
 		this.spiazzamentoY = 0.10 * ((float)getXSize() - 1) / 2;
-		
 		this.dimSpawnGate = dimSpawnGate;
-		
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
 		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
 		
@@ -55,6 +55,8 @@ public class Mappa
 		} while(!isValid());
 	}
 	
+	
+	// Utilizzato dalle guardie 
 	public Mappa(int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate)
 	{
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
@@ -72,6 +74,7 @@ public class Mappa
 			mappaSuperiore[0][j] = mappaInferiore[xAmpiezzaSpawn - 1][j] = 1;
 	}
 	
+	// Utilizzato dai ladri
 	public Mappa(int[][] mappa, int xAmpiezzaSpawn, int xDimInterna, int yDimInterna, int dimSpawnGate, double[] floorSize, double spiazzamentoX, double spiazzamentoY)
 	{
 		// Questo costruttore ï¿½ richiamato enlla classe STC_SEND_MAP
@@ -83,13 +86,11 @@ public class Mappa
 		this.xAmpiezzaSpawn = xAmpiezzaSpawn;
 		this.spiazzamentoX = spiazzamentoX;
 		this.spiazzamentoY = spiazzamentoY;
-		
 		int col, row;
 		col = row = 0;
 		
 		this.mappaSuperiore = new int[xAmpiezzaSpawn][yDimInterna];
 		this.mappaInferiore = new int[xAmpiezzaSpawn][yDimInterna];
-		
 		
 		for (int i = 0; i < xAmpiezzaSpawn; ++i, ++row)
 		{
@@ -115,10 +116,11 @@ public class Mappa
 		}
 	}
 
+	// Funzione per verificare che la mappa creata è valida
 	private boolean isValid() 
 	{
 		Point lastPoint = new Point(((2*xAmpiezzaSpawn) + xDimInterna)-2, (yDimInterna-2) ) ;
-		
+
 		AStarSearcher aStarSearcher = new AStarSearcher(this);		
 		ArrayList<Point> path = aStarSearcher.getPath(new Point(1,1),lastPoint);
 		
@@ -181,16 +183,7 @@ public class Mappa
 		return Difficolta;
 	}
 	
-	public void setValue(Point punto, int value)
-	{
-		if (punto.getX() < xAmpiezzaSpawn)
-			mappaSuperiore[punto.getX()][punto.getY()] = value;
-		else if (punto.getX() >= (xDimInterna + xAmpiezzaSpawn))
-			mappaInferiore[punto.getX() - xDimInterna - xAmpiezzaSpawn][punto.getY()] = value;
-		else
-			mappaInterna.setValue(punto.getX() - xAmpiezzaSpawn, punto.getY(), value);
-	}
-	
+	// 4-adiacenza, utilizzata da A*
 	public Set<Point> getNeighbors(Point point)
 	{
 		Set<Point> set = new HashSet<>();
@@ -225,7 +218,6 @@ public class Mappa
 		return yDimInterna;
 	}
 
-	
 	public int getXAmpiezzaSpawn()
 	{
 		return xAmpiezzaSpawn;
@@ -236,14 +228,14 @@ public class Mappa
 		return dimSpawnGate;
 	}
 
-	public void setDimSpawnGate(int dimSpawnGate)
-	{
-		this.dimSpawnGate = dimSpawnGate;
-	}
-
 	public int getxAmpiezzaSpawn()
 	{
 		return xAmpiezzaSpawn;
+	}
+
+	public void setDimSpawnGate(int dimSpawnGate)
+	{
+		this.dimSpawnGate = dimSpawnGate;
 	}
 
 	public void setxAmpiezzaSpawn(int xAmpiezzaSpawn) {
@@ -253,4 +245,16 @@ public class Mappa
 	public void setDifficolta(String difficolta) {
 		Difficolta = difficolta;
 	}	
+	
+	// Funzione per settare un valore in un punto
+	public void setValue(Point punto, int value)
+	{
+		if (punto.getX() < xAmpiezzaSpawn)
+			mappaSuperiore[punto.getX()][punto.getY()] = value;
+		else if (punto.getX() >= (xDimInterna + xAmpiezzaSpawn))
+			mappaInferiore[punto.getX() - xDimInterna - xAmpiezzaSpawn][punto.getY()] = value;
+		else
+			mappaInterna.setValue(punto.getX() - xAmpiezzaSpawn, punto.getY(), value);
+	}
+	
 }

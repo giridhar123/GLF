@@ -13,6 +13,9 @@ import Network.ClientConnectionHandler;
 import Network.Packets.ClientToServer.CTS_PEER_INFO;
 import Network.Packets.ClientToServer.CTS_WORLD_READY;
 
+/*
+ * Classe per la gestione, lo spawn e varie cose tra webots ed eclipse.
+ */
 public class SupervisorRobot extends Supervisor implements Client {
 	
 	private ClientConnectionHandler clientConnectionHandler;
@@ -33,7 +36,9 @@ public class SupervisorRobot extends Supervisor implements Client {
 	}
 		
 	/*
-	 * Metodo che spawna le casse e i robot
+	 * Metodo che spawna le casse e i robot.
+	 * Fondamentalmente si prendono le variabili tramite le funzioni della libreria di webots.
+	 * Si prende il nodo supervisor e si possono utilizzare le funzioni "speciali" definite nella documentazione come lo spawn di oggetti etc.
 	 */
 	public void spawnWorld()
 	{
@@ -54,13 +59,15 @@ public class SupervisorRobot extends Supervisor implements Client {
         StringBuilder spawnString = new StringBuilder(createWoodenBoxsString());
         spawnString.append(createRobotsString());
     	
+        //E' la funzione di spawn
     	RootChildrenField.importMFNodeFromString(4, spawnString.toString());
 		
+    	//Viene inviato il pacchetto al server che definisce che il mondo è pronto
 		clientConnectionHandler.sendPacket(new CTS_WORLD_READY());
-		
 		worldSpawned = true;
 	}
 
+	// Funzione con la quale viene creata la stringa per lo spawn delle casse
 	private String createWoodenBoxsString() 
 	{
 		StringBuilder string = new StringBuilder();
@@ -82,6 +89,8 @@ public class SupervisorRobot extends Supervisor implements Client {
 		return string.toString();
 	}
 	
+	
+	// Funzione con la quale viene creata la stringa per lo spawn dei robot
 	private String createRobotsString()
 	{
 		StringBuilder string = new StringBuilder();
